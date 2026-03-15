@@ -126,7 +126,7 @@ export const findDuplicatesExactTitle = <Manga extends Pick<MangaType, 'title'>>
 };
 
 /* -------- Fuzzy title (word-boundary) -------- */
-const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const escapeRegExp = (value: string): string => value.replaceAll(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 export const findDuplicatesFuzzyTitle = <Manga extends TMangaDuplicate>(
     mangasToCheck: Manga[],

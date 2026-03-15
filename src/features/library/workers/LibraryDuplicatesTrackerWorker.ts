@@ -6,7 +6,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import { TMangaDuplicate, TMangaDuplicates } from '@/features/library/Library.types.ts';
+import type { TMangaDuplicate, TMangaDuplicates } from '@/features/library/Library.types.ts';
 
 // eslint-disable-next-line no-restricted-globals
 self.onmessage = (event: MessageEvent<{ mangas: TMangaDuplicate[] }>) => {
@@ -18,7 +18,7 @@ self.onmessage = (event: MessageEvent<{ mangas: TMangaDuplicate[] }>) => {
         const nodes = m.trackRecords?.nodes ?? [];
         nodes.forEach((tr) => {
             // only valid if remoteId exists; otherwise tracker binding cannot be used
-            if (!tr.remoteId) return;
+            if (!tr.remoteId) {return;}
             const key = `${tr.trackerId}::${tr.remoteId}`;
             map[key] ??= [];
             map[key].push(m);

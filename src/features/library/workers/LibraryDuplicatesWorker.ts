@@ -26,7 +26,7 @@ class UnionFind {
 
     constructor(n: number) {
         this.parent = new Array(n);
-        for (let i = 0; i < n; i += 1) this.parent[i] = i;
+        for (let i = 0; i < n; i += 1) {this.parent[i] = i;}
     }
 
     find(a: number): number {
@@ -47,7 +47,7 @@ class UnionFind {
     union(a: number, b: number) {
         const pa = this.find(a);
         const pb = this.find(b);
-        if (pa === pb) return;
+        if (pa === pb) {return;}
         this.parent[pb] = pa;
     }
 }
@@ -69,7 +69,7 @@ function mergeDuplicateMapsAsComponents(
             const idxs: number[] = [];
             for (let i = 0; i < group.length; i += 1) {
                 const idx = idToIndex.get(String(group[i].id));
-                if (idx !== undefined) idxs.push(idx);
+                if (idx !== undefined) {idxs.push(idx);}
             }
             if (idxs.length > 1) {
                 const base = idxs[0];
@@ -84,8 +84,8 @@ function mergeDuplicateMapsAsComponents(
     for (let i = 0; i < n; i += 1) {
         const root = uf.find(i);
         const arr = rootToMembers.get(root);
-        if (arr) arr.push(i);
-        else rootToMembers.set(root, [i]);
+        if (arr) {arr.push(i);}
+        else {rootToMembers.set(root, [i]);}
     }
 
     const result: TMangaDuplicates<TMangaDuplicate> = {};
@@ -126,7 +126,7 @@ function mapHashResultToFull(
             const item = group[gi];
             const id = String(item.id);
             const full = idToManga.get(id);
-            if (full) mappedGroup.push(full);
+            if (full) {mappedGroup.push(full);}
             else {
                 // Fallback: if we don't have the original full manga, try to use whatever was returned
                 mappedGroup.push(item as TMangaDuplicate);
@@ -135,7 +135,7 @@ function mapHashResultToFull(
         if (mappedGroup.length > 1) {
             const outKey = mappedGroup[0].title ?? key;
             // ensure we don't overwrite an existing key (preserve first-seen)
-            if (mapped[outKey] === undefined) mapped[outKey] = mappedGroup;
+            if (mapped[outKey] === undefined) {mapped[outKey] = mappedGroup;}
             else {
                 // if key collision, append uniquely
                 let idx = 1;
@@ -321,7 +321,7 @@ self.onmessage = async (event: MessageEvent<LibraryDuplicatesWorkerInput>) => {
         resultsToMerge.push(mappedImageResult);
     }
 
-    if (trackerWorker) trackerWorker.terminate();
+    if (trackerWorker) {trackerWorker.terminate();}
 
     const merged = mergeDuplicateMapsAsComponents(mangas, resultsToMerge);
     postMessage(merged);

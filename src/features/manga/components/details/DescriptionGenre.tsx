@@ -29,18 +29,18 @@ const OPEN_CLOSE_BUTTON_HEIGHT = '35px';
 const DESCRIPTION_COLLAPSED_SIZE = 75;
 
 function normalizeDescription(input?: string | null): string | undefined {
-    if (!input) return undefined;
+    if (!input) {return undefined;}
     // Normalize CRLF -> LF
-    let s = input.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    let s = input.replaceAll(/\r\n/g, '\n').replaceAll(/\r/g, '\n');
     // Replace non-breaking spaces with normal spaces
-    s = s.replace(/\u00A0/g, ' ');
+    s = s.replaceAll(/\u00A0/g, ' ');
     // Remove lines that are only horizontal-rule markers at the start or end
     s = s.replace(/^(?:\s*[-*_]{3,}\s*\n)+/, '');
     s = s.replace(/(?:\n\s*[-*_]{3,}\s*)+$/, '');
     // Remove trailing spaces at end of lines
-    s = s.replace(/[ \t]+(\n|$)/g, '\n');
+    s = s.replaceAll(/[ \t]+(\n|$)/g, '\n');
     // Collapse runs of 3+ newlines into exactly two (preserve paragraph separation but avoid huge gaps)
-    s = s.replace(/\n{3,}/g, '\n\n');
+    s = s.replaceAll(/\n{3,}/g, '\n\n');
     // Trim leading/trailing whitespace and newlines
     s = s.trim();
     return s;

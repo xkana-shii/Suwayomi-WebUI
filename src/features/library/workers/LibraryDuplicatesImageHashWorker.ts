@@ -27,14 +27,14 @@ self.onmessage = async (
         (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_API_URL) || 'http://localhost:4567';
 
     function resolveUrl(url?: string | undefined): string | undefined {
-        if (!url) return undefined;
+        if (!url) {return undefined;}
         try {
             // If absolute, return as-is
             const parsed = new URL(url);
             return parsed.href;
         } catch {
             // Not absolute: prefix with BACKEND_BASE
-            if (url.startsWith('/')) return `${BACKEND_BASE}${url}`;
+            if (url.startsWith('/')) {return `${BACKEND_BASE}${url}`;}
             return `${BACKEND_BASE}/${url.replace(/^\/+/, '')}`;
         }
     }
@@ -70,12 +70,12 @@ self.onmessage = async (
     }
 
     function hammingDistanceHex(a: string, b: string): number {
-        if (!a || !b) return 64;
+        if (!a || !b) {return 64;}
         const ba = hexToBitString(a);
         const bb = hexToBitString(b);
         let dist = 0;
         const len = Math.min(ba.length, bb.length);
-        for (let i = 0; i < len; i += 1) if (ba[i] !== bb[i]) dist += 1;
+        for (let i = 0; i < len; i += 1) {if (ba[i] !== bb[i]) dist += 1;}
         dist += Math.abs(ba.length - bb.length);
         return dist;
     }
@@ -93,10 +93,10 @@ self.onmessage = async (
 
     async function fetchBlobAndBitmap(url?: string): Promise<ImageBitmap | null> {
         const resolved = resolveUrl(url);
-        if (!resolved) return null;
+        if (!resolved) {return null;}
         try {
             const res = await fetch(resolved, { mode: 'cors' });
-            if (!res.ok) return null;
+            if (!res.ok) {return null;}
             const blob = await res.blob();
             try {
                 const bitmap = await createImageBitmap(blob);
@@ -112,14 +112,14 @@ self.onmessage = async (
 
     // compute both hashes from a single bitmap
     function computeHashesFromBitmap(bitmap: ImageBitmap | null): { aHash: string | null; pHash: string | null } {
-        if (!bitmap) return { aHash: null, pHash: null };
+        if (!bitmap) {return { aHash: null, pHash: null };}
 
         // aHash: resize to 8x8 and compute average luminance bits
         try {
             const aSize = 8;
             const canvasA = new OffscreenCanvas(aSize, aSize);
             const ctxA = canvasA.getContext('2d');
-            if (!ctxA) return { aHash: null, pHash: null };
+            if (!ctxA) {return { aHash: null, pHash: null };}
             ctxA.drawImage(bitmap, 0, 0, aSize, aSize);
             const imageDataA = ctxA.getImageData(0, 0, aSize, aSize);
             const { data: dataA } = imageDataA;
@@ -135,7 +135,7 @@ self.onmessage = async (
             }
             const avg = sum / lum.length;
             let bits = '';
-            for (let i = 0; i < lum.length; i += 1) bits += lum[i] >= avg ? '1' : '0';
+            for (let i = 0; i < lum.length; i += 1) {bits += lum[i] >= avg ? '1' : '0';}
             const hexParts: string[] = [];
             for (let i = 0; i < bits.length; i += 4) {
                 const chunk = bits.substring(i, i + 4);
@@ -148,7 +148,7 @@ self.onmessage = async (
             const size = 32;
             const canvasP = new OffscreenCanvas(size, size);
             const ctxP = canvasP.getContext('2d');
-            if (!ctxP) return { aHash, pHash: null };
+            if (!ctxP) {return { aHash, pHash: null };}
             ctxP.drawImage(bitmap, 0, 0, size, size);
             const imageDataP = ctxP.getImageData(0, 0, size, size);
             const { data } = imageDataP;
@@ -201,14 +201,14 @@ self.onmessage = async (
             let bitmap: ImageBitmap | null = null;
             try {
                 bitmap = await fetchBlobAndBitmap(m.thumbnailUrl);
-                if (!bitmap) return { id: idStr, aHash: null, pHash: null, index: idx };
+                if (!bitmap) {return { id: idStr, aHash: null, pHash: null, index: idx };}
                 const { aHash, pHash } = computeHashesFromBitmap(bitmap);
                 return { id: idStr, aHash, pHash, index: idx };
             } catch {
                 return { id: idStr, aHash: null, pHash: null, index: idx };
             } finally {
                 try {
-                    if (bitmap && (bitmap as any).close) (bitmap as any).close();
+                    if (bitmap && (bitmap as any).close) {(bitmap as any).close();}
                 } catch {
                     // ignore
                 }
@@ -226,7 +226,7 @@ self.onmessage = async (
                 // get next index atomically (simple increment)
                 const idx = i;
                 i += 1;
-                if (idx >= funcs.length) break;
+                if (idx >= funcs.length) {break;}
                 try {
                     // awaiting inside the loop is intentional for a bounded worker pool
                     // eslint-disable-next-line no-await-in-loop
@@ -251,15 +251,15 @@ self.onmessage = async (
     const debugSamples: { idA: string; idB: string; aDist: number; pDist: number; avg: number }[] = [];
     const n = hashResults.length;
     const parent = new Array(n);
-    for (let i = 0; i < n; i += 1) parent[i] = i;
+    for (let i = 0; i < n; i += 1) {parent[i] = i;}
     function find(x: number): number {
-        if (parent[x] !== x) parent[x] = find(parent[x]);
+        if (parent[x] !== x) {parent[x] = find(parent[x]);}
         return parent[x];
     }
     function union(a: number, b: number): void {
         const ra = find(a);
         const rb = find(b);
-        if (ra !== rb) parent[rb] = ra;
+        if (ra !== rb) {parent[rb] = ra;}
     }
 
     for (let i = 0; i < n; i += 1) {
@@ -298,8 +298,8 @@ self.onmessage = async (
         const root = find(i);
         const arr = groupsMap.get(root);
         const { id } = hashResults[i] ?? { id: String(i) };
-        if (arr) arr.push(id);
-        else groupsMap.set(root, [id]);
+        if (arr) {arr.push(id);}
+        else {groupsMap.set(root, [id]);}
     }
 
     const result: Record<string, typeof mangas> = {};

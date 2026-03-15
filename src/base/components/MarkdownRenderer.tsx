@@ -77,7 +77,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
 }) => {
     const theme = useTheme();
 
-    if (!source) return null;
+    if (!source) {return null;}
 
     // rehypePlugins: cast to satisfy react-markdown/unified typings.
     const rehypePlugins = [[rehypeSanitize, sanitizeSchema]] as unknown as any;
