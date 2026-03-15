@@ -10,12 +10,20 @@ import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import type { ChapterAction, ChapterListOptions, ChapterSortMode } from '@/features/chapter/Chapter.types.ts';
 
-export const FALLBACK_CHAPTER = { id: -1, name: '', realUrl: '', isDownloaded: false, isBookmarked: false };
+export const FALLBACK_CHAPTER = {
+    id: -1,
+    name: '',
+    realUrl: '',
+    isDownloaded: false,
+    isBookmarked: false,
+    isFillermarked: false,
+};
 
 export const DEFAULT_CHAPTER_OPTIONS: ChapterListOptions = {
     unread: undefined,
     downloaded: undefined,
     bookmarked: undefined,
+    fillermarked: undefined,
     reverse: true,
     sortBy: 'source',
     showChapterNumber: false,
@@ -39,6 +47,8 @@ export const CHAPTER_ACTION_TO_CONFIRMATION_REQUIRED: Record<
     unbookmark: { always: false, bulkAction: true },
     mark_as_read: { always: false, bulkAction: true },
     mark_as_unread: { always: false, bulkAction: true },
+    fillermark: { always: false, bulkAction: false },
+    unfillermark: { always: false, bulkAction: true },
 };
 
 export const CHAPTER_ACTION_TO_TRANSLATION: {
@@ -86,6 +96,23 @@ export const CHAPTER_ACTION_TO_TRANSLATION: {
         confirmation: msg`{count, plural, one {You are about to remove one bookmark} other {You are about to remove # bookmarks}}`,
         success: msg`{count, plural, one {Chapter bookmark removed} other {# chapter bookmarks removed}}`,
         error: msg`{count, plural, one {Could not remove the bookmark} other {Could not remove the bookmarks}}`,
+    },
+    fillermark: {
+        action: {
+            single: msg`Add fillermark`,
+            selected: msg`Fillermark selected`,
+        },
+        success: msg`{count, plural, one {Chapter fillermarked} other {# chapters fillermarked}}`,
+        error: msg`{count, plural, one {Could not fillermark the chapter} other {Could not fillermark chapters}}`,
+    },
+    unfillermark: {
+        action: {
+            single: msg`Remove fillermark`,
+            selected: msg`Remove fillermarks from selected`,
+        },
+        confirmation: msg`{count, plural, one {You are about to remove one fillermark} other {You are about to remove # fillermarks}}`,
+        success: msg`{count, plural, one {Chapter fillermark removed} other {# chapter fillermarks removed}}`,
+        error: msg`{count, plural, one {Could not remove the fillermark} other {Could not remove the fillermarks}}`,
     },
     mark_as_read: {
         action: {

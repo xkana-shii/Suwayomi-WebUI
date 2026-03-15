@@ -13,6 +13,8 @@ import RemoveDone from '@mui/icons-material/RemoveDone';
 import Done from '@mui/icons-material/Done';
 import BookmarkRemove from '@mui/icons-material/BookmarkRemove';
 import BookmarkAdd from '@mui/icons-material/BookmarkAdd';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import DoneAll from '@mui/icons-material/DoneAll';
 import type { ComponentProps } from 'react';
 import { useMemo } from 'react';
@@ -40,6 +42,7 @@ import type {
     ChapterMangaInfo,
     ChapterReadInfo,
     ChapterRealUrlInfo,
+    ChapterFillermarkInfo,
 } from '@/features/chapter/Chapter.types.ts';
 import { IconWebView } from '@/assets/icons/IconWebView.tsx';
 import { IconBrowser } from '@/assets/icons/IconBrowser.tsx';
@@ -51,7 +54,8 @@ type TChapter = ChapterIdInfo &
     ChapterDownloadInfo &
     ChapterBookmarkInfo &
     ChapterReadInfo &
-    ChapterRealUrlInfo;
+    ChapterRealUrlInfo &
+    ChapterFillermarkInfo;
 
 type SingleModeProps = {
     chapter: TChapter;
@@ -78,7 +82,7 @@ export const ChapterActionMenuItems = ({
     const { t } = useLingui();
 
     const isSingleMode = !!chapter;
-    const { isDownloaded, isRead, isBookmarked } = chapter ?? {};
+    const { isDownloaded, isRead, isBookmarked, isFillermarked } = chapter ?? {};
 
     const mangaChaptersResponse = requestManager.useGetMangaChapters<GetChaptersMangaQuery>(
         GET_CHAPTERS_MANGA,
@@ -105,6 +109,8 @@ export const ChapterActionMenuItems = ({
         bookmarkedChapters,
         unreadChapters,
         readChapters,
+        unfillermarkedChapters,
+        fillermarkedChapters,
     } = useMemo(
         () => ({
             downloadableChapters: Chapters.getDownloadable(selectedChapters),
@@ -113,6 +119,8 @@ export const ChapterActionMenuItems = ({
             bookmarkedChapters: Chapters.getBookmarked(selectedChapters),
             unreadChapters: Chapters.getNonRead(selectedChapters),
             readChapters: Chapters.getRead(selectedChapters),
+            unfillermarkedChapters: Chapters.getNonFillermarked ? Chapters.getNonFillermarked(selectedChapters) : [],
+            fillermarkedChapters: Chapters.getFillermarked ? Chapters.getFillermarked(selectedChapters) : [],
         }),
         [selectedChapters],
     );
@@ -234,6 +242,22 @@ export const ChapterActionMenuItems = ({
                     disabled={isMenuItemDisabled(!bookmarkedChapters.length)}
                     onClick={() => performAction('unbookmark', bookmarkedChapters)}
                     title={getMenuItemTitle('unbookmark', bookmarkedChapters.length)}
+                />
+            )}
+            {shouldShowMenuItem && shouldShowMenuItem(!isFillermarked) && (
+                <MenuItem
+                    Icon={VisibilityOff}
+                    disabled={isMenuItemDisabled(!unfillermarkedChapters.length)}
+                    onClick={() => performAction('fillermark', unfillermarkedChapters)}
+                    title={getMenuItemTitle('fillermark', unfillermarkedChapters.length)}
+                />
+            )}
+            {shouldShowMenuItem && shouldShowMenuItem(isFillermarked) && (
+                <MenuItem
+                    Icon={Visibility}
+                    disabled={isMenuItemDisabled(!fillermarkedChapters.length)}
+                    onClick={() => performAction('unfillermark', fillermarkedChapters)}
+                    title={getMenuItemTitle('unfillermark', fillermarkedChapters.length)}
                 />
             )}
             {shouldShowMenuItem(!isRead) && (

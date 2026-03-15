@@ -2506,7 +2506,7 @@ export class RequestManager {
 
     public getMangasChapterIdsWithState(
         mangaIds: number[],
-        states: Pick<ChapterConditionInput, 'isRead' | 'isDownloaded' | 'isBookmarked'>,
+        states: Pick<ChapterConditionInput, 'isRead' | 'isDownloaded' | 'isBookmarked' | 'isFillermarked'>,
         options?: QueryOptions<GetMangasChapterIdsWithStateQueryVariables, GetMangasChapterIdsWithStateQuery>,
     ): AbortabaleApolloQueryResponse<GetMangasChapterIdsWithStateQuery> {
         return this.doRequest(
@@ -2617,6 +2617,7 @@ export class RequestManager {
             {
                 input: { id, patch: updatePatch },
                 getBookmarked: patch.isBookmarked != null,
+                getFillermarked: patch.isFillermarked != null,
                 getRead: patch.isRead != null,
                 getLastPageRead: patch.lastPageRead != null,
                 chapterIdToDelete,
@@ -2793,6 +2794,7 @@ export class RequestManager {
             {
                 input: { ids, patch: updatePatch },
                 getBookmarked: patch.isBookmarked != null,
+                getFillermarked: patch.isFillermarked != null,
                 getRead: patch.isRead != null,
                 getLastPageRead: patch.lastPageRead != null,
                 chapterIdsToDelete,

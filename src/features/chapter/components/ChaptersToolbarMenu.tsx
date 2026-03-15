@@ -25,6 +25,7 @@ import type {
     ChapterIdInfo,
     ChapterListOptions,
     ChapterReadInfo,
+    ChapterFillermarkInfo,
 } from '@/features/chapter/Chapter.types.ts';
 import { ChaptersDownloadActionMenuItems } from '@/features/chapter/components/actions/ChaptersDownloadActionMenuItems.tsx';
 import { Chapters } from '@/features/chapter/services/Chapters.ts';
@@ -33,7 +34,7 @@ interface IProps {
     mangaId: number;
     options: ChapterListOptions;
     updateOption: ReturnType<typeof updateChapterListOptions>;
-    chapters: (ChapterIdInfo & ChapterReadInfo & ChapterDownloadInfo & ChapterBookmarkInfo)[];
+    chapters: (ChapterIdInfo & ChapterReadInfo & ChapterDownloadInfo & ChapterBookmarkInfo & ChapterFillermarkInfo)[];
     scanlators: string[];
     excludeScanlators: string[];
 }

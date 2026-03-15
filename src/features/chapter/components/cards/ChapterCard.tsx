@@ -7,6 +7,7 @@
  */
 
 import BookmarkIcon from '@mui/icons-material/Bookmark';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CardActionArea from '@mui/material/CardActionArea';
 import Checkbox from '@mui/material/Checkbox';
@@ -39,6 +40,7 @@ import type {
     ChapterNumberInfo,
     ChapterReadInfo,
     ChapterScanlatorInfo,
+    ChapterFillermarkInfo,
 } from '@/features/chapter/Chapter.types.ts';
 import { MediaQuery } from '@/base/utils/MediaQuery.tsx';
 
@@ -49,6 +51,7 @@ type TChapter = ChapterIdInfo &
     ChapterBookmarkInfo &
     ChapterNumberInfo &
     ChapterScanlatorInfo &
+    ChapterFillermarkInfo &
     Pick<ChapterType, 'name' | 'sourceOrder' | 'uploadDate'>;
 
 interface IProps {
@@ -143,11 +146,22 @@ export const ChapterCard = memo((props: IProps) => {
                                         isDownloaded ? ` • ${t`Downloaded`}` : ''
                                     }`}
                                     infoIcons={
-                                        chapter.isBookmarked && (
-                                            <BookmarkIcon
-                                                color={mode === 'reader' && isActiveChapter ? 'secondary' : 'primary'}
-                                            />
-                                        )
+                                        <>
+                                            {chapter.isBookmarked && (
+                                                <BookmarkIcon
+                                                    color={
+                                                        mode === 'reader' && isActiveChapter ? 'secondary' : 'primary'
+                                                    }
+                                                />
+                                            )}
+                                            {chapter.isFillermarked && (
+                                                <VisibilityIcon
+                                                    color={
+                                                        mode === 'reader' && isActiveChapter ? 'secondary' : 'primary'
+                                                    }
+                                                />
+                                            )}
+                                        </>
                                     }
                                     slotProps={{
                                         title: {

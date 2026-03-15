@@ -34,6 +34,7 @@ import {
 import type {
     ChapterAction,
     ChapterBookmarkInfo,
+    ChapterFillermarkInfo,
     ChapterDownloadInfo,
     ChapterIdInfo,
     ChapterMangaInfo,
@@ -137,17 +138,22 @@ export class Chapters {
     }
 
     static isDeletable(
-        { isBookmarked, ...chapter }: ChapterDownloadInfo & ChapterBookmarkInfo,
+        { isBookmarked, isFillermarked, ...chapter }: ChapterDownloadInfo & ChapterBookmarkInfo & ChapterFillermarkInfo,
         canDeleteBookmarked: boolean = false,
+        canDeleteFillermarked: boolean = false,
     ): boolean {
-        return Chapters.isDownloaded(chapter) && (!isBookmarked || canDeleteBookmarked);
+        return (
+            Chapters.isDownloaded(chapter) &&
+            (!isBookmarked || canDeleteBookmarked || !isFillermarked || canDeleteFillermarked)
+        );
     }
 
-    static getDeletable<Chapters extends ChapterDownloadInfo & ChapterBookmarkInfo>(
+    static getDeletable<Chapters extends ChapterDownloadInfo & ChapterBookmarkInfo & ChapterFillermarkInfo>(
         chapters: Chapters[],
         canDeleteBookmarked?: boolean,
+        canDeleteFillermarked?: boolean,
     ): Chapters[] {
-        return chapters.filter((chapter) => Chapters.isDeletable(chapter, canDeleteBookmarked));
+        return chapters.filter((chapter) => Chapters.isDeletable(chapter, canDeleteBookmarked, canDeleteFillermarked));
     }
 
     static isBookmarked({ isBookmarked }: ChapterBookmarkInfo): boolean {
@@ -160,6 +166,18 @@ export class Chapters {
 
     static getNonBookmarked<Chapter extends ChapterBookmarkInfo>(chapters: Chapter[]): Chapter[] {
         return chapters.filter((chapter) => !Chapters.isBookmarked(chapter));
+    }
+
+    static isFillermarked({ isFillermarked }: ChapterFillermarkInfo): boolean {
+        return isFillermarked;
+    }
+
+    static getFillermarked<Chapter extends ChapterFillermarkInfo>(chapters: Chapter[]): Chapter[] {
+        return chapters.filter(Chapters.isFillermarked);
+    }
+
+    static getNonFillermarked<Chapter extends ChapterFillermarkInfo>(chapters: Chapter[]): Chapter[] {
+        return chapters.filter((chapter) => !Chapters.isFillermarked(chapter));
     }
 
     static isRead({ isRead }: ChapterReadInfo): boolean {
@@ -261,6 +279,22 @@ export class Chapters {
         );
     }
 
+    static async fillermark(chapterIds: number[]): Promise<void> {
+        return Chapters.executeAction(
+            'fillermark',
+            chapterIds.length,
+            () => requestManager.updateChapters(chapterIds, { isFillermarked: true }).response,
+        );
+    }
+
+    static async unFillermark(chapterIds: number[]): Promise<void> {
+        return Chapters.executeAction(
+            'unfillermark',
+            chapterIds.length,
+            () => requestManager.updateChapters(chapterIds, { isFillermarked: false }).response,
+        );
+    }
+
     private static async executeAction(
         action: ChapterAction,
         itemCount: number,
@@ -342,6 +376,11 @@ export class Chapters {
                 return Chapters.bookmark(chapterIds);
             case 'unbookmark':
                 return Chapters.unBookmark(chapterIds);
+            // Fillermark cases
+            case 'fillermark':
+                return Chapters.fillermark(chapterIds);
+            case 'unfillermark':
+                return Chapters.unFillermark(chapterIds);
             default:
                 throw new Error(`Chapters::performAction: unknown action "${action}"`);
         }

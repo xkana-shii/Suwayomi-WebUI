@@ -36,6 +36,7 @@ export const MANGA_CHAPTER_STAT_FIELDS = gql`
         unreadCount
         downloadCount
         bookmarkCount
+        fillermarkCount # <-- ADDED analogous to bookmarkCount
         hasDuplicateChapters
 
         chapters {
@@ -187,5 +188,14 @@ export const MANGA_LIBRARY_DUPLICATE_SCREEN_FIELDS = gql`
         ...MANGA_CHAPTER_STAT_FIELDS
 
         description
+
+        trackRecords {
+            totalCount
+            nodes {
+                id
+                trackerId
+                remoteId
+            }
+        }
     }
 `;

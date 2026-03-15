@@ -180,7 +180,7 @@ export class Mangas {
 
     static async getChapterIdsWithState(
         mangaIds: number[],
-        state: Pick<ChapterConditionInput, 'isRead' | 'isDownloaded' | 'isBookmarked'>,
+        state: Pick<ChapterConditionInput, 'isRead' | 'isDownloaded' | 'isBookmarked' | 'isFillermarked'>,
     ): Promise<GetMangasChapterIdsWithStateQuery['chapters']['nodes']> {
         const { data } = await requestManager.getMangasChapterIdsWithState(mangaIds, state).response;
         return data?.chapters.nodes ?? [];

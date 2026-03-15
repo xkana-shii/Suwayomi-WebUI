@@ -24,7 +24,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PopupState, { bindDialog, bindMenu, bindTrigger } from 'material-ui-popup-state';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef, useCallback } from 'react';
 import Badge from '@mui/material/Badge';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
 import { useLingui } from '@lingui/react/macro';
@@ -180,6 +180,104 @@ const TrackerActiveHeader = ({
 }) => {
     const { t } = useLingui();
 
+    // Local typed wrapper removed to avoid TS key validation; use t`...` directly below.
+
+    // --- Added: long-press/copy support for active tracker header (icon + title) ---
+    // Small, self-contained long-press implementation so we don't change other behavior.
+    const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const didLongPress = useRef(false);
+
+    const clearHoldTimer = useCallback(() => {
+        if (holdTimer.current) {
+            clearTimeout(holdTimer.current);
+            holdTimer.current = null;
+        }
+        // reset the flag shortly after mouseup/touchend so a subsequent click won't be blocked indefinitely
+        setTimeout(() => {
+            didLongPress.current = false;
+        }, 0);
+    }, []);
+
+    const startHold = useCallback(
+        (action: () => void) => {
+            clearHoldTimer();
+            holdTimer.current = setTimeout(() => {
+                didLongPress.current = true;
+                action();
+                holdTimer.current = null;
+            }, 600);
+        },
+        [clearHoldTimer],
+    );
+
+    const copyTextToClipboard = useCallback(
+        async (text: string, label?: string) => {
+            try {
+                if (!text) {
+                    makeToast(t`global.error.label.failed_to_copy`, 'error');
+                    return;
+                }
+
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(text);
+                } else {
+                    const ta = document.createElement('textarea');
+                    ta.value = text;
+                    ta.style.position = 'fixed';
+                    ta.style.left = '-9999px';
+                    document.body.appendChild(ta);
+                    ta.focus();
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                }
+
+                if (label) {
+                    makeToast(`${label} ${t`global.label.copied`}`, 'info');
+                } else {
+                    makeToast(t`global.label.copied`, 'info');
+                }
+            } catch (e) {
+                makeToast(t`global.error.label.failed_to_copy`, 'error', getErrorMessage(e));
+            }
+        },
+        [t],
+    );
+
+    const onHoldCopyUrl = useCallback(() => {
+        // prefer the tracked entry remoteUrl
+        const url = trackRecord.remoteUrl ?? '';
+        copyTextToClipboard(url, t`tracking.action.copy_url.label`);
+    }, [trackRecord.remoteUrl, copyTextToClipboard, t]);
+
+    const onHoldCopyName = useCallback(() => {
+        copyTextToClipboard(trackRecord.title ?? tracker.name ?? '', t`tracking.action.copy_title.label`);
+    }, [trackRecord.title, tracker.name, copyTextToClipboard, t]);
+
+    const handleContextMenuIcon = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        didLongPress.current = true;
+        onHoldCopyUrl();
+    };
+    const handleContextMenuName = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        didLongPress.current = true;
+        onHoldCopyName();
+    };
+
+    // We need to prevent the ListItemButton's click action (openSearch) if a long-press happened.
+    const handleListItemClick = (e: React.MouseEvent) => {
+        if (didLongPress.current) {
+            e.stopPropagation();
+            didLongPress.current = false;
+            return;
+        }
+        openSearch();
+    };
+    // --- end added code ---
+
     return (
         <Stack
             direction="row"
@@ -198,22 +296,84 @@ const TrackerActiveHeader = ({
                 }
             >
                 <TrackerActiveLink url={trackRecord.remoteUrl}>
-                    <AvatarSpinner
-                        alt={`${tracker.name}`}
-                        iconUrl={requestManager.getValidImgUrlFor(tracker.icon)}
-                        slots={{
-                            avatarProps: {
-                                variant: 'rounded',
-                                sx: { width: 64, height: 64 },
-                            },
-                            spinnerImageProps: {
-                                ignoreQueue: true,
-                            },
+                    {/* wrap avatar in a div to attach long-press / contextmenu handlers without changing layout */}
+                    <div
+                        role="button"
+                        tabIndex={0}
+                        onMouseDown={(e: React.MouseEvent) => {
+                            e.stopPropagation();
+                            startHold(onHoldCopyUrl);
                         }}
-                    />
+                        onMouseUp={(e: React.MouseEvent) => {
+                            e.stopPropagation();
+                            clearHoldTimer();
+                        }}
+                        onMouseLeave={(e: React.MouseEvent) => {
+                            e.stopPropagation();
+                            clearHoldTimer();
+                        }}
+                        onTouchStart={(e: React.TouchEvent) => {
+                            (e as React.TouchEvent).stopPropagation();
+                            startHold(onHoldCopyUrl);
+                        }}
+                        onTouchEnd={(e: React.TouchEvent) => {
+                            (e as React.TouchEvent).stopPropagation();
+                            clearHoldTimer();
+                        }}
+                        onContextMenu={handleContextMenuIcon}
+                        onKeyDown={(e: React.KeyboardEvent) => {
+                            // Support keyboard activation for accessibility (Enter / Space)
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                onHoldCopyUrl();
+                            }
+                        }}
+                        aria-label={tracker.name ? `${tracker.name} (${t`tracking.action.copy_url.label`})` : undefined}
+                    >
+                        <AvatarSpinner
+                            alt={`${tracker.name}`}
+                            iconUrl={requestManager.getValidImgUrlFor(tracker.icon)}
+                            slots={{
+                                avatarProps: {
+                                    variant: 'rounded',
+                                    sx: { width: 64, height: 64 },
+                                },
+                                spinnerImageProps: {
+                                    ignoreQueue: true,
+                                },
+                            }}
+                        />
+                    </div>
                 </TrackerActiveLink>
             </Badge>
-            <ListItemButton sx={{ flexGrow: 1 }} onClick={openSearch}>
+
+            <ListItemButton
+                sx={{ flexGrow: 1 }}
+                onClick={handleListItemClick}
+                onMouseDown={(e: React.MouseEvent) => {
+                    e.stopPropagation();
+                    startHold(onHoldCopyName);
+                }}
+                onMouseUp={(e: React.MouseEvent) => {
+                    e.stopPropagation();
+                    clearHoldTimer();
+                }}
+                onMouseLeave={(e: React.MouseEvent) => {
+                    e.stopPropagation();
+                    clearHoldTimer();
+                }}
+                onTouchStart={(e: React.TouchEvent) => {
+                    (e as React.TouchEvent).stopPropagation();
+                    startHold(onHoldCopyName);
+                }}
+                onTouchEnd={(e: React.TouchEvent) => {
+                    (e as React.TouchEvent).stopPropagation();
+                    clearHoldTimer();
+                }}
+                onContextMenu={handleContextMenuName}
+                // ensure keyboard users can open search via Enter/Space on the ListItemButton (native handles this)
+            >
                 <CustomTooltip title={trackRecord.title}>
                     <TypographyMaxLines flexGrow={1} lines={1}>
                         {trackRecord.title}
@@ -233,6 +393,34 @@ const TrackerActiveHeader = ({
                             </IconButton>
                             <Menu {...bindMenu(popupState)} id={`tracker-active-menu-${tracker.id}`}>
                                 {(onClose, setHideMenu) => [
+                                    /* Added copy URL / copy name menu items (per-tracker overflow menu) */
+                                    <MenuItem
+                                        key={`tracker-active-menu-item-copy-url-${tracker.id}`}
+                                        onClick={() => {
+                                            const url = trackRecord.remoteUrl ?? '';
+                                            if (!url) {
+                                                makeToast(t`global.error.label.failed_to_copy`, 'error');
+                                            } else {
+                                                copyTextToClipboard(url, t`tracking.action.copy_url.label`);
+                                            }
+                                            onClose();
+                                        }}
+                                    >
+                                        {t`tracking.action.copy_url.label`}
+                                    </MenuItem>,
+                                    <MenuItem
+                                        key={`tracker-active-menu-item-copy-name-${tracker.id}`}
+                                        onClick={() => {
+                                            copyTextToClipboard(
+                                                trackRecord.title ?? tracker.name ?? '',
+                                                t`tracking.action.copy_title.label`,
+                                            );
+                                            onClose();
+                                        }}
+                                    >
+                                        {t`tracking.action.copy_title.label`}
+                                    </MenuItem>,
+
                                     <TrackerActiveLink
                                         key={`tracker-active-menu-item-browser-${tracker.id}`}
                                         url={trackRecord.remoteUrl}

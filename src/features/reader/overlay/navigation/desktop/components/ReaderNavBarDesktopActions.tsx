@@ -18,6 +18,7 @@ import { Chapters } from '@/features/chapter/services/Chapters.ts';
 import { DownloadStateIndicator } from '@/base/components/downloads/DownloadStateIndicator.tsx';
 import { ReaderLibraryButton } from '@/features/reader/overlay/navigation/components/ReaderLibraryButton.tsx';
 import { ReaderBookmarkButton } from '@/features/reader/overlay/navigation/components/ReaderBookmarkButton.tsx';
+import { ReaderFillermarkButton } from '@/features/reader/overlay/navigation/components/ReaderFillermarkButton.tsx';
 import { CHAPTER_ACTION_TO_TRANSLATION, FALLBACK_CHAPTER } from '@/features/chapter/Chapter.constants.ts';
 import { IconBrowser } from '@/assets/icons/IconBrowser.tsx';
 import { IconWebView } from '@/assets/icons/IconWebView.tsx';
@@ -64,10 +65,11 @@ const DownloadButton = ({ id = -1, isDownloaded }: ChapterIdInfo & ChapterDownlo
 };
 
 export const ReaderNavBarDesktopActions = memo(() => {
-    const { id, isDownloaded, isBookmarked, realUrl } = useReaderChaptersStore((state) => ({
+    const { id, isDownloaded, isBookmarked, isFillermarked, realUrl } = useReaderChaptersStore((state) => ({
         id: state.currentChapter?.id ?? FALLBACK_CHAPTER.id,
         isDownloaded: state.currentChapter?.isDownloaded ?? FALLBACK_CHAPTER.isDownloaded,
         isBookmarked: state.currentChapter?.isBookmarked ?? FALLBACK_CHAPTER.isBookmarked,
+        isFillermarked: state.currentChapter?.isFillermarked ?? FALLBACK_CHAPTER.isFillermarked,
         realUrl: state.currentChapter?.realUrl ?? FALLBACK_CHAPTER.realUrl,
     }));
 
@@ -85,6 +87,7 @@ export const ReaderNavBarDesktopActions = memo(() => {
         <Stack sx={{ flexDirection: 'row', justifyContent: 'center', gap: 1 }}>
             <ReaderLibraryButton />
             <ReaderBookmarkButton id={id} isBookmarked={isBookmarked} />
+            <ReaderFillermarkButton id={id} isFillermarked={isFillermarked} />
             <CustomTooltip title={t`Retry errored pages`} disabled={!haveSomePagesFailedToLoad}>
                 <IconButton
                     onClick={() => {
