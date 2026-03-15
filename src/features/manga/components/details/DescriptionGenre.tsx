@@ -29,11 +29,13 @@ const OPEN_CLOSE_BUTTON_HEIGHT = '35px';
 const DESCRIPTION_COLLAPSED_SIZE = 75;
 
 function normalizeDescription(input?: string | null): string | undefined {
-    if (!input) {return undefined;}
+    if (!input) {
+        return undefined;
+    }
     // Normalize CRLF -> LF
-    let s = input.replaceAll(/\r\n/g, '\n').replaceAll(/\r/g, '\n');
+    let s = input.replaceAll('\r\n', '\n').replaceAll('\r', '\n');
     // Replace non-breaking spaces with normal spaces
-    s = s.replaceAll(/\u00A0/g, ' ');
+    s = s.replaceAll('\xA0', ' ');
     // Remove lines that are only horizontal-rule markers at the start or end
     s = s.replace(/^(?:\s*[-*_]{3,}\s*\n)+/, '');
     s = s.replace(/(?:\n\s*[-*_]{3,}\s*)+$/, '');
