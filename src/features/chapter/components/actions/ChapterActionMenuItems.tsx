@@ -6,6 +6,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { STABLE_EMPTY_ARRAY, STABLE_EMPTY_OBJECT } from '@/base/Base.constants.ts';
 import CheckBoxOutlineBlank from '@mui/icons-material/CheckBoxOutlineBlank';
 import Delete from '@mui/icons-material/Delete';
 import Download from '@mui/icons-material/Download';
@@ -75,14 +76,14 @@ export const ChapterActionMenuItems = ({
     chapter,
     handleSelection,
     canBeDownloaded = false,
-    selectedChapters = [],
+    selectedChapters = STABLE_EMPTY_ARRAY,
     onClose,
     selectable = true,
 }: Props) => {
     const { t } = useLingui();
 
     const isSingleMode = !!chapter;
-    const { isDownloaded, isRead, isBookmarked, isFillermarked } = chapter ?? {};
+    const { isDownloaded, isRead, isBookmarked, isFillermarked } = chapter ?? STABLE_EMPTY_OBJECT;
 
     const mangaChaptersResponse = requestManager.useGetMangaChapters<GetChaptersMangaQuery>(
         GET_CHAPTERS_MANGA,
@@ -92,7 +93,7 @@ export const ChapterActionMenuItems = ({
             fetchPolicy: 'cache-only',
         },
     );
-    const allChapters = mangaChaptersResponse.data?.chapters.nodes ?? [];
+    const allChapters = mangaChaptersResponse.data?.chapters.nodes ?? STABLE_EMPTY_ARRAY;
 
     const {
         settings: { deleteChaptersWithBookmark },
