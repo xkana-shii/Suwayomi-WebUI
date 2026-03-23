@@ -15,10 +15,12 @@ self.onmessage = (event: MessageEvent<{ mangas: TMangaDuplicate[] }>) => {
     const map: Record<string, TMangaDuplicate[]> = {};
 
     mangas.forEach((m) => {
-        const nodes = m.trackRecords?.nodes ?? [];
+        const nodes = Array.isArray(m.trackRecords) ? m.trackRecords : (m.trackRecords?.nodes ?? []);
         nodes.forEach((tr) => {
             // only valid if remoteId exists; otherwise tracker binding cannot be used
-            if (!tr.remoteId) {return;}
+            if (!tr.remoteId) {
+                return;
+            }
             const key = `${tr.trackerId}::${tr.remoteId}`;
             map[key] ??= [];
             map[key].push(m);
@@ -58,7 +60,9 @@ self.onmessage = (event: MessageEvent<{ mangas: TMangaDuplicate[] }>) => {
         }
 
         if (remaining.length > 1) {
-            const firstNode = remaining[0].trackRecords?.nodes?.[0];
+            const firstNode = Array.isArray(remaining[0].trackRecords)
+                ? remaining[0].trackRecords[0]
+                : remaining[0].trackRecords?.nodes?.[0];
             const trackerId = firstNode?.trackerId ?? 'unknown';
             const remoteId = firstNode?.remoteId ?? '';
             const prettifiedKey = `${trackerId}:${remoteId} (${key})`;
