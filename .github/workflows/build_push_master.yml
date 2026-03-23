@@ -17,10 +17,10 @@ jobs:
         with:
           access_token: ${{ github.token }}
 
-      - name: Checkout master branch
+      - name: Checkout branch or tag that triggered workflow
         uses: actions/checkout@v4
         with:
-          ref: master
+          ref: ${{ github.ref }}
           path: master
           fetch-depth: 0
 
