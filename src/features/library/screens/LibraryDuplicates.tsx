@@ -40,6 +40,7 @@ import { GridLayout } from '@/base/Base.types.ts';
 import { getErrorMessage } from '@/lib/HelperFunctions.ts';
 import { useAppTitleAndAction } from '@/features/navigation-bar/hooks/useAppTitleAndAction.ts';
 
+// ------------- Hyperlink helpers for certain trackers -------------
 const TRACKER_URLS: Record<string, (remoteId: string) => string> = {
     // 1: MyAnimeList
     '1': (id) => `https://myanimelist.net/manga/${id}`,
@@ -49,14 +50,26 @@ const TRACKER_URLS: Record<string, (remoteId: string) => string> = {
     '7': (id) => `https://mangabaka.org/${id}`,
 };
 
-function getTrackerLink(groupLabel: string): { url: string; trackerId: string; remoteId: string } | null {
-    // Look for parenthetical (trackerId::remoteId) at end of group label
+function getTrackerGroupInfo(groupLabel: string, groupMangas: Array<any>): { url: string; title: string } | null {
     const match = groupLabel.match(/\((\d+)::(\d+)\)$/);
     if (!match) {return null;}
     const [, trackerId, remoteId] = match;
     const urlMaker = TRACKER_URLS[trackerId];
     if (!urlMaker) {return null;}
-    return { url: urlMaker(remoteId), trackerId, remoteId };
+
+    let remoteTitle: string | undefined;
+    for (const manga of groupMangas) {
+        const records = Array.isArray(manga.trackRecords) ? manga.trackRecords : (manga.trackRecords?.nodes ?? []);
+        for (const rec of records) {
+            if (String(rec.trackerId) === trackerId && String(rec.remoteId) === remoteId && rec.remoteTitle) {
+                ({ remoteTitle } = rec);
+                break;
+            }
+        }
+        if (remoteTitle) {break;}
+    }
+
+    return { url: urlMaker(remoteId), title: remoteTitle || groupLabel };
 }
 // -----------------------------------------------------------------
 
@@ -74,7 +87,6 @@ export const LibraryDuplicates = () => {
         false,
     );
 
-    // image hash toggle
     const [checkImageHashes, setCheckImageHashes] = useLocalStorage('libraryDuplicatesCheckImageHashes', false);
 
     useAppTitleAndAction(
@@ -93,7 +105,6 @@ export const LibraryDuplicates = () => {
                                     label={t`Check description`}
                                     checked={checkAlternativeTitles}
                                     onChange={(_, checked) => {
-                                        // If enabling alternative-title check, disable the other two toggles.
                                         setCheckAlternativeTitles(checked);
                                         if (checked) {
                                             setCheckTrackedBySameTracker(false);
@@ -107,7 +118,6 @@ export const LibraryDuplicates = () => {
                                     label={t`Check tracker bindings`}
                                     checked={checkTrackedBySameTracker}
                                     onChange={(_, checked) => {
-                                        // If enabling tracker check, disable the other two toggles.
                                         setCheckTrackedBySameTracker(checked);
                                         if (checked) {
                                             setCheckAlternativeTitles(false);
@@ -121,7 +131,6 @@ export const LibraryDuplicates = () => {
                                     label={t`Check image hashes`}
                                     checked={checkImageHashes}
                                     onChange={(_, checked) => {
-                                        // If enabling image-hash check, disable the other two toggles.
                                         setCheckImageHashes(checked);
                                         if (checked) {
                                             setCheckAlternativeTitles(false);
@@ -135,7 +144,6 @@ export const LibraryDuplicates = () => {
                 )}
             </PopupState>
         </>,
-        // include image toggle in deps as it's now used in the UI
         [t, gridLayout, checkAlternativeTitles, checkTrackedBySameTracker, checkImageHashes],
     );
 
@@ -172,9 +180,7 @@ export const LibraryDuplicates = () => {
             type: 'module',
         });
 
-        // Debug-enabled onmessage: if worker returns debug info, log it and still set results for UI
         worker.onmessage = (event: MessageEvent<any>) => {
-            // Use TMangaDuplicates in a cast so the imported type is actually referenced (avoids TS6133)
             const payload = event.data as
                 | TMangaDuplicates<(typeof workerMangas)[number]>
                 | {
@@ -183,22 +189,18 @@ export const LibraryDuplicates = () => {
                       thresholdUsed?: number;
                   };
 
-            // read debugSamples directly (no leading underscore)
             const debugSamples = (payload as any).debugSamples ?? undefined;
 
-            // If worker returned debug info, log it so you can inspect distances in the browser console
             if (payload && (debugSamples || (payload as any).thresholdUsed !== undefined)) {
                 setMangasByTitle((payload as any).result ?? {});
                 setIsCheckingForDuplicates(false);
                 return;
             }
 
-            // normal, non-debug behaviour (existing)
             setMangasByTitle((payload as TMangaDuplicates<(typeof workerMangas)[number]>) ?? {});
             setIsCheckingForDuplicates(false);
         };
 
-        // include the flags in worker input; do NOT send threshold here so the worker default is the single source-of-truth
         worker.postMessage({
             mangas: workerMangas,
             checkAlternativeTitles,
@@ -216,12 +218,9 @@ export const LibraryDuplicates = () => {
     );
     const duplicatedMangas = useMemo(() => duplicatedTitles.flatMap((title) => mangasByTitle[title]), [mangasByTitle]);
 
-    // counts for groups and mangas involved in groups (kept for other UI uses)
     const duplicateGroupsCount = duplicatedTitles.length;
     const duplicateMangasCount = duplicatedMangas.length;
 
-    // reference counts via a ref so TypeScript treats them as used (avoids TS6133)
-    // no runtime side-effects or changes to your useAppTitleAndAction usage
     const countsRef = useRef(0);
     useEffect(() => {
         countsRef.current = duplicateGroupsCount + duplicateMangasCount;
@@ -264,7 +263,10 @@ export const LibraryDuplicates = () => {
                     <StyledGroupHeader isFirstItem={index === 0}>
                         <Typography variant="h5" component="h2">
                             {(() => {
-                                const info = getTrackerLink(duplicatedTitles[index]);
+                                const info = getTrackerGroupInfo(
+                                    duplicatedTitles[index],
+                                    mangasByTitle[duplicatedTitles[index]],
+                                );
                                 return info ? (
                                     <a
                                         href={info.url}
@@ -272,7 +274,7 @@ export const LibraryDuplicates = () => {
                                         rel="noopener noreferrer"
                                         style={{ color: 'inherit', textDecoration: 'underline' }}
                                     >
-                                        {duplicatedTitles[index]}
+                                        {info.title}
                                     </a>
                                 ) : (
                                     duplicatedTitles[index]
@@ -301,7 +303,7 @@ export const LibraryDuplicates = () => {
             <StyledGroupHeader sx={{ pt: index === 0 ? undefined : 0, pb: 0 }} isFirstItem={false}>
                 <Typography variant="h5" component="h2">
                     {(() => {
-                        const info = getTrackerLink(title);
+                        const info = getTrackerGroupInfo(title, mangasByTitle[title]);
                         return info ? (
                             <a
                                 href={info.url}
@@ -309,7 +311,7 @@ export const LibraryDuplicates = () => {
                                 rel="noopener noreferrer"
                                 style={{ color: 'inherit', textDecoration: 'underline' }}
                             >
-                                {title}
+                                {info.title}
                             </a>
                         ) : (
                             title
@@ -318,7 +320,6 @@ export const LibraryDuplicates = () => {
                 </Typography>
             </StyledGroupHeader>
             <BaseMangaGrid
-                // the key needs to include filters and query to force a re-render of the virtuoso grid to prevent https://github.com/petyosi/react-virtuoso/issues/1242
                 key={`${checkAlternativeTitles.toString()}-${checkImageHashes.toString()}`}
                 mangas={mangasByTitle[title] as IMangaGridProps['mangas']}
                 hasNextPage={false}
