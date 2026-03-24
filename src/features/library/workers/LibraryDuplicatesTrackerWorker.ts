@@ -6,71 +6,147 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import type { TMangaDuplicate, TMangaDuplicates } from '@/features/library/Library.types.ts';
+import type { TMangaDuplicate } from '@/features/library/Library.types.ts';
+
+interface TrackerGroupHeader {
+    kind: 'MAL' | 'MU' | 'MB';
+    trackerId: string;
+    remoteId: string;
+    remoteTitle: string;
+}
+
+// Disjoint-set Union-Find data structure
+class UnionFind {
+    parent: number[];
+    constructor(n: number) {
+        this.parent = new Array(n);
+        for (let i = 0; i < n; i += 1) {
+            this.parent[i] = i;
+        }
+    }
+    find(a: number): number {
+        let p = a;
+        while (this.parent[p] !== p) {
+            p = this.parent[p];
+        }
+        let cur = a;
+        while (this.parent[cur] !== cur) {
+            const next = this.parent[cur];
+            this.parent[cur] = p;
+            cur = next;
+        }
+        return p;
+    }
+    union(a: number, b: number) {
+        const pa = this.find(a);
+        const pb = this.find(b);
+        if (pa !== pb) {
+            this.parent[pb] = pa;
+        }
+    }
+}
 
 // eslint-disable-next-line no-restricted-globals
 self.onmessage = (event: MessageEvent<{ mangas: TMangaDuplicate[] }>) => {
     const { mangas } = event.data;
+    const n = mangas.length;
+    const uf = new UnionFind(n);
 
-    const map: Record<string, TMangaDuplicate[]> = {};
+    // Map each tracker binding to all manga indices that contain it
+    const keyToIndices: Record<string, number[]> = {};
 
-    mangas.forEach((m) => {
+    mangas.forEach((m, idx) => {
         const nodes = Array.isArray(m.trackRecords) ? m.trackRecords : (m.trackRecords?.nodes ?? []);
         nodes.forEach((tr) => {
-            // only valid if remoteId exists; otherwise tracker binding cannot be used
             if (!tr.remoteId) {
                 return;
             }
             const key = `${tr.trackerId}::${tr.remoteId}`;
-            map[key] ??= [];
-            map[key].push(m);
+            if (!keyToIndices[key]) {
+                keyToIndices[key] = [];
+            }
+            keyToIndices[key].push(idx);
         });
     });
 
-    // Ensure each manga appears in at most one returned group.
-    // Iterate over groups and assign mangas to the first group they appear in.
-    const usedIds = new Set<string>();
-    const result: TMangaDuplicates<TMangaDuplicate> = {};
+    // Union all manga that share the same tracker binding
+    for (const indices of Object.values(keyToIndices)) {
+        if (indices.length > 1) {
+            const [base, ...rest] = indices;
+            for (const idx of rest) {
+                uf.union(base, idx);
+            }
+        }
+    }
 
-    // Keep deterministic order by sorting keys
-    const keys = Object.keys(map).sort();
-    for (let k = 0; k < keys.length; k += 1) {
-        const key = keys[k];
-        const group = map[key];
-        // dedupe mangas inside the group by id while preserving order
-        const uniqueById: TMangaDuplicate[] = [];
-        const seenInGroup = new Set<string>();
-        for (let i = 0; i < group.length; i += 1) {
-            const m = group[i];
-            const id = String(m.id);
-            if (!seenInGroup.has(id)) {
-                seenInGroup.add(id);
-                uniqueById.push(m);
+    // Group by connected component
+    const rootToMembers = new Map<number, number[]>();
+    for (let i = 0; i < n; i++) {
+        const root = uf.find(i);
+        if (!rootToMembers.has(root)) {
+            rootToMembers.set(root, []);
+        }
+        rootToMembers.get(root)!.push(i);
+    }
+
+    type ResultEntry = {
+        trackers: TrackerGroupHeader[];
+        members: TMangaDuplicate[];
+    };
+
+    const result: ResultEntry[] = [];
+
+    for (const members of rootToMembers.values()) {
+        if (members.length <= 1) {
+            continue;
+        }
+
+        // Find all unique MAL/MU/MB tracker ids present in group
+        const trackers: Record<string, TrackerGroupHeader> = {};
+        for (const idx of members) {
+            const m = mangas[idx];
+            const nodes = Array.isArray(m.trackRecords) ? m.trackRecords : (m.trackRecords?.nodes ?? []);
+            for (const tr of nodes) {
+                let kind: TrackerGroupHeader['kind'] | undefined;
+                if (String(tr.trackerId) === '1') {
+                    kind = 'MAL';
+                } else if (String(tr.trackerId) === '4') {
+                    kind = 'MU';
+                } else if (String(tr.trackerId) === '7') {
+                    kind = 'MB';
+                } else {
+                    continue;
+                }
+                if (!tr.remoteId) {
+                    continue;
+                }
+                // Only overwrite if we haven't yet or the prior has empty remoteTitle and this doesn't
+                const key = `${kind}:${tr.remoteId}`;
+                if (!trackers[key] || (!trackers[key].remoteTitle && tr.remoteTitle)) {
+                    trackers[key] = {
+                        kind,
+                        trackerId: String(tr.trackerId),
+                        remoteId: String(tr.remoteId),
+                        remoteTitle: tr.remoteTitle || '',
+                    };
+                }
             }
         }
 
-        // filter out mangas already assigned to previous groups
-        const remaining: TMangaDuplicate[] = [];
-        for (let i = 0; i < uniqueById.length; i += 1) {
-            const m = uniqueById[i];
-            const id = String(m.id);
-            if (!usedIds.has(id)) {
-                remaining.push(m);
-            }
-        }
+        // Sort by preferred order: MAL, MU, MB, then trackId then remoteId
+        const trackerOrder = { MAL: 1, MU: 2, MB: 3 } as const;
+        const trackerArray = Object.values(trackers).sort(
+            (a, b) =>
+                (trackerOrder[a.kind] ?? 99) - (trackerOrder[b.kind] ?? 99) ||
+                a.trackerId.localeCompare(b.trackerId) ||
+                a.remoteId.localeCompare(b.remoteId),
+        );
 
-        if (remaining.length > 1) {
-            const firstNode = Array.isArray(remaining[0].trackRecords)
-                ? remaining[0].trackRecords[0]
-                : remaining[0].trackRecords?.nodes?.[0];
-            const trackerId = firstNode?.trackerId ?? 'unknown';
-            const remoteId = firstNode?.remoteId ?? '';
-            const prettifiedKey = `${trackerId}:${remoteId} (${key})`;
-            result[prettifiedKey] = remaining;
-            for (let i = 0; i < remaining.length; i += 1) {
-                usedIds.add(String(remaining[i].id));
-            }
-        }
+        // Add group entry
+        result.push({
+            trackers: trackerArray,
+            members: members.map((i) => mangas[i]),
+        });
     }
 
     postMessage(result);

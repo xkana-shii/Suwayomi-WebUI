@@ -2451,6 +2451,10 @@ msgstr "No chapters matching filter"
 msgid "No downloads"
 msgstr "No downloads"
 
+#: src/features/library/screens/LibraryDuplicates.tsx
+msgid "No duplicate tracker groups found"
+msgstr "No duplicate tracker groups found"
+
 #: src/features/global-search/screens/SearchAll.tsx
 #: src/features/manga/components/MangaGrid.tsx
 #: src/features/source/browse/screens/SourceMangas.tsx
