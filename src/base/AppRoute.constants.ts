@@ -199,12 +199,12 @@ export const AppRoutes = {
             }),
     },
     migrate: {
-        match: 'migrate/*',
-        path: '/migrate',
+        match: 'migrate/source/:sourceId',
+        path: (sourceId: SourceType['id']) => `/migrate/source/${sourceId}`,
 
         childRoutes: {
-            legacySearch: {
-                match: 'source/:sourceId/manga/:mangaId/search',
+            search: {
+                match: 'manga/:mangaId/search',
                 path: (sourceId: SourceType['id'], mangaId: MangaIdInfo['id'], query?: string | null | undefined) =>
                     UrlUtil.addQueryParam(`/migrate/source/${sourceId}/manga/${mangaId}/search`, query),
             },

@@ -8,8 +8,7 @@
 
 import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { MigrationPhase, SortBy, SortOrder } from '@/features/migration/Migration.types.ts';
-import type { MigrationState } from '@/features/migration/Migration.types.ts';
+import { SortBy, SortOrder } from '@/features/migration/Migration.types.ts';
 
 export const sortByToTranslation: Record<SortBy, MessageDescriptor> = {
     [SortBy.SOURCE_NAME]: msg`By source name`,
@@ -24,22 +23,4 @@ export const sortOrderToTranslation: Record<SortBy, MessageDescriptor> = {
 export const DEFAULT_SORT_SETTINGS = {
     sortBy: SortBy.SOURCE_NAME,
     sortOrder: SortOrder.ASC,
-};
-
-export const MIGRATION_LOCAL_STORAGE_KEY = 'migration_state';
-
-export const MAX_MANGAS_IN_PARALLEL = 5;
-
-export const MAX_SOURCES_IN_PARALLEL = 6;
-
-export const DEFAULT_MIGRATION_STATE: MigrationState = {
-    phase: MigrationPhase.IDLE,
-    sourceId: null,
-    entries: {},
-    destinationSourceIds: [],
-    migrateOptions: null,
-    searchProgress: { completed: 0, total: 0 },
-    migrationProgress: { completed: 0, total: 0, failed: 0 },
-    startedAt: null,
-    lastUpdatedAt: null,
 };
