@@ -73,8 +73,36 @@ export const LibraryDuplicates = () => {
     );
     const [checkImageHashes, setCheckImageHashes] = useLocalStorage('libraryDuplicatesCheckImageHashes', false);
 
+    const [groupsFromWorker, setGroupsFromWorker] = useState<any>([]);
+
+    // Always normalize to array of {members, trackers?}
+    let normalizedGroups: { members: TMangaDuplicate[]; trackers?: TrackerGroupHeader[] }[] = [];
+
+    if (Array.isArray(groupsFromWorker)) {
+        normalizedGroups = groupsFromWorker;
+    } else if (groupsFromWorker && typeof groupsFromWorker === 'object') {
+        normalizedGroups = Object.values(groupsFromWorker)
+            .filter(Boolean)
+            .map((groupArr) => {
+                const g: any = groupArr;
+                if (Array.isArray(g)) {
+                    return { members: g };
+                }
+                if (g && Array.isArray(g.members)) {
+                    return { members: g.members, ...(g.trackers ? { trackers: g.trackers } : {}) };
+                }
+                return { members: [] };
+            })
+            .filter((group) => group.members.length > 0);
+    }
+
+    const groupCount = normalizedGroups.length;
+    const totalMangaInGroups = normalizedGroups.reduce((acc, group) => acc + group.members.length, 0);
+
     useAppTitleAndAction(
-        t`Duplicated entries`,
+        groupCount > 0
+            ? t`Duplicated entries (${groupCount} groups – ${totalMangaInGroups} manga)`
+            : t`Duplicated entries`,
         <>
             <GridLayouts gridLayout={gridLayout} onChange={setGridLayout} />
             <PopupState variant="popover" popupId="library-dupliactes-settings">
@@ -128,7 +156,15 @@ export const LibraryDuplicates = () => {
                 )}
             </PopupState>
         </>,
-        [t, gridLayout, checkAlternativeTitles, checkTrackedBySameTracker, checkImageHashes],
+        [
+            t,
+            gridLayout,
+            checkAlternativeTitles,
+            checkTrackedBySameTracker,
+            checkImageHashes,
+            groupCount,
+            totalMangaInGroups,
+        ],
     );
 
     const { data, loading, error, refetch } = requestManager.useGetMangas<
@@ -138,7 +174,6 @@ export const LibraryDuplicates = () => {
 
     const [isCheckingForDuplicates, setIsCheckingForDuplicates] = useState(true);
 
-    const [groupsFromWorker, setGroupsFromWorker] = useState<WorkerGroupResult>([]);
     useEffect(() => {
         setIsCheckingForDuplicates(true);
         const libraryMangas: TMangaDuplicate[] = data?.mangas.nodes ?? [];
@@ -160,11 +195,21 @@ export const LibraryDuplicates = () => {
             })),
         }));
 
-        const worker = new Worker(new URL('../workers/LibraryDuplicatesTrackerWorker.ts', import.meta.url), {
+        // Pick worker type: always use TrackerWorker for now (update logic if you use others)
+        let workerUrl = '../workers/LibraryDuplicatesTrackerWorker.ts';
+        if (checkAlternativeTitles && !checkTrackedBySameTracker && !checkImageHashes) {
+            workerUrl = '../workers/LibraryDuplicatesDescriptionWorker.ts';
+        } else if (checkImageHashes && !checkTrackedBySameTracker && !checkAlternativeTitles) {
+            workerUrl = '../workers/LibraryDuplicatesImageHashWorker.ts';
+        } else if (!checkTrackedBySameTracker && !checkAlternativeTitles && !checkImageHashes) {
+            workerUrl = '../workers/LibraryDuplicatesWorker.ts';
+        }
+
+        const worker = new Worker(new URL(workerUrl, import.meta.url), {
             type: 'module',
         });
 
-        worker.onmessage = (event: MessageEvent<WorkerGroupResult>) => {
+        worker.onmessage = (event: MessageEvent<WorkerGroupResult | Record<string, unknown>>) => {
             setGroupsFromWorker(event.data ?? []);
             setIsCheckingForDuplicates(false);
         };
@@ -184,6 +229,10 @@ export const LibraryDuplicates = () => {
         return <LoadingPlaceholder />;
     }
 
+    if (normalizedGroups.length === 0) {
+        return <EmptyViewAbsoluteCentered message={t`No duplicate tracker groups found`} />;
+    }
+
     if (error) {
         return (
             <EmptyViewAbsoluteCentered
@@ -194,35 +243,46 @@ export const LibraryDuplicates = () => {
         );
     }
 
-    if (groupsFromWorker.length === 0) {
-        return <EmptyViewAbsoluteCentered message={t`No duplicate tracker groups found`} />;
-    }
-
     return (
         <>
-            {groupsFromWorker.map((group, groupIdx) => (
-                <Box key={group.trackers.map((tracker) => `${tracker.kind}:${tracker.remoteId}`).join(',')}>
+            {normalizedGroups.map((group, groupIdx) => (
+                <Box
+                    key={
+                        Array.isArray(group.trackers) && group.trackers.length > 0
+                            ? group.trackers.map((tracker) => `${tracker.kind}:${tracker.remoteId}`).join(',')
+                            : group.members.map((m) => m.id).join(',')
+                    }
+                >
                     <StyledGroupHeader sx={{ pt: groupIdx === 0 ? undefined : 0, pb: 0 }} isFirstItem={groupIdx === 0}>
                         <Typography variant="h5" component="h2">
-                            {group.trackers.map((tracker, i) => {
-                                const url = trackerUrl(tracker);
-                                const label = tracker.remoteTitle
-                                    ? `${tracker.kind}: ${tracker.remoteTitle}`
-                                    : `${tracker.kind}: ${tracker.remoteId}`;
-                                return (
-                                    <span key={tracker.kind + tracker.remoteId}>
-                                        <a
-                                            href={url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            style={{ color: 'inherit', textDecoration: 'underline', marginRight: 8 }}
-                                        >
-                                            {label}
-                                        </a>
-                                        {i < group.trackers.length - 1 && ', '}
-                                    </span>
-                                );
-                            })}
+                            {(() => {
+                                const trackers = Array.isArray(group.trackers) ? group.trackers : [];
+                                return trackers.length > 0
+                                    ? trackers.map((tracker, i) => {
+                                          const url = trackerUrl(tracker);
+                                          const label = tracker.remoteTitle
+                                              ? `${tracker.kind}: ${tracker.remoteTitle}`
+                                              : `${tracker.kind}: ${tracker.remoteId}`;
+                                          return (
+                                              <span key={tracker.kind + tracker.remoteId}>
+                                                  <a
+                                                      href={url}
+                                                      target="_blank"
+                                                      rel="noopener noreferrer"
+                                                      style={{
+                                                          color: 'inherit',
+                                                          textDecoration: 'underline',
+                                                          marginRight: 8,
+                                                      }}
+                                                  >
+                                                      {label}
+                                                  </a>
+                                                  {i < trackers.length - 1 && ', '}
+                                              </span>
+                                          );
+                                      })
+                                    : null;
+                            })()}
                         </Typography>
                     </StyledGroupHeader>
                     <BaseMangaGrid

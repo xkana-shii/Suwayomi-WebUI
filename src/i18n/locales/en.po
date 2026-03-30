@@ -1396,6 +1396,10 @@ msgstr "Duplicate chapters"
 msgid "Duplicated entries"
 msgstr "Duplicated entries"
 
+#: src/features/library/screens/LibraryDuplicates.tsx
+msgid "Duplicated entries ({groupCount} groups – {totalMangaInGroups} manga)"
+msgstr "Duplicated entries ({groupCount} groups – {totalMangaInGroups} manga)"
+
 #: src/features/settings/screens/Appearance.tsx
 msgid "Dynamic theme colors on manga page"
 msgstr "Dynamic theme colors on manga page"
