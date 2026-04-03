@@ -83,16 +83,26 @@ export const Updates: React.FC = () => {
 
             const mangaGroups: MangaUpdateGroup[] = Array.from(byManga.entries())
                 .map(([mangaId, chapters]) => {
-                    const sorted = [...chapters].sort(
-                        (a, b) => Number(b.fetchedAt ?? 0) - Number(a.fetchedAt ?? 0),
-                    );
+                    const sorted = [...chapters].sort((a, b) => {
+                        const chapterNumberCmp = Number(a.chapterNumber ?? 0) - Number(b.chapterNumber ?? 0);
+                        if (chapterNumberCmp !== 0) {
+                            return chapterNumberCmp;
+                        }
+
+                        const sourceOrderCmp = Number(a.sourceOrder ?? 0) - Number(b.sourceOrder ?? 0);
+                        if (sourceOrderCmp !== 0) {
+                            return sourceOrderCmp;
+                        }
+
+                        return Number(a.fetchedAt ?? 0) - Number(b.fetchedAt ?? 0);
+                    });
+
                     return { mangaId, chapters: sorted };
                 })
                 .sort((a, b) => {
-                    // chapters[0] is already the latest after sorting above
-                    const aLatest = Number(a.chapters[0].fetchedAt ?? 0);
-                    const bLatest = Number(b.chapters[0].fetchedAt ?? 0);
-                    return bLatest - aLatest;
+                    const aLatestFetchedAt = a.chapters.reduce((max, c) => Math.max(max, Number(c.fetchedAt ?? 0)), 0);
+                    const bLatestFetchedAt = b.chapters.reduce((max, c) => Math.max(max, Number(c.fetchedAt ?? 0)), 0);
+                    return bLatestFetchedAt - aLatestFetchedAt;
                 });
 
             return [group, mangaGroups] as const;
@@ -115,9 +125,7 @@ export const Updates: React.FC = () => {
         useCallback(
             (index: number) => {
                 const item = updateEntriesFlattened[index];
-                // Prefix with date slice to avoid key collisions when the same manga
-                // appears in multiple day groups
-                const datePrefix = item.chapters[0].fetchedAt?.toString().slice(0, 10) ?? 'unknown';
+                const datePrefix = item.chapters[item.chapters.length - 1]?.fetchedAt?.toString().slice(0, 10) ?? 'unknown';
                 return `${datePrefix}-${item.mangaId}`;
             },
             [updateEntriesFlattened],
@@ -141,7 +149,6 @@ export const Updates: React.FC = () => {
 
     useAppTitleAndAction(t`Updates`, <UpdateChecker />);
 
-    // Use a Set for O(1) lookup instead of an array with O(n) .includes()
     const [expandedMangaIds, setExpandedMangaIds] = useState<Set<ChapterUpdateListFieldsFragment['manga']['id']>>(
         () => new Set(),
     );
@@ -214,7 +221,8 @@ export const Updates: React.FC = () => {
                 computeItemKey={computeItemKey}
                 itemContent={(index) => {
                     const item = updateEntriesFlattened[index];
-                    // chapters are pre-sorted in the groupedUpdates memo — no sort needed here
+
+                    // main row: chapter 1
                     const primaryChapter = item.chapters[0];
                     const extraChapters = item.chapters.slice(1);
 
@@ -234,7 +242,15 @@ export const Updates: React.FC = () => {
                                     }}
                                 >
                                     <ListCardContent sx={{ justifyContent: 'space-between' }}>
-                                        <Box sx={{ display: 'flex', flexGrow: 1, gap: 1 }}>
+                                        <Box
+                                            sx={{
+                                                display: 'grid',
+                                                gridTemplateColumns: '56px 1fr',
+                                                columnGap: 1,
+                                                flexGrow: 1,
+                                                alignItems: 'center',
+                                            }}
+                                        >
                                             <ChapterCardThumbnail
                                                 mangaId={manga.id}
                                                 sourceId={manga.sourceId}
@@ -242,7 +258,11 @@ export const Updates: React.FC = () => {
                                                 thumbnailUrl={manga.thumbnailUrl}
                                                 thumbnailUrlLastFetched={manga.thumbnailUrlLastFetched}
                                             />
-                                            <ChapterCardMetadata title={manga.title} secondaryText={primaryChapter.name} />
+                                            <ChapterCardMetadata
+                                                title={manga.title}
+                                                secondaryText={primaryChapter.name}
+                                                showUnreadDot={!primaryChapter.isRead}
+                                            />
                                         </Box>
 
                                         {extraChapters.length > 0 ? (
@@ -282,11 +302,23 @@ export const Updates: React.FC = () => {
                                                 }}
                                             >
                                                 <ListCardContent sx={{ justifyContent: 'space-between' }}>
-                                                    <Box sx={{ display: 'flex', flexGrow: 1, gap: 1 }}>
+                                                    <Box
+                                                        sx={{
+                                                            display: 'grid',
+                                                            gridTemplateColumns: '56px 1fr',
+                                                            columnGap: 1,
+                                                            flexGrow: 1,
+                                                            alignItems: 'center',
+                                                        }}
+                                                    >
                                                         {/* blank space where the image usually is */}
-                                                        <Box sx={{ width: 40, minWidth: 40 }} />
+                                                        <Box />
                                                         {/* do not repeat manga title, only chapter name */}
-                                                        <ChapterCardMetadata title="" secondaryText={chapter.name} />
+                                                        <ChapterCardMetadata
+                                                            title=""
+                                                            secondaryText={chapter.name}
+                                                            showUnreadDot={!chapter.isRead}
+                                                        />
                                                     </Box>
                                                     <DownloadStateIndicator chapterId={chapter.id} />
                                                     <ChapterDownloadRetryButton chapterId={chapter.id} />

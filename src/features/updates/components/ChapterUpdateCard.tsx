@@ -43,7 +43,11 @@ export const ChapterUpdateCard = memo(({ chapter }: { chapter: ChapterUpdateList
                             thumbnailUrl={manga.thumbnailUrl}
                             thumbnailUrlLastFetched={manga.thumbnailUrlLastFetched}
                         />
-                        <ChapterCardMetadata title={manga.title} secondaryText={chapter.name} />
+                        <ChapterCardMetadata
+                            title={manga.title}
+                            secondaryText={chapter.name}
+                            showUnreadDot={!chapter.isRead}
+                        />
                     </Box>
                     <DownloadStateIndicator chapterId={chapter.id} />
                     <ChapterDownloadRetryButton chapterId={chapter.id} />

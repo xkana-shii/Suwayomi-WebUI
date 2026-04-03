@@ -47,6 +47,7 @@ export const ChapterHistoryCard = memo(({ chapter }: { chapter: ChapterHistoryLi
                         <ChapterCardMetadata
                             title={manga.title}
                             secondaryText={`${chapter.name} — ${timeFormatter.format(epochToDate(Number(chapter.lastReadAt)).valueOf())}`}
+                            showUnreadDot={!chapter.isRead}
                         />
                     </Box>
                     <DownloadStateIndicator chapterId={chapter.id} />
