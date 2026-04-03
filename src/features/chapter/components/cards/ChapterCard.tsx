@@ -14,6 +14,7 @@ import Checkbox from '@mui/material/Checkbox';
 import Stack from '@mui/material/Stack';
 import Card from '@mui/material/Card';
 import IconButton from '@mui/material/IconButton';
+import Box from '@mui/material/Box';
 import { useTheme } from '@mui/material/styles';
 import type { MouseEvent, TouchEvent } from 'react';
 import React, { memo, useRef } from 'react';
@@ -114,6 +115,8 @@ export const ChapterCard = memo((props: IProps) => {
         handleClick(event);
     });
 
+    const unreadDotSize = `calc(${theme.typography.caption.fontSize} * 0.6)`;
+
     return (
         <PopupState variant="popover" popupId="chapter-card-action-menu">
             {(popupState) => (
@@ -147,6 +150,18 @@ export const ChapterCard = memo((props: IProps) => {
                                     }`}
                                     infoIcons={
                                         <>
+                                            {!chapter.isRead ? (
+                                                <Box
+                                                    sx={{
+                                                        width: unreadDotSize,
+                                                        height: unreadDotSize,
+                                                        borderRadius: '50%',
+                                                        backgroundColor: 'primary.main',
+                                                        flex: '0 0 auto',
+                                                        marginRight: 0.25,
+                                                    }}
+                                                />
+                                            ) : null}
                                             {chapter.isBookmarked && (
                                                 <BookmarkIcon
                                                     color={
