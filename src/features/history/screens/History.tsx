@@ -22,6 +22,7 @@ import { ChapterHistoryCard } from '@/features/history/components/ChapterHistory
 import { Chapters } from '@/features/chapter/services/Chapters.ts';
 import { useAppTitle } from '@/features/navigation-bar/hooks/useAppTitle.ts';
 import { STABLE_EMPTY_ARRAY } from '@/base/Base.constants.ts';
+import type { ChapterHistoryListFieldsFragment } from '@/lib/graphql/generated/graphql.ts';
 
 export const History: React.FC = () => {
     const { t } = useLingui();
@@ -40,7 +41,37 @@ export const History: React.FC = () => {
     });
     const hasNextPage = !!chapterHistoryData?.chapters.pageInfo.hasNextPage;
     const endCursor = chapterHistoryData?.chapters.pageInfo.endCursor;
-    const readEntries = chapterHistoryData?.chapters.nodes ?? STABLE_EMPTY_ARRAY;
+
+    const readEntries = useMemo(() => {
+        const entries = chapterHistoryData?.chapters.nodes ?? STABLE_EMPTY_ARRAY;
+
+        const latestByMangaId = new Map<
+            ChapterHistoryListFieldsFragment['manga']['id'],
+            ChapterHistoryListFieldsFragment
+        >();
+
+        entries.forEach((chapter) => {
+            const mangaId = chapter.manga.id;
+            const existing = latestByMangaId.get(mangaId);
+
+            if (!existing) {
+                latestByMangaId.set(mangaId, chapter);
+                return;
+            }
+
+            const existingLastReadAt = Number(existing.lastReadAt ?? 0);
+            const currentLastReadAt = Number(chapter.lastReadAt ?? 0);
+
+            if (currentLastReadAt > existingLastReadAt) {
+                latestByMangaId.set(mangaId, chapter);
+            }
+        });
+
+        return Array.from(latestByMangaId.values()).sort(
+            (a, b) => Number(b.lastReadAt ?? 0) - Number(a.lastReadAt ?? 0),
+        );
+    }, [chapterHistoryData?.chapters.nodes]);
+
     const groupedHistory = useMemo(
         () => Object.entries(Chapters.groupByDate(readEntries, 'lastReadAt')),
         [readEntries],
