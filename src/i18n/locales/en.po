@@ -321,6 +321,10 @@ msgstr "Add repositories from which extensions can be installed"
 msgid "Add repository"
 msgstr "Add repository"
 
+#: src/features/source/browse/screens/SourceMangas.tsx
+msgid "Add selected"
+msgstr "Add selected"
+
 #: src/features/manga/components/details/MangaDetails.tsx
 #: src/features/manga/components/MangaBadges.tsx
 #: src/features/reader/overlay/navigation/components/ReaderLibraryButton.tsx
@@ -334,6 +338,10 @@ msgstr "Add tracking"
 #: src/features/manga/hooks/useManageMangaLibraryState.tsx
 msgid "Added manga to library!"
 msgstr "Added manga to library!"
+
+#: src/features/source/browse/screens/SourceMangas.tsx
+msgid "Added to library"
+msgstr "Added to library"
 
 #: src/features/library/screens/LibrarySettings.tsx
 msgid "Advanced"
@@ -891,6 +899,10 @@ msgstr "Copy"
 #: src/features/manga/hooks/useManageMangaLibraryState.tsx
 msgid "Could not add manga to library!"
 msgstr "Could not add manga to library!"
+
+#: src/features/source/browse/screens/SourceMangas.tsx
+msgid "Could not add to library"
+msgstr "Could not add to library"
 
 #: src/features/manga/hooks/useManageMangaLibraryState.tsx
 msgid ""

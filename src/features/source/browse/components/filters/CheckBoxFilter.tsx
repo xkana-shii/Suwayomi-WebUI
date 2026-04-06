@@ -37,7 +37,7 @@ export const CheckBoxFilter: React.FC<Props> = (props: Props) => {
             <Box
                 sx={{
                     borderRadius: 2,
-                    px: 4,
+                    px: 1,
                     mx: -1,
                     '&:hover': {
                         backgroundColor: 'action.hover',

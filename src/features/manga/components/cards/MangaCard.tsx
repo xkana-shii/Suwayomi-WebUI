@@ -72,13 +72,15 @@ export const MangaCard = memo((props: MangaCardProps) => {
 
             event.preventDefault();
 
-            if (isSourceMode) {
-                updateLibraryState();
+            // Selection mode should take precedence: toggle selection when in select mode
+            if (isSelectionMode) {
+                handleSelection?.(id, !selected, { selectRange: event.shiftKey });
                 return;
             }
 
-            if (isSelectionMode) {
-                handleSelection?.(id, !selected, { selectRange: event.shiftKey });
+            // Only when NOT in selection mode should source-mode click trigger add-to-library behavior
+            if (isSourceMode) {
+                updateLibraryState();
                 return;
             }
 
@@ -91,7 +93,7 @@ export const MangaCard = memo((props: MangaCardProps) => {
                 setIsMigrateDialogOpen(true);
             }
         },
-        [mode, selected, updateLibraryState, handleSelection],
+        [mode, selected, updateLibraryState, handleSelection, id],
     );
 
     const longPressBind = useLongPress(

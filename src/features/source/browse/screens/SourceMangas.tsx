@@ -11,6 +11,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import IconButton from '@mui/material/IconButton';
 import SettingsIcon from '@mui/icons-material/Settings';
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 import { useQueryParam, StringParam } from 'use-query-params';
 import Link from '@mui/material/Link';
 import Box from '@mui/material/Box';
@@ -57,6 +58,10 @@ import { useAppTitleAndAction } from '@/features/navigation-bar/hooks/useAppTitl
 import { useNavBarContext } from '@/features/navigation-bar/NavbarContext.tsx';
 import { VirtuosoUtil } from '@/lib/virtuoso/Virtuoso.util.tsx';
 import { IconWebView } from '@/assets/icons/IconWebView.tsx';
+
+// Selection related imports
+import { useSelectableCollection } from '@/base/collection/hooks/useSelectableCollection.ts';
+import { SelectableCollectionSelectMode } from '@/base/collection/components/SelectableCollectionSelectMode.tsx';
 
 const DEFAULT_SOURCE: SourceIdInfo = { id: '-1' };
 
@@ -298,6 +303,35 @@ export function SourceMangas() {
     );
     const source = sourceData?.source;
 
+    // ---------- Selection setup ----------
+    const sourceMangaIds = useMemo(() => mangas.map((m) => m.id), [mangas]);
+    const [isSelectModeActive, setIsSelectModeActive] = useState(false);
+
+    const {
+        areNoItemsForKeySelected,
+        areAllItemsForKeySelected,
+        selectedItemIds,
+        handleSelectAll,
+        handleSelection,
+        clearSelection,
+    } = useSelectableCollection<number, string>(mangas.length, {
+        itemIds: sourceMangaIds,
+        currentKey: sourceId?.toString() ?? 'default',
+        initialState: undefined,
+    });
+
+    const areNoItemsSelected = areNoItemsForKeySelected;
+    const areAllItemsSelected = areAllItemsForKeySelected;
+
+    const handleSelect = useCallback(
+        (id: number, selected: boolean, selectOptions?: { selectRange?: boolean; key?: string }) => {
+            setIsSelectModeActive(!!(selectedItemIds.length + (selected ? 1 : -1)));
+            handleSelection(id, selected, selectOptions);
+        },
+        [selectedItemIds.length, handleSelection],
+    );
+    // ---------- end selection setup ----------
+
     const filters = source?.filters ?? STABLE_EMPTY_ARRAY;
     const { savedSearches = {} } = useGetSourceMetadata(source ?? DEFAULT_SOURCE);
     const updateSourceMetadata = createUpdateSourceMetadata<'savedSearches'>(source ?? { id: '-1' }, (e) =>
@@ -412,6 +446,28 @@ export function SourceMangas() {
         requestManager.clearBrowseCacheFor(sourceId);
     }, [clearCache]);
 
+    // Add selected to library handler (bulk)
+    const addSelectedToLibrary = useCallback(async () => {
+        if (!selectedItemIds.length) {
+            return;
+        }
+
+        try {
+            // Set inLibrary = true for selected manga ids.
+            // This uses the existing request manager mutation to update multiple mangas.
+            await requestManager.updateMangas(selectedItemIds, {
+                updateMangas: { inLibrary: true },
+            }).response;
+
+            makeToast(t`Added to library`, 'success');
+            // clear selection and exit select mode
+            clearSelection();
+            setIsSelectModeActive(false);
+        } catch (e) {
+            makeToast(t`Could not add to library`, 'error', getErrorMessage(e));
+        }
+    }, [selectedItemIds, clearSelection, t]);
+
     useAppTitleAndAction(
         source?.displayName ?? t`Source`,
         <>
@@ -440,8 +496,41 @@ export function SourceMangas() {
                     </IconButton>
                 </CustomTooltip>
             )}
+            {!!mangas.length && (
+                <SelectableCollectionSelectMode
+                    isActive={isSelectModeActive}
+                    areAllItemsSelected={areAllItemsSelected}
+                    areNoItemsSelected={areNoItemsSelected}
+                    onSelectAll={(selectAll) => handleSelectAll(selectAll, [...new Set(mangas.map((m) => m.id))])}
+                    onModeChange={(checked) => {
+                        setIsSelectModeActive(checked);
+
+                        if (checked) {
+                            handleSelectAll(true, [...new Set(mangas.map((m) => m.id))]);
+                        } else {
+                            // clear selection when exiting select mode for this source
+                            clearSelection();
+                        }
+                    }}
+                />
+            )}
+            {/* Add selected to library button (visible when in select mode) */}
+            {isSelectModeActive && (
+                <CustomTooltip title={t`Add selected`}>
+                    <span>
+                        <IconButton
+                            onClick={addSelectedToLibrary}
+                            color={selectedItemIds.length ? 'inherit' : 'default'}
+                            disabled={!selectedItemIds.length}
+                            edge="end"
+                        >
+                            <LibraryAddIcon />
+                        </IconButton>
+                    </span>
+                </CustomTooltip>
+            )}
         </>,
-        [source],
+        [source, isSelectModeActive, mangas.length, areAllItemsSelected, areNoItemsSelected, selectedItemIds.length],
     );
 
     const EmptyViewComponent = mangas.length ? EmptyView : EmptyViewAbsoluteCentered;
@@ -488,6 +577,9 @@ export function SourceMangas() {
                     gridLayout={sourceGridLayout}
                     mode="source"
                     inLibraryIndicator
+                    isSelectModeActive={isSelectModeActive}
+                    selectedMangaIds={selectedItemIds}
+                    handleSelection={handleSelect}
                 />
             )}
             {error && (
