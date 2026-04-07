@@ -31,6 +31,7 @@ import Checkbox from '@mui/material/Checkbox';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import SearchIcon from '@mui/icons-material/Search';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useLingui } from '@lingui/react/macro';
 import { requestManager } from '@/lib/requests/RequestManager.ts';
 import { MangaStatus } from '@/lib/graphql/generated/graphql.ts';
@@ -295,6 +296,30 @@ const MatchTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => voi
         }
     };
 
+    const getResultExternalUrl = (resultProvider: string, result: SearchResult): string | null => {
+        switch (resultProvider) {
+            case 'MyAnimeList':
+                return `https://myanimelist.net/manga/${result.externalId}`;
+            case 'Anilist':
+                return `https://anilist.co/manga/${result.externalId}`;
+            case 'MangaUpdates':
+                return `https://www.mangaupdates.com/series/${result.externalId}`;
+            case 'MangaBaka':
+                return `https://mangabaka.org/${result.externalId}`;
+            default:
+                return null;
+        }
+    };
+
+    const handleOpenExternal = (result: SearchResult) => {
+        const url = getResultExternalUrl(provider, result);
+        if (!url) {
+            makeToast(t`No external link available for this provider`, 'error');
+            return;
+        }
+        window.open(url, '_blank', 'noopener,noreferrer');
+    };
+
     return (
         <>
             <DialogContent>
@@ -333,74 +358,92 @@ const MatchTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => voi
 
                     {results.length > 0 && (
                         <Stack sx={{ gap: 1, maxHeight: 400, overflowY: 'auto' }}>
-                            {results.map((result) => (
-                                <Card
-                                    key={result.externalId}
-                                    variant="outlined"
-                                    sx={{
-                                        border: selectedId === result.externalId ? 2 : 1,
-                                        borderColor: selectedId === result.externalId ? 'primary.main' : 'divider',
-                                    }}
-                                >
-                                    <CardActionArea onClick={() => setSelectedId(result.externalId)}>
-                                        <Box sx={{ display: 'flex', minHeight: 90 }}>
-                                            {result.coverUrl && (
-                                                <CardMedia
-                                                    component="img"
-                                                    image={result.coverUrl}
-                                                    alt={result.title}
-                                                    sx={{ width: 60, height: 90, objectFit: 'cover', flexShrink: 0 }}
-                                                />
-                                            )}
-                                            <CardContent
-                                                sx={{
-                                                    flex: 1,
-                                                    py: 1,
-                                                    '&:last-child': { pb: 1 },
-                                                    minWidth: 0,
-                                                    overflow: 'hidden',
-                                                }}
-                                            >
-                                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                                    <Typography variant="subtitle2" noWrap sx={{ flex: 1 }}>
-                                                        {result.title}
-                                                    </Typography>
-                                                    {result.year && (
+                            {results.map((result) => {
+                                const hasExternalLink = !!getResultExternalUrl(provider, result);
+
+                                return (
+                                    <Card
+                                        key={result.externalId}
+                                        variant="outlined"
+                                        sx={{
+                                            border: selectedId === result.externalId ? 2 : 1,
+                                            borderColor: selectedId === result.externalId ? 'primary.main' : 'divider',
+                                        }}
+                                    >
+                                        <CardActionArea onClick={() => setSelectedId(result.externalId)}>
+                                            <Box sx={{ display: 'flex', minHeight: 90 }}>
+                                                {result.coverUrl && (
+                                                    <CardMedia
+                                                        component="img"
+                                                        image={result.coverUrl}
+                                                        alt={result.title}
+                                                        sx={{ width: 60, height: 90, objectFit: 'cover', flexShrink: 0 }}
+                                                    />
+                                                )}
+                                                <CardContent
+                                                    sx={{
+                                                        flex: 1,
+                                                        py: 1,
+                                                        '&:last-child': { pb: 1 },
+                                                        minWidth: 0,
+                                                        overflow: 'hidden',
+                                                    }}
+                                                >
+                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                                        <Typography variant="subtitle2" noWrap sx={{ flex: 1 }}>
+                                                            {result.title}
+                                                        </Typography>
+
+                                                        <IconButton
+                                                            size="small"
+                                                            disabled={!hasExternalLink}
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                handleOpenExternal(result);
+                                                            }}
+                                                            aria-label={t`Open in new tab`}
+                                                        >
+                                                            <OpenInNewIcon fontSize="small" />
+                                                        </IconButton>
+
+                                                        {result.year && (
+                                                            <Typography variant="caption" color="text.secondary">
+                                                                {result.year}
+                                                            </Typography>
+                                                        )}
+                                                        {selectedId === result.externalId && (
+                                                            <CheckCircleIcon color="primary" fontSize="small" />
+                                                        )}
+                                                    </Box>
+                                                    {result.author && (
                                                         <Typography variant="caption" color="text.secondary">
-                                                            {result.year}
+                                                            {result.author}
                                                         </Typography>
                                                     )}
-                                                    {selectedId === result.externalId && (
-                                                        <CheckCircleIcon color="primary" fontSize="small" />
+                                                    {result.description && (
+                                                        <Typography
+                                                            variant="caption"
+                                                            color="text.secondary"
+                                                            component="p"
+                                                            sx={{
+                                                                display: '-webkit-box',
+                                                                WebkitLineClamp: 2,
+                                                                WebkitBoxOrient: 'vertical',
+                                                                overflow: 'hidden',
+                                                                mt: 0.5,
+                                                                wordBreak: 'break-word',
+                                                            }}
+                                                        >
+                                                            {result.description}
+                                                        </Typography>
                                                     )}
-                                                </Box>
-                                                {result.author && (
-                                                    <Typography variant="caption" color="text.secondary">
-                                                        {result.author}
-                                                    </Typography>
-                                                )}
-                                                {result.description && (
-                                                    <Typography
-                                                        variant="caption"
-                                                        color="text.secondary"
-                                                        component="p"
-                                                        sx={{
-                                                            display: '-webkit-box',
-                                                            WebkitLineClamp: 2,
-                                                            WebkitBoxOrient: 'vertical',
-                                                            overflow: 'hidden',
-                                                            mt: 0.5,
-                                                            wordBreak: 'break-word',
-                                                        }}
-                                                    >
-                                                        {result.description}
-                                                    </Typography>
-                                                )}
-                                            </CardContent>
-                                        </Box>
-                                    </CardActionArea>
-                                </Card>
-                            ))}
+                                                </CardContent>
+                                            </Box>
+                                        </CardActionArea>
+                                    </Card>
+                                );
+                            })}
                         </Stack>
                     )}
 
