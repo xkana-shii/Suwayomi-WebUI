@@ -1624,6 +1624,7 @@ msgstr "Filename"
 msgid "Fillermark selected"
 msgstr "Fillermark selected"
 
+#: src/features/chapter/components/ChapterOptions.tsx
 #: src/features/library/components/LibraryOptionsPanel.tsx
 msgid "Fillermarked"
 msgstr "Fillermarked"
@@ -2412,6 +2413,10 @@ msgstr "No downloads"
 msgid "No duplicate tracker groups found"
 msgstr "No duplicate tracker groups found"
 
+#: src/features/manga/components/details/EditMangaMetadataDialog.tsx
+msgid "No external link available for this provider"
+msgstr "No external link available for this provider"
+
 #: src/features/global-search/screens/SearchAll.tsx
 #: src/features/manga/components/MangaGrid.tsx
 #: src/features/source/browse/screens/SourceMangas.tsx
@@ -2538,6 +2543,10 @@ msgstr "Open"
 #: src/features/tracker/components/cards/TrackerActiveCard.tsx
 msgid "Open in browser"
 msgstr "Open in browser"
+
+#: src/features/manga/components/details/EditMangaMetadataDialog.tsx
+msgid "Open in new tab"
+msgstr "Open in new tab"
 
 #: src/features/chapter/components/actions/ChapterActionMenuItems.tsx
 #: src/features/manga/components/details/MangaDetails.tsx

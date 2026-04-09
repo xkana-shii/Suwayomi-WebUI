@@ -72,7 +72,7 @@ export const ChapterOptions: React.FC<IProps> = ({
                                 onChange={(c) => updateOption('bookmarked', c)}
                             />
                             <ThreeStateCheckboxInput
-                                label={t('global.filter.label.fillermarked')}
+                                label={t`Fillermarked`}
                                 checked={options.fillermarked}
                                 onChange={(c) => updateOption('fillermarked', c)}
                             />
