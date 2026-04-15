@@ -224,8 +224,7 @@ export const Updates: React.FC = () => {
                     const item = updateEntriesFlattened[index];
 
                     // main row: chapter 1
-                    const primaryChapter = item.chapters[0];
-                    const extraChapters = item.chapters.slice(1);
+                    const [primaryChapter, ...extraChapters] = item.chapters;
 
                     const expanded = expandedMangaIds.has(item.mangaId);
                     const { manga } = primaryChapter;

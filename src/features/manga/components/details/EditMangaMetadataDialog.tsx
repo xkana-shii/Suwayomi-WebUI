@@ -246,6 +246,21 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
     );
 };
 
+const getResultExternalUrl = (resultProvider: string, result: SearchResult): string | null => {
+    switch (resultProvider) {
+        case 'MyAnimeList':
+            return `https://myanimelist.net/manga/${result.externalId}`;
+        case 'Anilist':
+            return `https://anilist.co/manga/${result.externalId}`;
+        case 'MangaUpdates':
+            return `https://www.mangaupdates.com/series/${result.externalId}`;
+        case 'MangaBaka':
+            return `https://mangabaka.org/${result.externalId}`;
+        default:
+            return null;
+    }
+};
+
 const MatchTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void }) => {
     const { t } = useLingui();
 
@@ -293,21 +308,6 @@ const MatchTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => voi
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter') {
             handleSearch();
-        }
-    };
-
-    const getResultExternalUrl = (resultProvider: string, result: SearchResult): string | null => {
-        switch (resultProvider) {
-            case 'MyAnimeList':
-                return `https://myanimelist.net/manga/${result.externalId}`;
-            case 'Anilist':
-                return `https://anilist.co/manga/${result.externalId}`;
-            case 'MangaUpdates':
-                return `https://www.mangaupdates.com/series/${result.externalId}`;
-            case 'MangaBaka':
-                return `https://mangabaka.org/${result.externalId}`;
-            default:
-                return null;
         }
     };
 
