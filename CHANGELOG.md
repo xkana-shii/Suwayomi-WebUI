@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased] (Preview)
 
+### Fixed
+
+- (**Reader**) Fix scrollbar appearing with "fit to widt/height/screen" page scale mode and applied safe area insets
+- (**Reader**) Fix wrongly positioned mobile progress bar current page indicator
+- (**Reader**) Fix mobile progress bar previous/next chapter button visibility on hover and while disabled
+
+## [20260509.01] (r3147) - 2026-05-09
+
+### Fixed
+
+- (**Navigation**) Fix obsolete extensions being included in the updatable extensions info
+- (**Extensions**) Fix showing the uninstall button twice in the extension info page in case the extensions is obsolete and has a update at the same time
+- (**Reader**) Fix changing reader layout settings from their default value to another causing the reader to break
+
+### Contributors
+
+Thanks to everyone that contributed to this release
+
+@schroda
+
+## [20260508.01] (r3136) - 2026-05-08
+
 ### Added
 
 - (**Theme**) Add an option to save the dynamic color theme on the manga page as a custom theme
@@ -13,6 +35,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - (**Server Update**) Add an option to disable showing information when the server got updated
 - (**Manga**) Add an option to include client data during migration
 - (**Migrate**) Add bulk migration
+- (**Reader**) Add an option to apply safe area paddings (e.g., top-notch, rounded corners)
 
 ### Changed
 
@@ -25,21 +48,65 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - (**Theme**) Change "pure black mode" paper background color to true black
 - (**Library**) Improve library manga sorting
 - (**Browse**) Merge languages filter of the sources and extensions into one
+- (**Search**) Hide "pinned" sources button in global search in case no sources are pinned
+- (**Extensions**) Show "obsolete" information more discretely with the "uninstall" action instead of grouping obsolete extensions at the top of the page
+- (**Migration**) Mark all chapters as read up to the highest read chapter number. Previously matching chapter numbers got marked as read. E.g., Read up to chapter 250. The destination has a chapter 249.5 but the original source does not. Chapter 249.5 did not get marked as read.
 
 ### Fixed
 
 - (**General**) Fix saving large client data on the server (e.g., custom source filters)
+- (**General**) Fix clearing service worker image caches
 - (**Library**) Fix total library size chip color in light mode
 - (**Browse**) Fix missing pinned sources in the source language filter
 - (**Browse**) Fix incorrectly showing "local source" source in the source language filter (the local source can't be disabled)
+- (**Browse**) Fix language selection showing the default selected languages when the source/extension page was the first opened page
 - (**Reader**) Fix page shift when toggling the "offset double spreads" setting (currently: enable: shift to the right; disable: shift to the left – now: inverted)
 - (**Reader**) Fix "auto webtoon mode" detection for manga source languages other than english and the current selected language
 - (**Reader**) Fix the reader transition page previous chapter scanlator name showing the chapter name instead of the scanlator name
 - (**Reader**) Fix opening the previous/next chapter in the continuous horizontal mode with inverted reading direction
-- (**Reader**) Fix scroll preservation in continuous horizontal mode with righ to left reading direction
+- (**Reader**) Fix scroll preservation in continuous horizontal mode with right to left reading direction
 - (**Reader**) Fix mobile progress bar previous/next button not being clickable in single page chapters
 - (**Reader**) Fix scroll position jumping on chapter resume in the continuous horizontal mode
+- (**Reader**) Fix page load retry button in continuous reading modes
 - (**Manga**) Fix dynamic manga page color theme not getting reset after leaving the manga page
+- (**Download**) Fix "download ahead" option in the library for a single manga or in the manga page chapter list triggering downloads while there are already enough unread downloaded chapters
+
+### Translations
+
+Feel free to translate the project on [Weblate](https://hosted.weblate.org/projects/suwayomi/suwayomi-webui/)
+
+Thanks to everyone that contributed to the translation of this project.
+
+#### Added
+
+- Arabic (by Elyan Voryn)
+- Hungarian (by Roland Vezsenyi)
+- Indonesian (by Arif Budiman)
+
+#### Updated
+
+- Chinese (Simplified) (by 清水汐音)
+- Chinese (Traditional) (by plum7x)
+- German (by Constantin Piber)
+- Russian (by Sazuru, moron1717, Micka149)
+- French (by Damien O'Neil)
+- Polish (by AteX, UnknownSkyrimPasserby)
+- Vietnamese (by Nguyễn Trung Đức)
+- Japanese (by makoto)
+- Spanish (by Alexis Cabrera)
+
+#### Removed (less than 75% translated)
+
+- Portuguese (Brazil) (63.9%)
+- Portuguese (70.7%)
+- Tamil (74.3%)
+- Turkish (70.6%)
+
+### Contributors
+
+Thanks to everyone that contributed to this release
+
+@schroda, @weblate, @CyberMageIL, @dejavui, @tomaioo, @github-actions[bot], @cpiber, @aizhimoran, @arifpedia, @mahranaka, @moron1717, @tonyganchev, @infyProductions, @Daemonhellz, @makoto326, @Sazuru, @UnknownSkyrimPasserby, @crnobog69, @aitiotekt, @KaceyKoo-gif, @Micka149, @Pysta, @plum7x, @Lordreis28, @ginocic, @JeanCPG97, @Bartuzen
 
 ## [20251230.01] (r2937) - 2025-12-30
 
@@ -86,8 +153,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - (**Reader**) Fix potential page loss (continuous horizontal mode window resize, reader width change, page scale change)
 - (**Reader**) Fix current page detection in continuous horizontal mode with right-to-left reading mode
 - (**Reader**) Fix occasionally jumping to random pages in continuous reading modes
-- (**Extension**) Fix handling obsolete extensions as updatable in case they are marked as having an available update
-- (**Extension**) Fix being unable to uninstall an extension that can be updated
+- (**Extensions**) Fix handling obsolete extensions as updatable in case they are marked as having an available update
+- (**Extensions**) Fix being unable to uninstall an extension that can be updated
 - (**Theme**) Fix loading of fonts defined in themes
 - (**Reader**) Fix broken scrolling in continuous horizontal reading mode
 
@@ -151,7 +218,7 @@ Thanks to everyone that contributed to this release
 
 - (**General**) Fix drag and drop on touch devices
 - (**Reader**) Fix auto scrolling with static overlay
-- (**Extension**) Fix clicking on action button (install, uninstall, update, ...) opening the extension info page
+- (**Extensions**) Fix clicking on action button (install, uninstall, update, ...) opening the extension info page
 - (**Manga**) Fix incorrect removal of some text wrapped in "<>" in the description and tracker search result summaries
 - (**Settings**) Fix hidden "pure black mode" appearance setting
 - (**Chapter**) Fix updating read status of already read chapters when using the mark previous as read option
@@ -210,8 +277,8 @@ Thanks to everyone that contributed to this release
 - (**Chapter**) Save chapter list options on the server
 - (**Chapter**) Hide chapter list actions while chapters are selected
 - (**Chapter**) Clear selection after performing an action
-- (**Extension**) Make "All" language a selectable language (was forcibly enabled up until now)
-- (**Extension**) Remove language information from uninstalled extension items in list
+- (**Extensions**) Make "All" language a selectable language (was forcibly enabled up until now)
+- (**Extensions**) Remove language information from uninstalled extension items in list
 - (**Source**) Remove language information from not pinned and last used source items in list
 - (**Source**) Save "selected languages" on the server
 - (**Browse**) Select users preferred languages (from the browser) and the "All" language by default
@@ -241,7 +308,7 @@ Thanks to everyone that contributed to this release
 - (**Reader**) Fix scrolling horizontally with trackpads
 - (**WebUI Update**) Fix stable changelog url
 - (**Global search**) Fix failed source searches getting sorted the same way as if they were successfull
-- (**Extension**) Fix link to repository setting in case no extensions are installed
+- (**Extensions**) Fix link to repository setting in case no extensions are installed
 - (**Manga**) Fix data not getting updated properly on a library update (e.g. unread chapter count didn't get updated in case new chapters were found)
 - (**Manga**) Add option to click on artist/author to trigger library search
 - (**Browse**) Fix browse not loading more pages in some cases after filtering/searching
@@ -483,22 +550,17 @@ Thanks to everyone that contributed to the translation of this project.
 
 #### Removed (less than 75% translated)
 
-- "Arabic (ar)" (71.7%)
-- "Bengali (bn)" (1.8%)
-- "Danish (da)" (13.6%)
-- "Filipino (fil)" (16.2%)
-- "Gan (Traditional Han script) (gan-Hant)" (0%)
-- "Indonesian (id)" (22%)
-- "Italian (it)" (69.4%)
-- "Japanese (ja)" (56.8%)
-- "Korean (ko)" (13%)
-- "Norwegian Bokmål (nb-NO)" (1.3%)
-- "Dutch (nl)" (44.9%)
-- "Portuguese (Brazil) (pt-BR)" (32.4%)
-- "Swedish (sv)" (2%)
-- "Thai (th)" (28.5%)
-- "Ukrainian (uk)" (54.9%)
-- "Cantonese (Traditional Han script) (yue-Hant)" (0%)
+- Arabic (ar) (71.7%)
+- Bengali (bn) (1.8%)
+- Gan (Traditional Han script) (gan-Hant) (0%)
+- Indonesian (id) (22%)
+- Italian (it) (69.4%)
+- Japanese (ja) (56.8%)
+- Korean (ko) (13%)
+- Norwegian Bokmål (nb-NO) (1.3%)
+- Swedish (sv) (2%)
+- Ukrainian (uk) (54.9%)
+- Cantonese (Traditional Han script) (yue-Hant) (0%)
 
 ### Contributors
 
@@ -716,7 +778,9 @@ Thanks to everyone that contributed to this release
 
 @schroda, @jesusFx, @QuietBlade, @anvstin, @guohuageng, @plum7x, @HiyoriTUK, @aizhimoran, @JiPaix, @Yuhyeong, @a18ccms, @chancez, @rickymcmuffin, @zmmx, @alexandrejournet, @ibaraki-douji, @nitezs, @misaka10843, @Becods, @skrewde, @xconkhi9x, @cnmorocho, @Wip-Sama, @Kefir2105, @RafieHardinur, @SuperMario229, @Alexandre-P-J, @AriaMoradi, @NathanBnm, @FumoVite, @JoHena, @bandysharif, @DevCoz, @comradekingu, @Zereef, @akabhirav
 
-[unreleased]: https://github.com/suwayomi/suwayomi-webui/compare/v20251230.01...HEAD
+[unreleased]: https://github.com/suwayomi/suwayomi-webui/compare/v20260509.01...HEAD
+[20260509.01]: https://github.com/suwayomi/suwayomi-webui/compare/v20260508.01...v20260509.01
+[20260508.01]: https://github.com/suwayomi/suwayomi-webui/compare/v20251230.01...v20260508.01
 [20251230.01]: https://github.com/suwayomi/suwayomi-webui/compare/v20250801.01...v20251230.01
 [20250801.01]: https://github.com/suwayomi/suwayomi-webui/compare/v20250731.01...v20250801.01
 [20250731.01]: https://github.com/suwayomi/suwayomi-webui/compare/v20250703.01...v20250731.01

@@ -84,6 +84,7 @@ const convertSettingsToMetadata = (
     readerWidth: JSON.stringify(settings.readerWidth),
     hotkeys: JSON.stringify(settings.hotkeys),
     autoScroll: JSON.stringify(settings.autoScroll),
+    safeAreaInset: JSON.stringify(settings.autoScroll),
 });
 
 export const DEFAULT_READER_SETTINGS_WITH_DEFAULT_FLAG = convertToSettingsWithDefaultFlag(
@@ -174,7 +175,7 @@ export const useDefaultReaderSettings = (
     loading: boolean;
     request: ReturnType<typeof requestManager.useGetGlobalMeta>;
 } => {
-    const request = requestManager.useGetGlobalMeta({ notifyOnNetworkStatusChange: true });
+    const request = requestManager.useGetGlobalMeta();
     const { data, loading } = request;
     const metadata = useMemo(() => convertFromGqlMeta(data?.metas.nodes), [data?.metas.nodes]);
     const metaHolder: MetadataHolder = useMemo(() => ({ meta: metadata }), [metadata]);
@@ -200,7 +201,7 @@ export const useDefaultReaderSettingsWithDefaultFlag = (
     loading: boolean;
     request: ReturnType<typeof requestManager.useGetGlobalMeta>;
 } => {
-    const request = requestManager.useGetGlobalMeta({ notifyOnNetworkStatusChange: true });
+    const request = requestManager.useGetGlobalMeta();
     const { data, loading } = request;
     const metadata = useMemo(() => convertFromGqlMeta(data?.metas.nodes), [data?.metas.nodes]);
     const metaHolder: MetadataHolder = useMemo(() => ({ meta: metadata }), [metadata]);

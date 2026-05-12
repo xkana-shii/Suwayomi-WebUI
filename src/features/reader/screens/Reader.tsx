@@ -75,6 +75,7 @@ const BaseReader = ({
         'shouldShowReadingModePreview',
         'shouldShowTapZoneLayoutPreview',
     );
+    const safeAreaInset = useReaderSettingsStore((state) => state.safeAreaInset);
 
     const scrollElementRef = useRef<HTMLDivElement | null>(null);
 
@@ -228,6 +229,10 @@ const BaseReader = ({
                 maxWidth: `calc(100vw - ${readerNavBarWidth}px)`,
                 width: `calc(100vw - ${readerNavBarWidth}px)`,
                 height: `100vh`,
+                pt: safeAreaInset.top ? 'env(safe-area-inset-top)' : undefined,
+                pb: safeAreaInset.bottom ? 'env(safe-area-inset-bottom)' : undefined,
+                pr: safeAreaInset.right ? 'env(safe-area-inset-right)' : undefined,
+                pl: safeAreaInset.left ? 'env(safe-area-inset-left)' : undefined,
                 marginLeft: `${readerNavBarWidth}px`,
                 transition: (theme) =>
                     `width 0.${theme.transitions.duration.shortest}s, margin-left 0.${theme.transitions.duration.shortest}s`,

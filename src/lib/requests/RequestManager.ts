@@ -213,6 +213,8 @@ import type {
     SetCategoryMetasInput,
     DeleteCategoryMetasInput,
     MangaStatus,
+    RefreshMangaMutation,
+    RefreshMangaMutationVariables,
 } from '@/lib/graphql/generated/graphql.ts';
 import {
     CategoryOrderBy,
@@ -241,6 +243,7 @@ import { GET_MIGRATABLE_SOURCES, GET_SOURCES_LIST } from '@/lib/graphql/source/S
 import {
     GET_MANGA_FETCH,
     GET_MANGA_TO_MIGRATE_TO_FETCH,
+    REFRESH_MANGA,
     UPDATE_MANGA,
     UPDATE_MANGA_CATEGORIES,
     UPDATE_MANGA_DETAILS,
@@ -2222,6 +2225,20 @@ export class RequestManager {
         );
     }
 
+    public refreshManga(
+        mangaId: number | string,
+        options?: MutationOptions<RefreshMangaMutation, RefreshMangaMutationVariables>,
+    ): AbortableApolloMutationResponse<RefreshMangaMutation> {
+        return this.doRequest<RefreshMangaMutation, RefreshMangaMutationVariables>(
+            GQLMethod.MUTATION,
+            REFRESH_MANGA,
+            {
+                id: Number(mangaId),
+            },
+            { refetchQueries: [GET_CHAPTERS_MANGA], errorPolicy: 'all', ...options },
+        );
+    }
+
     public getMangaToMigrateToFetch(
         mangaId: number | string,
         {
@@ -3589,6 +3606,12 @@ export class RequestManager {
                 },
             } as SubscriptionHookOptions<UpdaterSubscription, UpdaterSubscriptionVariables>,
         ) as useSubscription.Result<UpdaterSubscription>;
+    }
+
+    public getServerSettings(
+        options?: QueryOptions<GetServerSettingsQueryVariables>,
+    ): AbortabaleApolloQueryResponse<GetServerSettingsQuery> {
+        return this.doRequest(GQLMethod.QUERY, GET_SERVER_SETTINGS, undefined, options);
     }
 
     public useGetServerSettings(

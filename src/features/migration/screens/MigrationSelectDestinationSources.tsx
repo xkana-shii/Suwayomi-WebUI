@@ -28,10 +28,12 @@ import { Sources } from '@/features/source/services/Sources.ts';
 import { useMetadataServerSettings } from '@/features/settings/services/ServerSettingsMetadata.ts';
 import ToggleOnIcon from '@mui/icons-material/ToggleOn';
 import { CustomTooltip } from '@/base/components/CustomTooltip.tsx';
+import { MigrationBulkSearchOptionsDialog } from '@/features/migration/components/MigrationBulkSearchOptionsDialog.tsx';
+import { AwaitableComponent } from 'awaitable-component';
 
 export const MigrationSelectDestinationSources = () => {
     const { t } = useLingui();
-    const currentSourceId = MigrationManager.useSourceId();
+    const currentSourceIds = MigrationManager.useSourceIds();
 
     const {
         settings: { browseLanguages, showNsfw },
@@ -44,9 +46,7 @@ export const MigrationSelectDestinationSources = () => {
         loading: areSourcesLoading,
         error: sourceError,
         refetch: refetchSources,
-    } = requestManager.useGetSourceList({
-        notifyOnNetworkStatusChange: true,
-    });
+    } = requestManager.useGetSourceList();
 
     const allSources = data?.sources.nodes ?? STABLE_EMPTY_ARRAY;
     const sources = useMemo(
@@ -60,6 +60,8 @@ export const MigrationSelectDestinationSources = () => {
     const sourceIds = useMemo(() => Sources.getIds(sources), [sources]);
     const pinnedSourceIds = useMemo(() => Sources.getIds(Sources.filter(sources, { pinned: true })), [sources]);
     const enabledSourceIds = useMemo(() => Sources.getIds(Sources.filter(sources, { enabled: true })), [sources]);
+
+    const hasPinnedSources = !!pinnedSourceIds.length;
 
     const {
         selectedItemIds,
@@ -81,11 +83,13 @@ export const MigrationSelectDestinationSources = () => {
     useAppTitleAndAction(
         t`Select destination sources`,
         <>
-            <CustomTooltip title={t`Select pinned sources`}>
-                <IconButton color="inherit" onClick={() => setSelectionForKey('default', pinnedSourceIds)}>
-                    <PushPinIcon />
-                </IconButton>
-            </CustomTooltip>
+            {hasPinnedSources && (
+                <CustomTooltip title={t`Select pinned sources`}>
+                    <IconButton color="inherit" onClick={() => setSelectionForKey('default', pinnedSourceIds)}>
+                        <PushPinIcon />
+                    </IconButton>
+                </CustomTooltip>
+            )}
             <CustomTooltip title={t`Select enabled sources`}>
                 <IconButton color="inherit" onClick={() => setSelectionForKey('default', enabledSourceIds)}>
                     <ToggleOnIcon />
@@ -156,7 +160,7 @@ export const MigrationSelectDestinationSources = () => {
                 selectedSourceIds={selectedItemIds}
                 handleSelection={handleSelection}
                 handlePriorityChange={handlePriorityChange}
-                currentSourceId={currentSourceId}
+                currentSourceIds={currentSourceIds}
             />
             <Fab
                 variant="extended"
@@ -166,7 +170,15 @@ export const MigrationSelectDestinationSources = () => {
                     bottom: (theme) => theme.spacing(2),
                     right: (theme) => theme.spacing(2),
                 }}
-                onClick={() => MigrationManager.startSearch(selectedItemIds)}
+                onClick={async () => {
+                    try {
+                        const searchOptions = await AwaitableComponent.show(MigrationBulkSearchOptionsDialog);
+
+                        await MigrationManager.startSearch(selectedItemIds, searchOptions);
+                    } catch (e) {
+                        // Ignore
+                    }
+                }}
             >
                 {t`Start Search`}
             </Fab>

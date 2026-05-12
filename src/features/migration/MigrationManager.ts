@@ -14,11 +14,12 @@ import { devtools, persist } from 'zustand/middleware';
 import {
     type MigratableEntry,
     type MigrateOptions,
-    type TMigrationEntry,
+    type MigrationBulkSearchSettings,
     MigrationEntryStatus,
-    MigrationPhase,
     type MigrationMatch,
+    MigrationPhase,
     type MigrationState,
+    type TMigrationEntry,
 } from '@/features/migration/Migration.types.ts';
 import {
     DEFAULT_MIGRATION_STATE,
@@ -55,6 +56,7 @@ import { MANGA_MIGRATION_FIELDS } from '@/lib/graphql/manga/MangaFragments.ts';
 import { ZustandUtil } from '@/lib/zustand/ZustandUtil.ts';
 import { getErrorMessage } from '@/lib/HelperFunctions.ts';
 import isEqual from 'lodash/fp/isEqual';
+import uniqBy from 'lodash/fp/uniqBy';
 
 const RESUMABLE_PHASES: readonly MigrationPhase[] = [MigrationPhase.SEARCHING, MigrationPhase.MIGRATING];
 
@@ -150,6 +152,14 @@ export class MigrationManager {
         } catch (e) {
             defaultPromiseErrorHandler('MigrationManager::abort')(e);
             return false;
+        }
+    }
+
+    private static ensureIsInValidPhase(phases: MigrationPhase[]): void {
+        const { phase } = MigrationManager.getState();
+
+        if (!phases.includes(phase)) {
+            throw new Error(`Illegal migration phase "${phase}". Expected: ${phases}`);
         }
     }
 
@@ -265,16 +275,34 @@ export class MigrationManager {
         return updatedEntry;
     }
 
-    static selectSource(sourceId: SourceIdInfo['id']): void {
+    static selectSources(sourceIds: SourceIdInfo['id'][]): void {
+        MigrationManager.ensureIsInValidPhase([MigrationPhase.IDLE]);
+
         MigrationManager.updateState((draft) => {
             draft.phase = MigrationPhase.SELECT_MANGAS;
-            draft.sourceId = sourceId;
+            draft.sourceIds = sourceIds;
             draft.entries = {};
         });
-        ReactRouter.navigate(AppRoutes.migrate.path);
     }
 
     static selectMangas(mangas: MangaMigrationFieldsFragment[]): void {
+        MigrationManager.ensureIsInValidPhase([MigrationPhase.SELECT_MANGAS]);
+
+        const isSingleManga = mangas.length === 1;
+        if (isSingleManga) {
+            const [manga] = mangas;
+
+            ReactRouter.navigate(
+                AppRoutes.migrate.childRoutes.singleMangaSearch.path(manga.sourceId, manga.id, manga.title),
+                {
+                    state: { mangaTitle: manga.title },
+                },
+            );
+
+            MigrationManager.reset();
+            return;
+        }
+
         MigrationManager.updateState((draft) => {
             draft.phase = MigrationPhase.SELECTING_SOURCES;
             draft.entries = Object.fromEntries(
@@ -304,23 +332,42 @@ export class MigrationManager {
         });
     }
 
-    static async startSearch(destinationSourceIds: SourceIdInfo['id'][]): Promise<void> {
-        MigrationManager.updateState((draft) => {
-            draft.destinationSourceIds = destinationSourceIds;
-        });
+    static async startSearch(
+        destinationSourceIds: SourceIdInfo['id'][],
+        options: MigrationBulkSearchSettings,
+    ): Promise<void> {
+        MigrationManager.ensureIsInValidPhase([MigrationPhase.SELECTING_SOURCES]);
 
         const state = MigrationManager.getState();
         const entryIds = Object.keys(state.entries).map(Number);
 
         MigrationManager.updateState((draft) => {
             draft.phase = MigrationPhase.SEARCHING;
+            draft.destinationSourceIds = destinationSourceIds;
+            draft.searchOptions = options;
             draft.searchProgress = { total: entryIds.length, completed: 0, success: 0, failed: 0 };
             draft.startedAt = Date.now();
             draft.groupExpandState = MIGRATE_SEARCH_ENTRY_GROUP_EXPAND_DEFAULT_STATE;
         });
 
+        await MigrationManager.search(Object.values(state.entries), options);
+    }
+
+    private static async search(entries: TMigrationEntry[], options: MigrationBulkSearchSettings): Promise<void> {
+        const { signal } = MigrationManager.abortAndCreateAbortController('search');
+
+        const searchPromises = entries.map((entry) =>
+            MigrationManager.mangaProcessQueue(async () => {
+                if (signal.aborted) {
+                    return;
+                }
+
+                await MigrationManager.searchForManga(entry.mangaId, entry.mangaTitle, signal, options);
+            }),
+        );
+
         try {
-            await MigrationManager.search(Object.values(state.entries));
+            await Promise.allSettled(searchPromises);
         } finally {
             const { searchProgress } = MigrationManager.getState();
 
@@ -332,6 +379,7 @@ export class MigrationManager {
                         ...MIGRATE_SEARCH_ENTRY_GROUP_EXPAND_DEFAULT_STATE,
                         [MigrationEntryStatus.SEARCHING]: false,
                         [MigrationEntryStatus.NO_MATCH]: !allSearchesFailed && !searchProgress.success,
+                        [MigrationEntryStatus.OUTDATED]: !allSearchesFailed && !searchProgress.success,
                         [MigrationEntryStatus.SEARCH_FAILED]: allSearchesFailed,
                         [MigrationEntryStatus.SEARCH_COMPLETE]: !!searchProgress.success,
                     };
@@ -340,28 +388,12 @@ export class MigrationManager {
         }
     }
 
-    private static async search(entries: TMigrationEntry[]): Promise<void> {
-        const { signal } = MigrationManager.abortAndCreateAbortController('search');
-
-        const searchPromises = entries.map((entry) =>
-            MigrationManager.mangaProcessQueue(async () => {
-                if (signal.aborted) {
-                    return;
-                }
-
-                await MigrationManager.searchForManga(entry.mangaId, entry.mangaTitle, signal);
-            }),
-        );
-
-        await Promise.allSettled(searchPromises);
-    }
-
     static getMigratableEntries(): MigratableEntry[] {
         const { entries } = MigrationManager.getState();
 
         return Object.values(entries).filter(
             (entry): entry is MigratableEntry =>
-                entry.status === MigrationEntryStatus.SEARCH_COMPLETE &&
+                [MigrationEntryStatus.SEARCH_COMPLETE, MigrationEntryStatus.MIGRATING].includes(entry.status) &&
                 !entry.isExcluded &&
                 entry.selectedMatchMangaId != null &&
                 entry.selectedMatchSourceId != null,
@@ -369,6 +401,8 @@ export class MigrationManager {
     }
 
     static async startMigration(options: Omit<MigrateOptions, 'mangaIdToMigrateTo'>): Promise<void> {
+        MigrationManager.ensureIsInValidPhase([MigrationPhase.SEARCHING]);
+
         const migratableEntries = MigrationManager.getMigratableEntries();
 
         await Confirmation.show({
@@ -388,22 +422,7 @@ export class MigrationManager {
             draft.groupExpandState = MIGRATE_EXECUTE_ENTRY_GROUP_EXPAND_DEFAULT_STATE;
         });
 
-        try {
-            await MigrationManager.migrate(migratableEntries, options);
-        } finally {
-            const { migrationProgress } = MigrationManager.getState();
-
-            if (migrationProgress.completed === migrationProgress.total) {
-                MigrationManager.updateState((draft) => {
-                    draft.groupExpandState = {
-                        ...MIGRATE_SEARCH_ENTRY_GROUP_EXPAND_DEFAULT_STATE,
-                        [MigrationEntryStatus.MIGRATING]: false,
-                        [MigrationEntryStatus.MIGRATION_FAILED]: !!migrationProgress.failed,
-                        [MigrationEntryStatus.MIGRATION_COMPLETE]: !migrationProgress.failed,
-                    };
-                });
-            }
-        }
+        await MigrationManager.migrate(migratableEntries, options);
     }
 
     private static async migrate(
@@ -426,7 +445,23 @@ export class MigrationManager {
                 }
             }),
         );
-        await Promise.allSettled(migrationPromises);
+
+        try {
+            await Promise.allSettled(migrationPromises);
+        } finally {
+            const { migrationProgress } = MigrationManager.getState();
+
+            if (migrationProgress.completed === migrationProgress.total) {
+                MigrationManager.updateState((draft) => {
+                    draft.groupExpandState = {
+                        ...MIGRATE_SEARCH_ENTRY_GROUP_EXPAND_DEFAULT_STATE,
+                        [MigrationEntryStatus.MIGRATING]: false,
+                        [MigrationEntryStatus.MIGRATION_FAILED]: !!migrationProgress.failed,
+                        [MigrationEntryStatus.MIGRATION_COMPLETE]: !migrationProgress.failed,
+                    };
+                });
+            }
+        }
 
         if (!signal.aborted) {
             MigrationManager.updateState((draft) => {
@@ -450,29 +485,43 @@ export class MigrationManager {
     }
 
     static async resume(): Promise<void> {
-        const state = MigrationManager.getState();
+        const { phase, migrateOptions, searchOptions, entries } = MigrationManager.getState();
 
-        const isResumeablePhase = RESUMABLE_PHASES.includes(state.phase);
+        const isResumeablePhase = RESUMABLE_PHASES.includes(phase);
         if (!isResumeablePhase) {
             return;
         }
 
-        const resumeMigrationPhase = state.phase === MigrationPhase.MIGRATING && state.migrateOptions;
+        const resumeMigrationPhase = phase === MigrationPhase.MIGRATING && migrateOptions;
         if (resumeMigrationPhase) {
-            assertIsDefined(state.migrateOptions);
+            assertIsDefined(migrateOptions);
 
             const migratableEntries = MigrationManager.getMigratableEntries();
 
-            await MigrationManager.migrate(migratableEntries, state.migrateOptions);
+            MigrationManager.updateState((draft) => {
+                migratableEntries.forEach((entry) => {
+                    draft.entries[entry.mangaId].status = MigrationEntryStatus.SEARCH_COMPLETE;
+                });
+            });
+
+            await MigrationManager.migrate(migratableEntries, migrateOptions);
 
             return;
         }
 
-        const pendingEntries = Object.values(state.entries).filter(
-            (entry) => entry.status === MigrationEntryStatus.PENDING,
+        assertIsDefined(searchOptions);
+
+        const pendingEntries = Object.values(entries).filter((entry) =>
+            [MigrationEntryStatus.PENDING, MigrationEntryStatus.SEARCHING].includes(entry.status),
         );
 
-        await MigrationManager.search(pendingEntries);
+        MigrationManager.updateState((draft) => {
+            pendingEntries.forEach((entry) => {
+                draft.entries[entry.mangaId].status = MigrationEntryStatus.PENDING;
+            });
+        });
+
+        await MigrationManager.search(pendingEntries, searchOptions);
     }
 
     static reset(): void {
@@ -544,32 +593,60 @@ export class MigrationManager {
 
     static isActive(): boolean {
         const { phase } = migrationStore.getState();
-        return phase === MigrationPhase.SEARCHING || phase === MigrationPhase.MIGRATING;
+
+        return (
+            !!MigrationManager.abortController &&
+            (phase === MigrationPhase.SEARCHING || phase === MigrationPhase.MIGRATING)
+        );
     }
 
     static hasPausedMigration(): boolean {
         return RESUMABLE_PHASES.includes(MigrationManager.getState().phase);
     }
 
-    private static getHigherPrioritySourceIds(sourceId: SourceIdInfo['id']): SourceIdInfo['id'][] {
-        const { destinationSourceIds } = MigrationManager.getState();
+    private static getDestinationSourceIds(mangaSourceId: SourceIdInfo['id']): MigrationState['destinationSourceIds'] {
+        const { sourceIds, destinationSourceIds } = MigrationManager.getState();
 
-        const sourceIdPriority = destinationSourceIds.indexOf(sourceId);
+        // Prevent (most likely) unintentionally matching a manga to itself.
+        const isMultiSourceMigration = (sourceIds?.length ?? -1) > 1;
+        if (isMultiSourceMigration) {
+            const mangaSourceIdIndex = destinationSourceIds.indexOf(mangaSourceId);
+
+            return [
+                ...destinationSourceIds.slice(0, mangaSourceIdIndex),
+                ...destinationSourceIds.slice(mangaSourceIdIndex + 1),
+                mangaSourceId,
+            ];
+        }
+
+        return destinationSourceIds;
+    }
+
+    private static getHigherPrioritySourceIds(
+        mangaSourceId: SourceIdInfo['id'],
+        destSourceId: SourceIdInfo['id'],
+    ): SourceIdInfo['id'][] {
+        const destinationSourceIds = MigrationManager.getDestinationSourceIds(mangaSourceId);
+
+        const sourceIdPriority = destinationSourceIds.indexOf(destSourceId);
         return destinationSourceIds.slice(0, Math.max(0, sourceIdPriority - 1));
     }
 
-    private static isHigherPrioritySourceUnsettled(mangaId: MangaIdInfo['id'], sourceId: SourceIdInfo['id']): boolean {
+    private static isHigherPrioritySourceUnsettled(
+        mangaId: MangaIdInfo['id'],
+        destSourceId: SourceIdInfo['id'],
+    ): boolean {
         const { entries } = MigrationManager.getState();
         const entry = entries[mangaId];
 
         assertIsDefined(entry);
 
-        return MigrationManager.getHigherPrioritySourceIds(sourceId).some(
+        return MigrationManager.getHigherPrioritySourceIds(entry.sourceId, destSourceId).some(
             (higherPrioritySourceId) => entry.destSourceIdToSearchState[higherPrioritySourceId] == null,
         );
     }
 
-    private static hasHigherSourcePriorityMatch(mangaId: MangaIdInfo['id'], sourceId: SourceIdInfo['id']): boolean {
+    private static hasHigherSourcePriorityMatch(mangaId: MangaIdInfo['id'], destSourceId: SourceIdInfo['id']): boolean {
         const { entries } = MigrationManager.getState();
         const entry = entries[mangaId];
 
@@ -577,7 +654,7 @@ export class MigrationManager {
             return false;
         }
 
-        return MigrationManager.getHigherPrioritySourceIds(sourceId).some(
+        return MigrationManager.getHigherPrioritySourceIds(entry.sourceId, destSourceId).some(
             (higherPrioritySourceId) => entry.destSourceIdToSearchState[higherPrioritySourceId],
         );
     }
@@ -587,62 +664,104 @@ export class MigrationManager {
         mangaTitle: string,
         sourceId: SourceIdInfo['id'],
         signal: AbortSignal,
+        { selectHighestChapterNumberSource, performAdvancedSearch }: MigrationBulkSearchSettings,
     ): Promise<MangaMigrationFieldsFragment[]> {
         if (signal.aborted) {
             throw new Error(signal.reason);
         }
 
-        return MigrationManager.getOrCreateSourceQueue(sourceId)(async () => {
+        if (signal.aborted) {
+            throw new Error(signal.reason);
+        }
+
+        if (!selectHighestChapterNumberSource && MigrationManager.hasHigherSourcePriorityMatch(mangaId, sourceId)) {
+            throw new Error('Entry already has a selected match from a higher priority source');
+        }
+
+        const searchQueries = performAdvancedSearch
+            ? [
+                  mangaTitle,
+                  ...enhancedCleanup(mangaTitle)
+                      .split(' ')
+                      .filter((query) => query.length >= 3),
+              ]
+            : [mangaTitle];
+
+        const searchRequests = searchQueries.map((query) =>
+            MigrationManager.getOrCreateSourceQueue(sourceId)(() =>
+                requestManager.graphQLClient.client.mutate<
+                    GetMigrationSourceMangasFetchMutation,
+                    GetMigrationSourceMangasFetchMutationVariables
+                >({
+                    mutation: GET_MIGRATION_SOURCE_MANGAS_FETCH,
+                    variables: {
+                        input: {
+                            source: sourceId,
+                            query,
+                            page: 1,
+                            type: FetchSourceMangaType.Search,
+                        },
+                    },
+                    context: { fetchOptions: { signal } },
+                }),
+            ),
+        );
+
+        const searchResponses = await Promise.allSettled(searchRequests);
+        const successfulSearchResponses = searchResponses
+            .filter((response) => response.status === 'fulfilled')
+            .map((response) => response.value);
+
+        if (!successfulSearchResponses.length) {
+            const failureReasons = searchResponses.map((response) => (response as PromiseRejectedResult).reason);
+
+            throw new Error(`Search failed due to:${failureReasons.join('\n\n')}`);
+        }
+
+        const searchResults = successfulSearchResponses.flatMap(
+            (response) => response?.data?.fetchSourceManga?.mangas ?? [],
+        );
+        const uniqueSearchResults = uniqBy('id', searchResults);
+        const matches = uniqueSearchResults.filter(
+            (searchMatch) => enhancedCleanup(searchMatch.title) === enhancedCleanup(mangaTitle),
+        );
+
+        const matchUpdatePromises = matches.map(async (match) => {
             if (signal.aborted) {
                 throw new Error(signal.reason);
             }
 
-            if (MigrationManager.hasHigherSourcePriorityMatch(mangaId, sourceId)) {
-                throw new Error('Entry already has a selected match from a higher priority source');
-            }
+            return (async () => {
+                try {
+                    const updatedMatch = await MigrationManager.getOrCreateSourceQueue(sourceId)(
+                        () =>
+                            requestManager.refreshManga(match.id, {
+                                awaitRefetchQueries: true,
+                            }).response,
+                    );
 
-            const searchResponse = await requestManager.graphQLClient.client.mutate<
-                GetMigrationSourceMangasFetchMutation,
-                GetMigrationSourceMangasFetchMutationVariables
-            >({
-                mutation: GET_MIGRATION_SOURCE_MANGAS_FETCH,
-                variables: {
-                    input: {
-                        source: sourceId,
-                        query: mangaTitle,
-                        page: 1,
-                        type: FetchSourceMangaType.Search,
-                    },
-                },
-                context: { fetchOptions: { signal } },
-            });
-
-            const searchMatches = searchResponse?.data?.fetchSourceManga?.mangas ?? [];
-            const matches = searchMatches.filter(
-                (searchMatch) => enhancedCleanup(searchMatch.title) === enhancedCleanup(mangaTitle),
-            );
-
-            const matchUpdatePromises = matches.map(async (match) => {
-                if (signal.aborted) {
-                    throw new Error(signal.reason);
+                    return updatedMatch.data?.fetchManga?.manga ?? match;
+                } catch (e) {
+                    // ignore
                 }
 
-                const updatedMatch = await requestManager.getMangaFetch(match.id).response;
-
-                return updatedMatch.data?.fetchManga?.manga ?? match;
-            });
-
-            const updatedMatches = await Promise.all(matchUpdatePromises);
-
-            return updatedMatches;
+                return match;
+            })();
         });
+
+        const updatedMatches = await Promise.all(matchUpdatePromises);
+
+        return updatedMatches;
     }
 
     private static async searchForManga(
         mangaId: MangaIdInfo['id'],
         mangaTitle: string,
         mainSignal: AbortSignal,
+        options: MigrationBulkSearchSettings,
     ): Promise<void> {
+        const { selectHighestChapterNumberSource, ignoreOutdatedMatches } = options;
+
         const state = MigrationManager.getState();
         const entry = state.entries[mangaId];
 
@@ -658,13 +777,16 @@ export class MigrationManager {
         });
 
         try {
-            const searchPromises = state.destinationSourceIds.map((destSourceId) =>
+            const searchPromises = MigrationManager.getDestinationSourceIds(entry.sourceId).map((destSourceId) =>
                 MigrationManager.getParallelSourceQueue()(async () => {
                     if (signal.aborted) {
                         return null;
                     }
 
-                    if (MigrationManager.hasHigherSourcePriorityMatch(mangaId, destSourceId)) {
+                    if (
+                        !selectHighestChapterNumberSource &&
+                        MigrationManager.hasHigherSourcePriorityMatch(mangaId, destSourceId)
+                    ) {
                         return null;
                     }
 
@@ -675,6 +797,7 @@ export class MigrationManager {
                                 mangaTitle,
                                 destSourceId,
                                 signal,
+                                options,
                             );
                         } catch (e) {
                             MigrationManager.updateState((draft) => {
@@ -699,6 +822,9 @@ export class MigrationManager {
 
                     MigrationManager.updateState((draft) => {
                         const draftEntry = draft.entries[mangaId];
+                        const draftMatchEntry = draftEntry.selectedMatchMangaId
+                            ? draft.entries[draftEntry.selectedMatchMangaId]
+                            : null;
 
                         const matches = foundMatches.map((manga) => ({
                             id: manga.id,
@@ -712,26 +838,55 @@ export class MigrationManager {
                         }));
 
                         draftEntry.destSourceIdToSearchState[destSourceId] = true;
-
                         draftEntry.searchMatches = [...draftEntry.searchMatches, ...matches];
 
-                        if (!MigrationManager.hasHigherSourcePriorityMatch(mangaId, destSourceId)) {
-                            const matchesByChapterNumber = Object.groupBy(
-                                matches,
-                                (match) => match.latestChapterNumber ?? -1,
-                            );
-                            const latestChapterNumber = Math.max(
-                                ...Object.keys(matchesByChapterNumber).map((chapterNumber) => Number(chapterNumber)),
-                            );
-                            const bestMatch = matchesByChapterNumber[latestChapterNumber]?.[0];
+                        const matchesByChapterNumber = Object.groupBy(
+                            matches,
+                            (match) => match.latestChapterNumber ?? -1,
+                        );
+                        const latestChapterNumber = Math.max(
+                            ...Object.keys(matchesByChapterNumber).map((chapterNumber) => Number(chapterNumber)),
+                        );
+                        const bestMatch = matchesByChapterNumber[latestChapterNumber]?.[0];
 
-                            assertIsDefined(bestMatch);
+                        assertIsDefined(bestMatch);
 
+                        const entryLatestChapterNumber = draftEntry.latestChapterNumber ?? Number.MIN_SAFE_INTEGER;
+                        const selectedMatchLatestChapterNumber =
+                            draftMatchEntry?.latestChapterNumber ?? Number.MIN_SAFE_INTEGER;
+
+                        const hasNewerChapterVsEntry = latestChapterNumber > entryLatestChapterNumber;
+                        const hasNewerChapterVsSelectedMatch = latestChapterNumber > selectedMatchLatestChapterNumber;
+                        const hasNewerChapter = hasNewerChapterVsEntry && hasNewerChapterVsSelectedMatch;
+
+                        const hasSameLatestChapterAsSelectedMatch =
+                            !!draftMatchEntry && selectedMatchLatestChapterNumber === latestChapterNumber;
+
+                        const hasHigherSourcePriority = !MigrationManager.hasHigherSourcePriorityMatch(
+                            mangaId,
+                            destSourceId,
+                        );
+
+                        const ignoreOutdatedMatch = ignoreOutdatedMatches && !hasNewerChapter;
+                        const isPreferredSourcePriorityMatch =
+                            hasHigherSourcePriority && !selectHighestChapterNumberSource;
+                        const isPreferredChapterNumberMatch =
+                            selectHighestChapterNumberSource &&
+                            (hasNewerChapter ||
+                                (hasHigherSourcePriority && hasSameLatestChapterAsSelectedMatch) ||
+                                !draftMatchEntry);
+
+                        const isPreferredMatch =
+                            !ignoreOutdatedMatch && (isPreferredSourcePriorityMatch || isPreferredChapterNumberMatch);
+                        if (isPreferredMatch) {
                             draftEntry.selectedMatchMangaId = bestMatch.id;
                             draftEntry.selectedMatchSourceId = destSourceId;
                         }
 
-                        if (!MigrationManager.isHigherPrioritySourceUnsettled(mangaId, destSourceId)) {
+                        if (
+                            !selectHighestChapterNumberSource &&
+                            !MigrationManager.isHigherPrioritySourceUnsettled(mangaId, destSourceId)
+                        ) {
                             searchController.abort(`Found best match in source "${destSourceId}"`);
                         }
                     });
@@ -750,7 +905,12 @@ export class MigrationManager {
 
                 if (draftEntry.searchMatches.length) {
                     draft.searchProgress.success += 1;
-                    draftEntry.status = MigrationEntryStatus.SEARCH_COMPLETE;
+
+                    if (draftEntry.selectedMatchMangaId != null) {
+                        draftEntry.status = MigrationEntryStatus.SEARCH_COMPLETE;
+                    } else {
+                        draftEntry.status = MigrationEntryStatus.OUTDATED;
+                    }
                 } else {
                     draftEntry.status = MigrationEntryStatus.NO_MATCH;
                 }
@@ -758,7 +918,7 @@ export class MigrationManager {
                 draft.searchProgress.completed += 1;
             });
         } catch (error) {
-            if (signal.aborted) {
+            if (mainSignal.aborted) {
                 return;
             }
 
@@ -794,20 +954,19 @@ export class MigrationManager {
                 return;
             }
 
-            await MigrationManager.getParallelSourceQueue()(() =>
-                MigrationManager.getOrCreateSourceQueue(entry.sourceId)(() => {
-                    assertIsDefined(entry.selectedMatchSourceId);
+            await MigrationManager.getParallelSourceQueue()(() => {
+                assertIsDefined(entry.selectedMatchSourceId);
 
-                    return MigrationManager.getOrCreateSourceQueue(entry.selectedMatchSourceId)(async () => {
-                        if (signal.aborted) {
-                            return;
-                        }
+                return MigrationManager.getOrCreateSourceQueue(entry.selectedMatchSourceId)(async () => {
+                    if (signal.aborted) {
+                        return;
+                    }
 
-                        assertIsDefined(entry.selectedMatchMangaId);
-                        await MangaMigration.migrate(mangaId, entry.selectedMatchMangaId, options);
-                    });
-                }),
-            );
+                    assertIsDefined(entry.selectedMatchMangaId);
+
+                    await MangaMigration.migrateByIdWithQuery(mangaId, entry.selectedMatchMangaId, options);
+                });
+            });
 
             MigrationManager.updateState((draft) => {
                 draft.entries[mangaId].status = MigrationEntryStatus.MIGRATION_COMPLETE;
@@ -829,7 +988,8 @@ export class MigrationManager {
     }
 
     static async retryEntry(id: MangaIdInfo['id']): Promise<void> {
-        const entry = MigrationManager.getState().entries[id];
+        const { entries, migrateOptions, searchOptions } = MigrationManager.getState();
+        const entry = entries[id];
 
         if (!entry) {
             return;
@@ -844,7 +1004,12 @@ export class MigrationManager {
                 draft.searchProgress.failed -= 1;
             });
 
-            await MigrationManager.searchForManga(id, entry.mangaTitle, signal);
+            assertIsDefined(searchOptions);
+
+            await MigrationManager.mangaProcessQueue(() =>
+                MigrationManager.searchForManga(id, entry.mangaTitle, signal, searchOptions),
+            );
+
             return;
         }
 
@@ -854,10 +1019,11 @@ export class MigrationManager {
                 draft.migrationProgress.failed -= 1;
             });
 
-            const migrationOptions = MigrationManager.getState().migrateOptions;
-            assertIsDefined(migrationOptions);
+            assertIsDefined(migrateOptions);
 
-            await MigrationManager.migrateSingleEntry(id, migrationOptions, signal);
+            await MigrationManager.mangaProcessQueue(() =>
+                MigrationManager.migrateSingleEntry(id, migrateOptions, signal),
+            );
         }
     }
 
@@ -893,8 +1059,8 @@ export class MigrationManager {
         return useMigrationStore((state) => state.phase);
     }
 
-    static useSourceId(): SourceIdInfo['id'] | null {
-        return useMigrationStore((state) => state.sourceId);
+    static useSourceIds(): MigrationState['sourceIds'] {
+        return useMigrationStore((state) => state.sourceIds);
     }
 
     static useEntries(): Record<number, TMigrationEntry> {

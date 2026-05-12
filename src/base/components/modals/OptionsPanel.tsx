@@ -22,13 +22,15 @@ export const OptionsPanel: React.FC<IProps> = ({ open, onClose, children, minHei
         anchor="bottom"
         open={open}
         onClose={onClose}
-        PaperProps={{
-            style: {
-                maxWidth: 600,
-                marginLeft: 'auto',
-                marginRight: 'auto',
-                minHeight,
-                borderRadius: 16,
+        slotProps={{
+            paper: {
+                sx: {
+                    maxWidth: 600,
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                    minHeight,
+                    borderRadius: 16,
+                },
             },
         }}
     >

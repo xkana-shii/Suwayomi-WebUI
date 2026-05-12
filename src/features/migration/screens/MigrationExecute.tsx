@@ -30,9 +30,21 @@ export const MigrationExecute = () => {
     const entryList = useMemo(() => Object.values(entries), [entries]);
     const migratingEntries = useMemo(
         () =>
-            entryList.filter((entry) =>
-                [MigrationEntryStatus.PENDING, MigrationEntryStatus.MIGRATING].includes(entry.status),
-            ),
+            entryList
+                .filter((entry) =>
+                    [MigrationEntryStatus.SEARCH_COMPLETE, MigrationEntryStatus.MIGRATING].includes(entry.status),
+                )
+                .toSorted((a, b) => {
+                    if (a.status === MigrationEntryStatus.MIGRATING && b.status !== MigrationEntryStatus.MIGRATING) {
+                        return -1;
+                    }
+
+                    if (a.status !== MigrationEntryStatus.MIGRATING && b.status === MigrationEntryStatus.MIGRATING) {
+                        return 1;
+                    }
+
+                    return entryList.indexOf(a) - entryList.indexOf(b);
+                }),
         [entryList],
     );
     const migratedEntries = useMemo(
@@ -46,6 +58,10 @@ export const MigrationExecute = () => {
     const excludedEntries = useMemo(() => entryList.filter((entry) => entry.isExcluded), [entryList]);
     const noMatchEntries = useMemo(
         () => entryList.filter((entry) => entry.status === MigrationEntryStatus.NO_MATCH),
+        [entryList],
+    );
+    const outdatedEntries = useMemo(
+        () => entryList.filter((entry) => entry.status === MigrationEntryStatus.OUTDATED),
         [entryList],
     );
 
@@ -68,7 +84,7 @@ export const MigrationExecute = () => {
                     })}
                     entries={migratingEntries}
                     isMigrating
-                    color="error"
+                    color="info"
                 />
                 <MigrationEntryGroup
                     status={MigrationEntryStatus.MIGRATION_FAILED}
@@ -89,6 +105,15 @@ export const MigrationExecute = () => {
                     entries={noMatchEntries}
                     color="warning"
                     isMigrating
+                />
+                <MigrationEntryGroup
+                    status={MigrationEntryStatus.OUTDATED}
+                    title={plural(outdatedEntries.length, {
+                        one: '1 entry with only outdated matches',
+                        other: '# entries with only outdated matches',
+                    })}
+                    entries={outdatedEntries}
+                    color="warning"
                 />
                 <MigrationEntryGroup
                     status={MigrationEntryStatus.EXCLUDED}

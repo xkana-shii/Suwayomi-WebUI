@@ -58,6 +58,12 @@ export type MetadataMigrationSettings = {
     migrateSortSettings: SortSettings;
 };
 
+export interface MigrationBulkSearchSettings {
+    selectHighestChapterNumberSource: boolean;
+    ignoreOutdatedMatches: boolean;
+    performAdvancedSearch: boolean;
+}
+
 export enum MigrationPhase {
     IDLE = 'idle',
     SELECT_SOURCE = 'select_source',
@@ -72,6 +78,7 @@ export enum MigrationEntryStatus {
     SEARCHING = 'searching',
     SEARCH_COMPLETE = 'search_complete',
     SEARCH_FAILED = 'search_failed',
+    OUTDATED = 'outdated',
     NO_MATCH = 'no_match',
     MIGRATING = 'migrating',
     MIGRATION_COMPLETE = 'migration_complete',
@@ -111,9 +118,10 @@ export type MigrationProgress = { total: number; completed: number; success: num
 
 export interface MigrationState {
     phase: MigrationPhase;
-    sourceId: SourceIdInfo['id'] | null;
+    sourceIds: SourceIdInfo['id'][] | null;
     entries: Record<MangaIdInfo['id'], TMigrationEntry>;
     destinationSourceIds: SourceIdInfo['id'][];
+    searchOptions: MigrationBulkSearchSettings | null;
     migrateOptions: Omit<MigrateOptions, 'mangaIdToMigrateTo'> | null;
     searchProgress: MigrationProgress;
     migrationProgress: MigrationProgress;
@@ -123,3 +131,7 @@ export interface MigrationState {
 }
 
 export interface SourceItem extends SourceIdInfo, SourceNameInfo, SourceLanguageInfo, SourceIconInfo, SourceMetaInfo {}
+
+export type TMigratableSource = NonNullable<GetMigratableSourcesQuery['mangas']['nodes'][number]['source']> & {
+    mangaCount: number;
+};

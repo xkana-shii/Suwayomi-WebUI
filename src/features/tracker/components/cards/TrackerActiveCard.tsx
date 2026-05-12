@@ -375,7 +375,7 @@ const TrackerActiveHeader = ({
                 // ensure keyboard users can open search via Enter/Space on the ListItemButton (native handles this)
             >
                 <CustomTooltip title={trackRecord.title}>
-                    <TypographyMaxLines flexGrow={1} lines={1}>
+                    <TypographyMaxLines sx={{ flexGrow: 1 }} lines={1}>
                         {trackRecord.title}
                     </TypographyMaxLines>
                 </CustomTooltip>

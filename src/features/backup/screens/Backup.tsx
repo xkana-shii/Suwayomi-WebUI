@@ -53,12 +53,7 @@ export function Backup() {
 
     useAppTitle(t`Backup`);
 
-    const {
-        data: settingsData,
-        loading,
-        error,
-        refetch,
-    } = requestManager.useGetServerSettings({ notifyOnNetworkStatusChange: true });
+    const { data: settingsData, loading, error, refetch } = requestManager.useGetServerSettings();
     const [mutateSettings] = requestManager.useUpdateServerSettings();
 
     const { data } = requestManager.useGetBackupRestoreStatus(backupRestoreId ?? '', {
@@ -306,7 +301,9 @@ export function Backup() {
                                     <span>{t`Exclude: ${excludedCategoriesText}`}</span>
                                 </>
                             }
-                            secondaryTypographyProps={{ style: { display: 'flex', flexDirection: 'column' } }}
+                            slotProps={{
+                                secondary: { sx: { display: 'flex', flexDirection: 'column' } },
+                            }}
                         />
                     </ListItemButton>
                     <TimeSetting

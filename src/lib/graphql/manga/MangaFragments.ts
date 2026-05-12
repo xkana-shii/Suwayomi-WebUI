@@ -113,6 +113,7 @@ export const MANGA_LIBRARY_FIELDS = gql`
     ${MANGA_CHAPTER_STAT_FIELDS}
     ${MANGA_CHAPTER_NODE_FIELDS}
     ${MANGA_META_FIELDS}
+    ${SOURCE_BASE_FIELDS}
 
     fragment MANGA_LIBRARY_FIELDS on MangaType {
         ...MANGA_BASE_FIELDS
@@ -133,8 +134,7 @@ export const MANGA_LIBRARY_FIELDS = gql`
         }
 
         source {
-            id
-            displayName
+            ...SOURCE_BASE_FIELDS
         }
 
         trackRecords {
