@@ -204,6 +204,18 @@ export const UPDATE_MANGA_DETAILS = gql`
     }
 `;
 
+export const RESET_MANGA_METADATA_TO_SOURCE = gql`
+    ${MANGA_SCREEN_FIELDS}
+
+    mutation RESET_MANGA_METADATA_TO_SOURCE($input: ResetMangaMetadataToSourceInput!) {
+        resetMangaMetadataToSource(input: $input) {
+            manga {
+                ...MANGA_SCREEN_FIELDS
+            }
+        }
+    }
+`;
+
 export const UPLOAD_MANGA_COVER = gql`
     ${MANGA_SCREEN_FIELDS}
 

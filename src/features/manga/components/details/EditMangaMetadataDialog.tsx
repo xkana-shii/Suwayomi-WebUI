@@ -6,7 +6,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -24,10 +24,10 @@ import Typography from '@mui/material/Typography';
 import Card from '@mui/material/Card';
 import CardActionArea from '@mui/material/CardActionArea';
 import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import CircularProgress from '@mui/material/CircularProgress';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import Collapse from '@mui/material/Collapse';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import SearchIcon from '@mui/icons-material/Search';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -51,6 +51,11 @@ import type {
     MangaTitleInfo,
 } from '@/features/manga/Manga.types.ts';
 
+type MangaMetaEntry = {
+    key: string;
+    value: string;
+};
+
 type EditableManga = MangaIdInfo &
     MangaTitleInfo &
     MangaStatusInfo &
@@ -58,7 +63,9 @@ type EditableManga = MangaIdInfo &
     MangaArtistInfo &
     MangaDescriptionInfo &
     MangaGenreInfo &
-    MangaThumbnailInfo;
+    MangaThumbnailInfo & {
+        meta?: MangaMetaEntry[] | null;
+    };
 
 interface SearchResult {
     externalId: string;
@@ -81,18 +88,104 @@ const STATUS_OPTIONS = [
 
 const PROVIDERS = ['MangaBaka', 'MangaUpdates', 'MyAnimeList', 'Anilist'];
 
+const PROVIDER_LABELS: Record<string, string> = {
+    MangaBaka: 'MangaBaka',
+    MangaUpdates: 'MangaUpdates',
+    MyAnimeList: 'MyAnimeList',
+    Anilist: 'AniList',
+};
+
+const PROVIDER_URLS: Record<string, string> = {
+    MangaBaka: 'https://mangabaka.org',
+    MangaUpdates: 'https://www.mangaupdates.com',
+    MyAnimeList: 'https://myanimelist.net',
+    Anilist: 'https://anilist.co',
+};
+
+const getProviderFaviconUrl = (provider: string): string => {
+    const providerUrl = PROVIDER_URLS[provider];
+    return `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${encodeURIComponent(providerUrl)}&size=128`;
+};
+
+const previewTextFieldSx = {
+    '& .MuiInputBase-input::placeholder': {
+        opacity: 1,
+        color: 'text.secondary',
+    },
+    '& textarea::placeholder': {
+        opacity: 1,
+        color: 'text.secondary',
+    },
+};
+
+type PreviewTextFieldProps = {
+    fieldLabel: string;
+    previewValue: string;
+    value: string;
+    onChange: (value: string) => void;
+    multiline?: boolean;
+    minRows?: number;
+    maxRows?: number;
+};
+
+const PreviewTextField = ({
+    fieldLabel,
+    previewValue,
+    value,
+    onChange,
+    multiline = false,
+    minRows,
+    maxRows,
+}: PreviewTextFieldProps) => {
+    const [focused, setFocused] = useState(false);
+
+    const showPreviewAsLabel = !focused && value.length === 0 && previewValue.length > 0;
+    const shrink = focused || value.length > 0;
+
+    return (
+        <TextField
+            label={showPreviewAsLabel ? previewValue : fieldLabel}
+            value={value}
+            placeholder={previewValue}
+            onChange={(e) => onChange(e.target.value)}
+            onFocus={() => setFocused(true)}
+            onBlur={() => setFocused(false)}
+            fullWidth
+            size="small"
+            variant="outlined"
+            multiline={multiline}
+            minRows={minRows}
+            maxRows={maxRows}
+            InputLabelProps={{ shrink }}
+            sx={previewTextFieldSx}
+        />
+    );
+};
+
 const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void }) => {
     const { t } = useLingui();
 
-    const [title, setTitle] = useState(manga.title);
-    const [author, setAuthor] = useState(manga.author ?? '');
-    const [artist, setArtist] = useState(manga.artist ?? '');
-    const [description, setDescription] = useState(manga.description ?? '');
+    const metaMap = useMemo(
+        () => Object.fromEntries((manga.meta ?? []).map((entry) => [entry.key, entry.value])),
+        [manga.meta],
+    );
+
+    const initialTitle = metaMap['metadata.override.title'] ?? '';
+    const initialAuthor = metaMap['metadata.override.author'] ?? '';
+    const initialArtist = metaMap['metadata.override.artist'] ?? '';
+    const initialDescription = metaMap['metadata.override.description'] ?? '';
+
+    const [title, setTitle] = useState(initialTitle);
+    const [author, setAuthor] = useState(initialAuthor);
+    const [artist, setArtist] = useState(initialArtist);
+    const [description, setDescription] = useState(initialDescription);
     const [genre, setGenre] = useState<string[]>(manga.genre ?? []);
     const [status, setStatus] = useState<MangaStatus>(manga.status);
     const [coverFile, setCoverFile] = useState<File | null>(null);
     const [coverPreview, setCoverPreview] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
+    const [isResetting, setIsResetting] = useState(false);
+    const [resetCover, setResetCover] = useState(true);
 
     const handleCoverSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -106,10 +199,10 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
         setIsSaving(true);
         try {
             const patch = {
-                title: title !== manga.title ? title : undefined,
-                author: author !== (manga.author ?? '') ? author : undefined,
-                artist: artist !== (manga.artist ?? '') ? artist : undefined,
-                description: description !== (manga.description ?? '') ? description : undefined,
+                title: title !== initialTitle ? title : undefined,
+                author: author !== initialAuthor ? author : undefined,
+                artist: artist !== initialArtist ? artist : undefined,
+                description: description !== initialDescription ? description : undefined,
                 genre: JSON.stringify(genre) !== JSON.stringify(manga.genre ?? []) ? genre : undefined,
                 status: status !== manga.status ? status : undefined,
             };
@@ -129,6 +222,19 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
             makeToast(t`Failed to update metadata`, 'error', getErrorMessage(e));
         } finally {
             setIsSaving(false);
+        }
+    };
+
+    const handleReset = async () => {
+        setIsResetting(true);
+        try {
+            await requestManager.resetMangaMetadataToSource(manga.id, resetCover).response;
+            makeToast(t`Metadata reset to source`, 'success');
+            onClose();
+        } catch (e) {
+            makeToast(t`Failed to reset metadata`, 'error', getErrorMessage(e));
+        } finally {
+            setIsResetting(false);
         }
     };
 
@@ -163,30 +269,29 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
                                 <input type="file" hidden accept="image/*" onChange={handleCoverSelect} />
                             </IconButton>
                         </Box>
+
                         <Stack sx={{ gap: 1, flex: 1 }}>
-                            <TextField
-                                label={t`Title`}
+                            <PreviewTextField
+                                fieldLabel={t`Title`}
+                                previewValue={manga.title}
                                 value={title}
-                                onChange={(e) => setTitle(e.target.value)}
-                                fullWidth
-                                size="small"
+                                onChange={setTitle}
                             />
-                            <TextField
-                                label={t`Author`}
+                            <PreviewTextField
+                                fieldLabel={t`Author`}
+                                previewValue={manga.author ?? ''}
                                 value={author}
-                                onChange={(e) => setAuthor(e.target.value)}
-                                fullWidth
-                                size="small"
+                                onChange={setAuthor}
                             />
-                            <TextField
-                                label={t`Artist`}
+                            <PreviewTextField
+                                fieldLabel={t`Artist`}
+                                previewValue={manga.artist ?? ''}
                                 value={artist}
-                                onChange={(e) => setArtist(e.target.value)}
-                                fullWidth
-                                size="small"
+                                onChange={setArtist}
                             />
                         </Stack>
                     </Box>
+
                     <TextField
                         select
                         label={t`Status`}
@@ -201,6 +306,7 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
                             </MenuItem>
                         ))}
                     </TextField>
+
                     <Autocomplete
                         multiple
                         freeSolo
@@ -222,25 +328,36 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
                             <TextField {...params} label={t`Genres`} size="small" placeholder={t`Add genre`} />
                         )}
                     />
-                    <TextField
-                        label={t`Description`}
+
+                    <PreviewTextField
+                        fieldLabel={t`Description`}
+                        previewValue={manga.description ?? ''}
                         value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        fullWidth
+                        onChange={setDescription}
                         multiline
                         minRows={3}
                         maxRows={6}
-                        size="small"
                     />
                 </Stack>
             </DialogContent>
-            <DialogActions>
-                <Button onClick={onClose} color="primary">
-                    {t`Cancel`}
-                </Button>
-                <Button onClick={handleSubmit} color="primary" disabled={isSaving}>
-                    {isSaving ? t`Saving...` : t`Save`}
-                </Button>
+
+            <DialogActions sx={{ justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
+                <FormControlLabel
+                    control={<Checkbox checked={resetCover} onChange={(e) => setResetCover(e.target.checked)} />}
+                    label={t`Reset cover too`}
+                    sx={{ ml: 1 }}
+                />
+                <Box sx={{ display: 'flex', gap: 1 }}>
+                    <Button onClick={handleReset} color="warning" disabled={isResetting || isSaving}>
+                        {isResetting ? t`Resetting...` : t`Reset to source`}
+                    </Button>
+                    <Button onClick={onClose} color="primary">
+                        {t`Cancel`}
+                    </Button>
+                    <Button onClick={handleSubmit} color="primary" disabled={isSaving || isResetting}>
+                        {isSaving ? t`Saving...` : t`Save`}
+                    </Button>
+                </Box>
             </DialogActions>
         </>
     );
@@ -261,26 +378,180 @@ const getResultExternalUrl = (resultProvider: string, result: SearchResult): str
     }
 };
 
+const MatchResultCard = ({
+    result,
+    provider,
+    selected,
+    expanded,
+    onSelect,
+    onToggleExpanded,
+}: {
+    result: SearchResult;
+    provider: string;
+    selected: boolean;
+    expanded: boolean;
+    onSelect: () => void;
+    onToggleExpanded: () => void;
+}) => {
+    const { t } = useLingui();
+    const externalUrl = getResultExternalUrl(provider, result);
+
+    return (
+        <Card variant="outlined">
+            <CardActionArea onClick={onSelect}>
+                <CardContent>
+                    <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
+                        <Stack direction="row" spacing={2} sx={{ flex: 1, minWidth: 0 }}>
+                            <Box sx={{ flexShrink: 0 }}>
+                                {result.coverUrl ? (
+                                    externalUrl ? (
+                                        <a href={externalUrl} rel="noreferrer" target="_blank">
+                                            <Box
+                                                component="img"
+                                                src={result.coverUrl}
+                                                alt={result.title}
+                                                draggable={false}
+                                                sx={{
+                                                    width: 80,
+                                                    height: 120,
+                                                    objectFit: 'cover',
+                                                    borderRadius: 1,
+                                                    display: 'block',
+                                                }}
+                                            />
+                                        </a>
+                                    ) : (
+                                        <Box
+                                            component="img"
+                                            src={result.coverUrl}
+                                            alt={result.title}
+                                            draggable={false}
+                                            sx={{
+                                                width: 80,
+                                                height: 120,
+                                                objectFit: 'cover',
+                                                borderRadius: 1,
+                                                display: 'block',
+                                            }}
+                                        />
+                                    )
+                                ) : null}
+                            </Box>
+
+                            <Stack spacing={1} sx={{ minWidth: 0, flex: 1 }}>
+                                {externalUrl ? (
+                                    <a
+                                        href={externalUrl}
+                                        rel="noreferrer"
+                                        target="_blank"
+                                        style={{ color: 'inherit', textDecoration: 'none' }}
+                                        onClick={(e) => e.stopPropagation()}
+                                    >
+                                        <Stack direction="row" spacing={1} alignItems="center">
+                                            <Typography variant="h6" noWrap sx={{ minWidth: 0 }}>
+                                                {result.title}
+                                            </Typography>
+                                            {selected && <CheckCircleIcon color="primary" />}
+                                        </Stack>
+                                    </a>
+                                ) : (
+                                    <Stack direction="row" spacing={1} alignItems="center">
+                                        <Typography variant="h6" noWrap sx={{ minWidth: 0 }}>
+                                            {result.title}
+                                        </Typography>
+                                        {selected && <CheckCircleIcon color="primary" />}
+                                    </Stack>
+                                )}
+
+                                <Stack direction="row" spacing={1}>
+                                    <Typography variant="body2" color="text.secondary" sx={{ minWidth: 70 }}>
+                                        {t`Author`}
+                                    </Typography>
+                                    <Typography variant="body2">{result.author ?? '-'}</Typography>
+                                </Stack>
+
+                                <Stack direction="row" spacing={1}>
+                                    <Typography variant="body2" color="text.secondary" sx={{ minWidth: 70 }}>
+                                        {t`Year`}
+                                    </Typography>
+                                    <Typography variant="body2">{result.year ?? '-'}</Typography>
+                                </Stack>
+                            </Stack>
+                        </Stack>
+
+                        {externalUrl ? (
+                            <IconButton
+                                size="small"
+                                aria-label={t`Open in new tab`}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    window.open(externalUrl, '_blank', 'noopener,noreferrer');
+                                }}
+                            >
+                                <OpenInNewIcon fontSize="small" />
+                            </IconButton>
+                        ) : null}
+                    </Box>
+
+                    {result.description ? (
+                        <>
+                            <Collapse in={expanded} collapsedSize={50}>
+                                <Typography
+                                    variant="body2"
+                                    sx={{
+                                        mt: 2,
+                                        whiteSpace: 'pre-wrap',
+                                        wordBreak: 'break-word',
+                                    }}
+                                >
+                                    {result.description}
+                                </Typography>
+                            </Collapse>
+                            <Button
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    onToggleExpanded();
+                                }}
+                                sx={{ mt: 1, px: 0 }}
+                            >
+                                {expanded ? t`Show less` : t`Show more`}
+                            </Button>
+                        </>
+                    ) : null}
+                </CardContent>
+            </CardActionArea>
+        </Card>
+    );
+};
+
 const MatchTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void }) => {
     const { t } = useLingui();
 
     const [provider, setProvider] = useState(PROVIDERS[0]);
     const [searchQuery, setSearchQuery] = useState(manga.title);
     const [results, setResults] = useState<SearchResult[]>([]);
+    const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({});
     const [isSearching, setIsSearching] = useState(false);
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [includeCover, setIncludeCover] = useState(true);
     const [isApplying, setIsApplying] = useState(false);
 
-    const handleSearch = async () => {
-        if (!searchQuery.trim()) {
+    const handleSearch = async (queryOverride?: string, providerOverride?: string) => {
+        const query = (queryOverride ?? searchQuery).trim();
+        const providerToUse = providerOverride ?? provider;
+
+        if (!query) {
             return;
         }
+
         setIsSearching(true);
         setResults([]);
         setSelectedId(null);
+        setExpandedIds({});
         try {
-            const response = await requestManager.searchMetadataProvider(provider, searchQuery.trim()).response;
+            const response = await requestManager.searchMetadataProvider(providerToUse, query).response;
             setResults(response.data?.searchMetadataProvider?.results ?? []);
         } catch (e) {
             makeToast(t`Search failed`, 'error', getErrorMessage(e));
@@ -288,6 +559,16 @@ const MatchTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => voi
             setIsSearching(false);
         }
     };
+
+    useEffect(() => {
+        handleSearch(manga.title, PROVIDERS[0]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    useEffect(() => {
+        handleSearch(searchQuery, provider);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [provider]);
 
     const handleApply = async () => {
         if (!selectedId) {
@@ -311,34 +592,42 @@ const MatchTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => voi
         }
     };
 
-    const handleOpenExternal = (result: SearchResult) => {
-        const url = getResultExternalUrl(provider, result);
-        if (!url) {
-            makeToast(t`No external link available for this provider`, 'error');
-            return;
-        }
-        window.open(url, '_blank', 'noopener,noreferrer');
-    };
-
     return (
         <>
-            <DialogContent>
-                <Stack sx={{ gap: 2, mt: 1 }}>
+            <DialogContent dividers>
+                <Stack sx={{ gap: 2 }}>
+                    <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                        {PROVIDERS.map((p) => {
+                            const selected = provider === p;
+                            return (
+                                <Button
+                                    key={p}
+                                    variant={selected ? 'contained' : 'outlined'}
+                                    onClick={() => setProvider(p)}
+                                    startIcon={
+                                        <Box
+                                            component="img"
+                                            src={getProviderFaviconUrl(p)}
+                                            alt={PROVIDER_LABELS[p]}
+                                            sx={{ width: 24, height: 24, borderRadius: 0.5 }}
+                                        />
+                                    }
+                                    sx={{
+                                        justifyContent: 'flex-start',
+                                        minWidth: 180,
+                                        borderRadius: 3,
+                                        textTransform: 'none',
+                                        px: 2,
+                                        py: 1.25,
+                                    }}
+                                >
+                                    {PROVIDER_LABELS[p]}
+                                </Button>
+                            );
+                        })}
+                    </Stack>
+
                     <Box sx={{ display: 'flex', gap: 1 }}>
-                        <TextField
-                            select
-                            label={t`Provider`}
-                            value={provider}
-                            onChange={(e) => setProvider(e.target.value)}
-                            size="small"
-                            sx={{ minWidth: 150 }}
-                        >
-                            {PROVIDERS.map((p) => (
-                                <MenuItem key={p} value={p}>
-                                    {p}
-                                </MenuItem>
-                            ))}
-                        </TextField>
                         <TextField
                             label={t`Search`}
                             value={searchQuery}
@@ -348,7 +637,7 @@ const MatchTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => voi
                             size="small"
                         />
                         <IconButton
-                            onClick={handleSearch}
+                            onClick={() => handleSearch()}
                             disabled={isSearching || !searchQuery.trim()}
                             color="primary"
                         >
@@ -357,93 +646,23 @@ const MatchTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => voi
                     </Box>
 
                     {results.length > 0 && (
-                        <Stack sx={{ gap: 1, maxHeight: 400, overflowY: 'auto' }}>
-                            {results.map((result) => {
-                                const hasExternalLink = !!getResultExternalUrl(provider, result);
-
-                                return (
-                                    <Card
-                                        key={result.externalId}
-                                        variant="outlined"
-                                        sx={{
-                                            border: selectedId === result.externalId ? 2 : 1,
-                                            borderColor: selectedId === result.externalId ? 'primary.main' : 'divider',
-                                        }}
-                                    >
-                                        <CardActionArea onClick={() => setSelectedId(result.externalId)}>
-                                            <Box sx={{ display: 'flex', minHeight: 90 }}>
-                                                {result.coverUrl && (
-                                                    <CardMedia
-                                                        component="img"
-                                                        image={result.coverUrl}
-                                                        alt={result.title}
-                                                        sx={{ width: 60, height: 90, objectFit: 'cover', flexShrink: 0 }}
-                                                    />
-                                                )}
-                                                <CardContent
-                                                    sx={{
-                                                        flex: 1,
-                                                        py: 1,
-                                                        '&:last-child': { pb: 1 },
-                                                        minWidth: 0,
-                                                        overflow: 'hidden',
-                                                    }}
-                                                >
-                                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                                        <Typography variant="subtitle2" noWrap sx={{ flex: 1 }}>
-                                                            {result.title}
-                                                        </Typography>
-
-                                                        <IconButton
-                                                            size="small"
-                                                            disabled={!hasExternalLink}
-                                                            onClick={(e) => {
-                                                                e.preventDefault();
-                                                                e.stopPropagation();
-                                                                handleOpenExternal(result);
-                                                            }}
-                                                            aria-label={t`Open in new tab`}
-                                                        >
-                                                            <OpenInNewIcon fontSize="small" />
-                                                        </IconButton>
-
-                                                        {result.year && (
-                                                            <Typography variant="caption" color="text.secondary">
-                                                                {result.year}
-                                                            </Typography>
-                                                        )}
-                                                        {selectedId === result.externalId && (
-                                                            <CheckCircleIcon color="primary" fontSize="small" />
-                                                        )}
-                                                    </Box>
-                                                    {result.author && (
-                                                        <Typography variant="caption" color="text.secondary">
-                                                            {result.author}
-                                                        </Typography>
-                                                    )}
-                                                    {result.description && (
-                                                        <Typography
-                                                            variant="caption"
-                                                            color="text.secondary"
-                                                            component="p"
-                                                            sx={{
-                                                                display: '-webkit-box',
-                                                                WebkitLineClamp: 2,
-                                                                WebkitBoxOrient: 'vertical',
-                                                                overflow: 'hidden',
-                                                                mt: 0.5,
-                                                                wordBreak: 'break-word',
-                                                            }}
-                                                        >
-                                                            {result.description}
-                                                        </Typography>
-                                                    )}
-                                                </CardContent>
-                                            </Box>
-                                        </CardActionArea>
-                                    </Card>
-                                );
-                            })}
+                        <Stack component="ul" sx={{ gap: 2, p: 0, m: 0, listStyle: 'none' }}>
+                            {results.map((result) => (
+                                <MatchResultCard
+                                    key={result.externalId}
+                                    result={result}
+                                    provider={provider}
+                                    selected={selectedId === result.externalId}
+                                    expanded={!!expandedIds[result.externalId]}
+                                    onSelect={() => setSelectedId(result.externalId)}
+                                    onToggleExpanded={() =>
+                                        setExpandedIds((prev) => ({
+                                            ...prev,
+                                            [result.externalId]: !prev[result.externalId],
+                                        }))
+                                    }
+                                />
+                            ))}
                         </Stack>
                     )}
 
@@ -454,6 +673,7 @@ const MatchTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => voi
                     )}
                 </Stack>
             </DialogContent>
+
             <DialogActions>
                 <FormControlLabel
                     control={<Checkbox checked={includeCover} onChange={(e) => setIncludeCover(e.target.checked)} />}
@@ -476,7 +696,7 @@ export const EditMangaMetadataDialog = ({ manga, onClose }: { manga: EditableMan
     const [tab, setTab] = useState(0);
 
     return (
-        <Dialog open onClose={onClose} maxWidth="sm" fullWidth>
+        <Dialog open onClose={onClose} maxWidth="md" fullWidth>
             <Tabs value={tab} onChange={(_, v) => setTab(v)} variant="fullWidth">
                 <Tab label={t`Edit`} />
                 <Tab label={t`Match`} />

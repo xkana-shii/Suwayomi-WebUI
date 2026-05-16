@@ -244,6 +244,7 @@ import {
     GET_MANGA_FETCH,
     GET_MANGA_TO_MIGRATE_TO_FETCH,
     REFRESH_MANGA,
+    RESET_MANGA_METADATA_TO_SOURCE,
     UPDATE_MANGA,
     UPDATE_MANGA_CATEGORIES,
     UPDATE_MANGA_DETAILS,
@@ -2362,6 +2363,15 @@ export class RequestManager {
         },
     ): AbortableApolloMutationResponse<any> {
         return this.doRequest(GQLMethod.MUTATION, UPDATE_MANGA_DETAILS, { input: { id, patch } });
+    }
+
+    public resetMangaMetadataToSource(
+        id: number,
+        resetCover = true,
+    ): AbortableApolloMutationResponse<any> {
+        return this.doRequest(GQLMethod.MUTATION, RESET_MANGA_METADATA_TO_SOURCE, {
+            input: { id, resetCover },
+        });
     }
 
     public uploadMangaCover(id: number, cover: File): AbortableApolloMutationResponse<any> {
