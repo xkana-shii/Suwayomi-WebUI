@@ -105,7 +105,9 @@ const PROVIDER_URLS: Record<string, string> = {
 
 const getProviderFaviconUrl = (provider: string): string => {
     const providerUrl = PROVIDER_URLS[provider];
-    return `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${encodeURIComponent(providerUrl)}&size=128`;
+    return `https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${encodeURIComponent(
+        providerUrl,
+    )}&size=128`;
 };
 
 const previewTextFieldSx = {
@@ -143,6 +145,7 @@ const PreviewTextField = ({
     const showPreviewAsLabel = !focused && value.length === 0 && previewValue.length > 0;
     const shrink = focused || value.length > 0;
 
+    // Use an any-typed props object to avoid complex MUI overload typing issues
     const textFieldProps: any = {
         label: showPreviewAsLabel ? previewValue : fieldLabel,
         value,
@@ -162,6 +165,9 @@ const PreviewTextField = ({
 
     return <TextField {...textFieldProps} />;
 };
+
+// Cast Autocomplete to "any" at usage sites to avoid type incompatibilities across MUI versions
+const AutocompleteAny = Autocomplete as unknown as React.ComponentType<any>;
 
 const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void }) => {
     const { t } = useLingui();
@@ -242,7 +248,7 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
     return (
         <>
             <DialogContent>
-                <Stack sx={{ gap: 2, mt: 1 }} component="div">
+                <Stack sx={{ gap: 2, mt: 1 }}>
                     <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
                         <Box sx={{ position: 'relative', flexShrink: 0, width: 120 }}>
                             <SpinnerImage
@@ -271,13 +277,8 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
                             </IconButton>
                         </Box>
 
-                        <Stack sx={{ gap: 1, flex: 1 }} component="div">
-                            <PreviewTextField
-                                fieldLabel={t`Title`}
-                                previewValue={manga.title}
-                                value={title}
-                                onChange={setTitle}
-                            />
+                        <Stack sx={{ gap: 1, flex: 1 }}>
+                            <PreviewTextField fieldLabel={t`Title`} previewValue={manga.title} value={title} onChange={setTitle} />
                             <PreviewTextField
                                 fieldLabel={t`Author`}
                                 previewValue={manga.author ?? ''}
@@ -308,8 +309,8 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
                         ))}
                     </TextField>
 
-                    {/* Provide explicit generics so MUI Autocomplete typings match our usage (multiple + freeSolo) */}
-                    <Autocomplete<string, true, false, true>
+                    {/* Use an any-typed Autocomplete wrapper to avoid MUI typing mismatches for renderTags */}
+                    <AutocompleteAny
                         multiple
                         freeSolo
                         options={[] as string[]}
@@ -317,13 +318,7 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
                         onChange={(_: React.SyntheticEvent, newValue: string[]) => setGenre(newValue)}
                         renderTags={(value: string[], getTagProps: (params: { index: number }) => any) =>
                             value.map((option: string, index: number) => (
-                                <Chip
-                                    variant="outlined"
-                                    label={option}
-                                    size="small"
-                                    {...getTagProps({ index })}
-                                    key={option}
-                                />
+                                <Chip variant="outlined" label={option} size="small" {...getTagProps({ index })} key={option} />
                             ))
                         }
                         renderInput={(params: AutocompleteRenderInputParams) => (
@@ -403,7 +398,7 @@ const MatchResultCard = ({
             <CardActionArea onClick={onSelect}>
                 <CardContent>
                     <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
-                        <Stack direction="row" spacing={2} sx={{ flex: 1, minWidth: 0 }} component="div">
+                        <Stack direction="row" spacing={2} sx={{ flex: 1, minWidth: 0 }}>
                             <Box sx={{ flexShrink: 0 }}>
                                 {result.coverUrl ? (
                                     externalUrl ? (
@@ -440,7 +435,7 @@ const MatchResultCard = ({
                                 ) : null}
                             </Box>
 
-                            <Stack spacing={1} sx={{ minWidth: 0, flex: 1 }} component="div">
+                            <Stack spacing={1} sx={{ minWidth: 0, flex: 1 }}>
                                 {externalUrl ? (
                                     <a
                                         href={externalUrl}
@@ -449,7 +444,7 @@ const MatchResultCard = ({
                                         style={{ color: 'inherit', textDecoration: 'none' }}
                                         onClick={(e) => e.stopPropagation()}
                                     >
-                                        <Stack direction="row" spacing={1} alignItems="center" component="div">
+                                        <Stack direction="row" spacing={1} alignItems="center">
                                             <Typography variant="h6" noWrap sx={{ minWidth: 0 }}>
                                                 {result.title}
                                             </Typography>
@@ -457,7 +452,7 @@ const MatchResultCard = ({
                                         </Stack>
                                     </a>
                                 ) : (
-                                    <Stack direction="row" spacing={1} alignItems="center" component="div">
+                                    <Stack direction="row" spacing={1} alignItems="center">
                                         <Typography variant="h6" noWrap sx={{ minWidth: 0 }}>
                                             {result.title}
                                         </Typography>
@@ -465,14 +460,14 @@ const MatchResultCard = ({
                                     </Stack>
                                 )}
 
-                                <Stack direction="row" spacing={1} component="div">
+                                <Stack direction="row" spacing={1}>
                                     <Typography variant="body2" color="text.secondary" sx={{ minWidth: 70 }}>
                                         {t`Author`}
                                     </Typography>
                                     <Typography variant="body2">{result.author ?? '-'}</Typography>
                                 </Stack>
 
-                                <Stack direction="row" spacing={1} component="div">
+                                <Stack direction="row" spacing={1}>
                                     <Typography variant="body2" color="text.secondary" sx={{ minWidth: 70 }}>
                                         {t`Year`}
                                     </Typography>
@@ -597,14 +592,14 @@ const MatchTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => voi
     return (
         <>
             <DialogContent dividers>
-                <Stack sx={{ gap: 2 }} component="div">
-                    <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap component="div">
+                <Stack sx={{ gap: 2 }}>
+                    <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
                         {PROVIDERS.map((p) => {
-                            const selected = provider === p;
+                            const sel = provider === p;
                             return (
                                 <Button
                                     key={p}
-                                    variant={selected ? 'contained' : 'outlined'}
+                                    variant={sel ? 'contained' : 'outlined'}
                                     onClick={() => setProvider(p)}
                                     startIcon={
                                         <Box
@@ -638,34 +633,31 @@ const MatchTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => voi
                             fullWidth
                             size="small"
                         />
-                        <IconButton
-                            onClick={() => handleSearch()}
-                            disabled={isSearching || !searchQuery.trim()}
-                            color="primary"
-                        >
+                        <IconButton onClick={() => handleSearch()} disabled={isSearching || !searchQuery.trim()} color="primary">
                             {isSearching ? <CircularProgress size={24} /> : <SearchIcon />}
                         </IconButton>
                     </Box>
 
                     {results.length > 0 && (
-                        <Stack component="ul" sx={{ gap: 2, p: 0, m: 0, listStyle: 'none' }} component="div">
+                        <Box component="ul" sx={{ gap: 2, p: 0, m: 0, listStyle: 'none' }}>
                             {results.map((result) => (
-                                <MatchResultCard
-                                    key={result.externalId}
-                                    result={result}
-                                    provider={provider}
-                                    selected={selectedId === result.externalId}
-                                    expanded={!!expandedIds[result.externalId]}
-                                    onSelect={() => setSelectedId(result.externalId)}
-                                    onToggleExpanded={() =>
-                                        setExpandedIds((prev) => ({
-                                            ...prev,
-                                            [result.externalId]: !prev[result.externalId],
-                                        }))
-                                    }
-                                />
+                                <li key={result.externalId} style={{ listStyle: 'none' }}>
+                                    <MatchResultCard
+                                        result={result}
+                                        provider={provider}
+                                        selected={selectedId === result.externalId}
+                                        expanded={!!expandedIds[result.externalId]}
+                                        onSelect={() => setSelectedId(result.externalId)}
+                                        onToggleExpanded={() =>
+                                            setExpandedIds((prev) => ({
+                                                ...prev,
+                                                [result.externalId]: !prev[result.externalId],
+                                            }))
+                                        }
+                                    />
+                                </li>
                             ))}
-                        </Stack>
+                        </Box>
                     )}
 
                     {!isSearching && results.length === 0 && searchQuery && (
