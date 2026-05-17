@@ -14,7 +14,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import MenuItem from '@mui/material/MenuItem';
 import Stack from '@mui/material/Stack';
-import Autocomplete from '@mui/material/Autocomplete';
+import Autocomplete, { AutocompleteRenderInputParams } from '@mui/material/Autocomplete';
 import Chip from '@mui/material/Chip';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -34,7 +34,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useLingui } from '@lingui/react/macro';
 import { requestManager } from '@/lib/requests/RequestManager.ts';
-import { MangaStatus } from '@/lib/graphql/generated/graphql.ts';
+import { MangaStatus } from '@/lib/graphql/generated/graphql-base.types.ts';
 import { makeToast } from '@/base/utils/Toast.ts';
 import { getErrorMessage } from '@/lib/HelperFunctions.ts';
 import { Mangas } from '@/features/manga/services/Mangas.ts';
@@ -142,24 +142,24 @@ const PreviewTextField = ({
     const showPreviewAsLabel = !focused && value.length === 0 && previewValue.length > 0;
     const shrink = focused || value.length > 0;
 
-    return (
-        <TextField
-            label={showPreviewAsLabel ? previewValue : fieldLabel}
-            value={value}
-            placeholder={previewValue}
-            onChange={(e) => onChange(e.target.value)}
-            onFocus={() => setFocused(true)}
-            onBlur={() => setFocused(false)}
-            fullWidth
-            size="small"
-            variant="outlined"
-            multiline={multiline}
-            minRows={minRows}
-            maxRows={maxRows}
-            InputLabelProps={{ shrink }}
-            sx={previewTextFieldSx}
-        />
-    );
+    const textFieldProps: any = {
+        label: showPreviewAsLabel ? previewValue : fieldLabel,
+        value,
+        placeholder: previewValue,
+        onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => onChange(e.target.value),
+        onFocus: () => setFocused(true),
+        onBlur: () => setFocused(false),
+        fullWidth: true,
+        size: 'small',
+        variant: 'outlined',
+        multiline,
+        minRows,
+        maxRows,
+        InputLabelProps: { shrink },
+        sx: previewTextFieldSx,
+    };
+
+    return <TextField {...textFieldProps} />;
 };
 
 const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void }) => {
@@ -241,7 +241,7 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
     return (
         <>
             <DialogContent>
-                <Stack sx={{ gap: 2, mt: 1 }}>
+                <Stack sx={{ gap: 2, mt: 1 }} component="div">
                     <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
                         <Box sx={{ position: 'relative', flexShrink: 0, width: 120 }}>
                             <SpinnerImage
@@ -270,7 +270,7 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
                             </IconButton>
                         </Box>
 
-                        <Stack sx={{ gap: 1, flex: 1 }}>
+                        <Stack sx={{ gap: 1, flex: 1 }} component="div">
                             <PreviewTextField
                                 fieldLabel={t`Title`}
                                 previewValue={manga.title}
@@ -302,19 +302,20 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
                     >
                         {STATUS_OPTIONS.map((s) => (
                             <MenuItem key={s} value={s}>
-                                {t(MANGA_STATUS_TO_TRANSLATION[s])}
+                                {t(MANGA_STATUS_TO_TRANSLATION[s as MangaStatus])}
                             </MenuItem>
                         ))}
                     </TextField>
 
-                    <Autocomplete
+                    {/* Provide explicit generics so MUI Autocomplete typings match our usage (multiple + freeSolo) */}
+                    <Autocomplete<string, true, false, true>
                         multiple
                         freeSolo
-                        options={[]}
+                        options={[] as string[]}
                         value={genre}
-                        onChange={(_, newValue) => setGenre(newValue)}
-                        renderTags={(value, getTagProps) =>
-                            value.map((option, index) => (
+                        onChange={(_: React.SyntheticEvent, newValue: string[]) => setGenre(newValue)}
+                        renderTags={(value: string[], getTagProps: (params: { index: number }) => any) =>
+                            value.map((option: string, index: number) => (
                                 <Chip
                                     variant="outlined"
                                     label={option}
@@ -324,7 +325,7 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
                                 />
                             ))
                         }
-                        renderInput={(params) => (
+                        renderInput={(params: AutocompleteRenderInputParams) => (
                             <TextField {...params} label={t`Genres`} size="small" placeholder={t`Add genre`} />
                         )}
                     />
@@ -401,7 +402,7 @@ const MatchResultCard = ({
             <CardActionArea onClick={onSelect}>
                 <CardContent>
                     <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
-                        <Stack direction="row" spacing={2} sx={{ flex: 1, minWidth: 0 }}>
+                        <Stack direction="row" spacing={2} sx={{ flex: 1, minWidth: 0 }} component="div">
                             <Box sx={{ flexShrink: 0 }}>
                                 {result.coverUrl ? (
                                     externalUrl ? (
@@ -438,7 +439,7 @@ const MatchResultCard = ({
                                 ) : null}
                             </Box>
 
-                            <Stack spacing={1} sx={{ minWidth: 0, flex: 1 }}>
+                            <Stack spacing={1} sx={{ minWidth: 0, flex: 1 }} component="div">
                                 {externalUrl ? (
                                     <a
                                         href={externalUrl}
@@ -447,7 +448,7 @@ const MatchResultCard = ({
                                         style={{ color: 'inherit', textDecoration: 'none' }}
                                         onClick={(e) => e.stopPropagation()}
                                     >
-                                        <Stack direction="row" spacing={1} alignItems="center">
+                                        <Stack direction="row" spacing={1} alignItems="center" component="div">
                                             <Typography variant="h6" noWrap sx={{ minWidth: 0 }}>
                                                 {result.title}
                                             </Typography>
@@ -455,7 +456,7 @@ const MatchResultCard = ({
                                         </Stack>
                                     </a>
                                 ) : (
-                                    <Stack direction="row" spacing={1} alignItems="center">
+                                    <Stack direction="row" spacing={1} alignItems="center" component="div">
                                         <Typography variant="h6" noWrap sx={{ minWidth: 0 }}>
                                             {result.title}
                                         </Typography>
@@ -463,14 +464,14 @@ const MatchResultCard = ({
                                     </Stack>
                                 )}
 
-                                <Stack direction="row" spacing={1}>
+                                <Stack direction="row" spacing={1} component="div">
                                     <Typography variant="body2" color="text.secondary" sx={{ minWidth: 70 }}>
                                         {t`Author`}
                                     </Typography>
                                     <Typography variant="body2">{result.author ?? '-'}</Typography>
                                 </Stack>
 
-                                <Stack direction="row" spacing={1}>
+                                <Stack direction="row" spacing={1} component="div">
                                     <Typography variant="body2" color="text.secondary" sx={{ minWidth: 70 }}>
                                         {t`Year`}
                                     </Typography>
@@ -595,8 +596,8 @@ const MatchTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => voi
     return (
         <>
             <DialogContent dividers>
-                <Stack sx={{ gap: 2 }}>
-                    <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                <Stack sx={{ gap: 2 }} component="div">
+                    <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap component="div">
                         {PROVIDERS.map((p) => {
                             const selected = provider === p;
                             return (
@@ -646,7 +647,7 @@ const MatchTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => voi
                     </Box>
 
                     {results.length > 0 && (
-                        <Stack component="ul" sx={{ gap: 2, p: 0, m: 0, listStyle: 'none' }}>
+                        <Stack component="ul" sx={{ gap: 2, p: 0, m: 0, listStyle: 'none' }} component="div">
                             {results.map((result) => (
                                 <MatchResultCard
                                     key={result.externalId}

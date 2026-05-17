@@ -141,6 +141,7 @@ export const MangaCard = memo((props: MangaCardProps) => {
                                     ReactRouter.navigate(AppRoutes.manga.path(id), { replace: true });
                                 } catch (e) {
                                     optionsDialog.update({ isMigrating: false, startMigration: () => migrate() });
+                                    defaultPromiseErrorHandler('MangaCard::migrate')(e);
                                 }
                             },
                         },
