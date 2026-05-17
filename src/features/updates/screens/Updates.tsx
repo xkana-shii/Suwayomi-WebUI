@@ -69,7 +69,10 @@ export const Updates: React.FC = () => {
         const byDay = Chapters.groupByDate(updateEntries, 'fetchedAt');
 
         return Object.entries(byDay).map(([group, items]) => {
-            const byManga = new Map<ChapterUpdateListFieldsFragment['manga']['id'], ChapterUpdateListFieldsFragment[]>();
+            const byManga = new Map<
+                ChapterUpdateListFieldsFragment['manga']['id'],
+                ChapterUpdateListFieldsFragment[]
+            >();
 
             items.forEach((chapter) => {
                 const mangaId = chapter.manga.id;
@@ -125,7 +128,8 @@ export const Updates: React.FC = () => {
         useCallback(
             (index: number) => {
                 const item = updateEntriesFlattened[index];
-                const datePrefix = item.chapters[item.chapters.length - 1]?.fetchedAt?.toString().slice(0, 10) ?? 'unknown';
+                const datePrefix =
+                    item.chapters[item.chapters.length - 1]?.fetchedAt?.toString().slice(0, 10) ?? 'unknown';
                 return `${datePrefix}-${item.mangaId}`;
             },
             [updateEntriesFlattened],
