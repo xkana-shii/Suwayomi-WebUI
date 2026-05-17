@@ -72,6 +72,7 @@ export type MetadataMigrationSettings = {
 export interface MigrationBulkSearchSettings {
     selectHighestChapterNumberSource: boolean;
     ignoreOutdatedMatches: boolean;
+    requireAdditionalChapters: boolean;
     performAdvancedSearch: boolean;
 }
 
@@ -121,6 +122,7 @@ export interface TMigrationEntry {
     error: string | undefined;
     isExcluded: boolean;
     areMatchesExpanded: boolean;
+    isManualSelection: boolean;
 }
 
 export type MigratableEntry = NonNullableProperty<TMigrationEntry, 'selectedMatchMangaId' | 'selectedMatchSourceId'>;
