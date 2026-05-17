@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) Contributors to the Suwayomi project
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
@@ -23,7 +23,6 @@ import { RestClient } from '@/lib/requests/client/RestClient.ts';
 import { GraphQLClient } from '@/lib/requests/client/GraphQLClient.ts';
 import { BaseClient } from '@/lib/requests/client/BaseClient.ts';
 import type {
-    ChapterConditionInput,
     CheckForServerUpdatesQuery,
     CheckForServerUpdatesQueryVariables,
     CheckForWebuiUpdateQuery,
@@ -32,7 +31,8 @@ import type {
     ClearDownloaderMutationVariables,
     ClearServerCacheMutation,
     ClearServerCacheMutationVariables,
-    CreateCategoryInput,
+    CreateBackupMutation,
+    CreateBackupMutationVariables,
     CreateCategoryMutation,
     CreateCategoryMutationVariables,
     DeleteCategoryMutation,
@@ -51,8 +51,6 @@ import type {
     EnqueueChapterDownloadMutationVariables,
     EnqueueChapterDownloadsMutation,
     EnqueueChapterDownloadsMutationVariables,
-    FetchSourceMangaInput,
-    FilterChangeInput,
     GetAboutQuery,
     GetAboutQueryVariables,
     GetCategoriesSettingsQuery,
@@ -61,20 +59,24 @@ import type {
     GetCategoryMangasQueryVariables,
     GetChapterPagesFetchMutation,
     GetChapterPagesFetchMutationVariables,
+    GetChaptersHistoryQuery,
+    GetChaptersHistoryQueryVariables,
     GetChaptersMangaQuery,
     GetChaptersMangaQueryVariables,
     GetChaptersUpdatesQuery,
     GetChaptersUpdatesQueryVariables,
-    GetChaptersHistoryQuery,
-    GetChaptersHistoryQueryVariables,
     GetDownloadStatusQuery,
     GetDownloadStatusQueryVariables,
+    GetExtensionQuery,
+    GetExtensionQueryVariables,
     GetExtensionsFetchMutation,
     GetExtensionsFetchMutationVariables,
     GetExtensionsQuery,
     GetExtensionsQueryVariables,
     GetGlobalMetadatasQuery,
     GetGlobalMetadatasQueryVariables,
+    GetKoSyncStatusQuery,
+    GetKoSyncStatusQueryVariables,
     GetLastUpdateTimestampQuery,
     GetLastUpdateTimestampQueryVariables,
     GetMangaChaptersFetchMutation,
@@ -105,16 +107,18 @@ import type {
     GetWebuiUpdateStatusQueryVariables,
     InstallExternalExtensionMutation,
     InstallExternalExtensionMutationVariables,
+    KoSyncLoginMutation,
+    KoSyncLoginMutationVariables,
+    KoSyncLogoutMutation,
+    KoSyncLogoutMutationVariables,
+    RefreshMangaMutation,
+    RefreshMangaMutationVariables,
     ReorderChapterDownloadMutation,
     ReorderChapterDownloadMutationVariables,
     ResetWebuiUpdateStatusMutation,
     ResetWebuiUpdateStatusMutationVariables,
     RestoreBackupMutation,
     RestoreBackupMutationVariables,
-    SetGlobalMetasInput,
-    DeleteGlobalMetasInput,
-    SettingsType,
-    SourcePreferenceChangeInput,
     StartDownloaderMutation,
     StartDownloaderMutationVariables,
     StopDownloaderMutation,
@@ -137,25 +141,32 @@ import type {
     TrackerUnbindMutationVariables,
     TrackerUpdateBindMutation,
     TrackerUpdateBindMutationVariables,
+    UpdateCategoryMetadataMutation,
+    UpdateCategoryMetadataMutationVariables,
     UpdateCategoryMutation,
     UpdateCategoryMutationVariables,
-    UpdateCategoryPatchInput,
+    UpdateCategoryOrderMutation,
+    UpdateCategoryOrderMutationVariables,
+    UpdateChapterMetadataMutation,
+    UpdateChapterMetadataMutationVariables,
     UpdateChapterMutation,
     UpdateChapterMutationVariables,
-    UpdateChapterPatchInput,
     UpdateChaptersMutation,
     UpdateChaptersMutationVariables,
     UpdateExtensionMutation,
     UpdateExtensionMutationVariables,
-    UpdateExtensionPatchInput,
     UpdateExtensionsMutation,
     UpdateExtensionsMutationVariables,
+    UpdateGlobalMetadataMutation,
+    UpdateGlobalMetadataMutationVariables,
+    UpdateLibraryMutation,
+    UpdateLibraryMutationVariables,
     UpdateMangaCategoriesMutation,
     UpdateMangaCategoriesMutationVariables,
-    UpdateMangaCategoriesPatchInput,
+    UpdateMangaMetadataMutation,
+    UpdateMangaMetadataMutationVariables,
     UpdateMangaMutation,
     UpdateMangaMutationVariables,
-    UpdateMangaPatchInput,
     UpdateMangasCategoriesMutation,
     UpdateMangasCategoriesMutationVariables,
     UpdateMangasMutation,
@@ -168,60 +179,49 @@ import type {
     UpdateSourceMetadataMutationVariables,
     UpdateSourcePreferencesMutation,
     UpdateSourcePreferencesMutationVariables,
-    UpdateTrackInput,
     UpdateWebuiMutation,
     UpdateWebuiMutationVariables,
-    ValidateBackupQuery,
-    ValidateBackupQueryVariables,
-    WebuiUpdateSubscription,
-    UpdateLibraryMutation,
-    UpdateLibraryMutationVariables,
-    GetExtensionQuery,
-    GetExtensionQueryVariables,
     UserLoginMutation,
     UserLoginMutationVariables,
     UserRefreshMutation,
     UserRefreshMutationVariables,
-    CreateBackupInput,
-    CreateBackupMutation,
-    CreateBackupMutationVariables,
-    RestoreBackupInput,
-    KoSyncLoginMutation,
-    KoSyncLoginMutationVariables,
-    KoSyncLogoutMutation,
-    KoSyncLogoutMutationVariables,
-    GetKoSyncStatusQuery,
-    GetKoSyncStatusQueryVariables,
-    UpdateGlobalMetadataMutation,
-    UpdateGlobalMetadataMutationVariables,
-    UpdateMangaMetadataMutation,
-    UpdateMangaMetadataMutationVariables,
-    UpdateChapterMetadataMutation,
-    UpdateChapterMetadataMutationVariables,
-    UpdateCategoryMetadataMutation,
-    UpdateCategoryMetadataMutationVariables,
-    UpdateSourceMetadataMutation,
-    UpdateSourceMetadataMutationVariables,
-    SetSourceMetasInput,
-    DeleteSourceMetasInput,
-    SetMangaMetasInput,
-    DeleteMangaMetasInput,
-    SetChapterMetasInput,
-    DeleteChapterMetasInput,
-    SetCategoryMetasInput,
-    DeleteCategoryMetasInput,
-    MangaStatus,
-    RefreshMangaMutation,
-    RefreshMangaMutationVariables,
+    ValidateBackupQuery,
+    ValidateBackupQueryVariables,
+    WebuiUpdateSubscription,
 } from '@/lib/graphql/generated/graphql.ts';
+import type {
+    ChapterConditionInput,
+    CreateBackupInput,
+    CreateCategoryInput,
+    DeleteCategoryMetasInput,
+    DeleteChapterMetasInput,
+    DeleteGlobalMetasInput,
+    DeleteMangaMetasInput,
+    DeleteSourceMetasInput,
+    FetchSourceMangaInput,
+    FilterChangeInput,
+    RestoreBackupInput,
+    SetCategoryMetasInput,
+    SetChapterMetasInput,
+    SetGlobalMetasInput,
+    SetMangaMetasInput,
+    SetSourceMetasInput,
+    SourcePreferenceChangeInput,
+    UpdateCategoryPatchInput,
+    UpdateChapterPatchInput,
+    UpdateExtensionPatchInput,
+    UpdateMangaCategoriesPatchInput,
+    UpdateMangaPatchInput,
+    UpdateTrackInput,
+} from '@/lib/graphql/generated/graphql-base.types.ts';
 import {
     CategoryOrderBy,
     ChapterOrderBy,
+    DownloaderState,
     DownloadUpdateType,
     FetchSourceMangaType,
     SortOrder,
-    DownloaderState,
-} from '@/lib/graphql/generated/graphql.ts';
+} from '@/lib/graphql/generated/graphql-base.types.ts';
 import { GET_GLOBAL_METADATAS } from '@/lib/graphql/metadata/GlobalMetadataQuery.ts';
 import { UPDATE_GLOBAL_METADATA } from '@/lib/graphql/metadata/GlobalMetadataMutation.ts';
 import {
@@ -252,12 +252,7 @@ import {
     UPLOAD_MANGA_COVER,
 } from '@/lib/graphql/manga/MangaMutation.ts';
 import { SEARCH_METADATA_PROVIDER, APPLY_METADATA_MATCH } from '@/lib/graphql/manga/MetadataMutation.ts';
-import {
-    GET_MANGA_TO_MIGRATE,
-    GET_MANGA_TRACK_RECORDS,
-    GET_MANGAS_LIBRARY,
-    GET_MIGRATABLE_SOURCE_MANGAS,
-} from '@/lib/graphql/manga/MangaQuery.ts';
+import { GET_MANGA_TO_MIGRATE, GET_MANGA_TRACK_RECORDS, GET_MANGAS_LIBRARY } from '@/lib/graphql/manga/MangaQuery.ts';
 import {
     GET_CATEGORIES_BASE,
     GET_CATEGORIES_LIBRARY,
@@ -983,7 +978,7 @@ export class RequestManager {
             }
 
             return this.imageQueue.enqueue(sourceId, url, request, priority);
-        } catch (error) {
+        } catch  {
             return this.imageQueue.enqueue(sourceId, url, request, priority);
         }
     }
@@ -1586,6 +1581,7 @@ export class RequestManager {
                 data: {
                     ...cachedExtensions.data,
                     fetchExtensions: {
+                        __typename: 'FetchExtensionsPayload',
                         ...cachedExtensions.data.fetchExtensions,
                         extensions: isExtensionCached
                             ? cachedExtensions.data.fetchExtensions!.extensions.map((extension) => {
@@ -1648,6 +1644,7 @@ export class RequestManager {
                 data: {
                     ...cachedExtensions.data,
                     fetchExtensions: {
+                        __typename: 'FetchExtensionsPayload',
                         ...cachedExtensions.data.fetchExtensions,
                         extensions:
                             cachedExtensions.data.fetchExtensions?.extensions
@@ -1712,6 +1709,7 @@ export class RequestManager {
                 data: {
                     ...cachedExtensions.data,
                     fetchExtensions: {
+                        __typename: 'FetchExtensionsPayload',
                         ...cachedExtensions.data.fetchExtensions,
                         extensions:
                             cachedExtensions.data.fetchExtensions?.extensions
@@ -2279,13 +2277,6 @@ export class RequestManager {
         options?: QueryOptions<Variables, Data>,
     ): AbortabaleApolloQueryResponse<Data> {
         return this.doRequest(GQLMethod.QUERY, document, variables, options);
-    }
-
-    public useGetMigratableSourceMangas(
-        sourceId: string,
-        options?: QueryHookOptions<GetMigratableSourceMangasQuery, GetMigratableSourceMangasQueryVariables>,
-    ): AbortableApolloUseQueryResponse<GetMigratableSourceMangasQuery, GetMigratableSourceMangasQueryVariables> {
-        return this.doRequest(GQLMethod.USE_QUERY, GET_MIGRATABLE_SOURCE_MANGAS, { sourceId }, options);
     }
 
     public useUpdateMangaCategories(
@@ -2969,7 +2960,7 @@ export class RequestManager {
             }
 
             const movedIndex = cachedCategories.findIndex((category) => category.id === variables.id);
-            const newData = [...cachedCategories.map((category) => ({ ...category }))];
+            const newData = cachedCategories.map((category) => ({ ...category }));
             const [removed] = newData.splice(movedIndex, 1);
             newData.splice(variables.position, 0, removed);
             removed.order = variables.position;
@@ -3549,6 +3540,7 @@ export class RequestManager {
                         cache.writeQuery<GetDownloadStatusQuery>({
                             query: GET_DOWNLOAD_STATUS,
                             data: {
+                                __typename: 'Query',
                                 ...downloadStatusQueryCache,
                                 downloadStatus: {
                                     __typename: 'DownloadStatus',
@@ -3641,8 +3633,8 @@ export class RequestManager {
                         __typename: 'SetSettingsPayload',
                         settings: {
                             __typename: 'SettingsType',
-                            ...(mutateOptions?.variables?.input.settings ?? {}),
-                        } as SettingsType,
+                            ...mutateOptions?.variables?.input.settings,
+                        } as UpdateServerSettingsMutation['setSettings']['settings'],
                     },
                 },
                 ...mutateOptions,
