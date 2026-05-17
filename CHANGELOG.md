@@ -6,11 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased] (Preview)
 
+### Changed
+
+- (**Migration**) Show "abort" button during active bulk migration search
+- (**Migration**) Keep the migration page open when aborting during the actual migration execution
+- (**Migration**) Prevent concurrent requests to the same tracker
+- (**Migration**) Allow only 2 tracker requests per second
+- (**Migration**) Sort manga to migrate selection by title and by recently added to the library
+- (**Migration**) Sort destination source selection by same order as browse source page
+- (**Migration**) Sort entries in search/execution page by title
+
 ### Fixed
 
+- (**Migration**) Fix aborting bulk migration search/execution while webUI is served on a subpath
+- (**Migration**) Fix retry button never being shown for failed search/migration entries
+- (**Migration**) Fix showing an empty "Available" source group header when all sources are selected
+- (**Migration**) Fix showing no info message when no sources are available to select as destinations
 - (**Reader**) Fix scrollbar appearing with "fit to widt/height/screen" page scale mode and applied safe area insets
 - (**Reader**) Fix wrongly positioned mobile progress bar current page indicator
 - (**Reader**) Fix mobile progress bar previous/next chapter button visibility on hover and while disabled
+- (**Reader**) Fix jumping back to the first page on window resize
 
 ## [20260509.01] (r3147) - 2026-05-09
 

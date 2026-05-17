@@ -7,42 +7,39 @@
  */
 
 import { requestManager } from '@/lib/requests/RequestManager.ts';
-import type {
-    GetMangaToMigrateQuery,
-    GetMangaToMigrateToFetchMutation,
-    SetChapterMetasItemInput,
-} from '@/lib/graphql/generated/graphql.ts';
+import type { SetChapterMetasItemInput } from '@/lib/graphql/generated/graphql-base.types.ts';
 import type { MangaIdInfo } from '@/features/manga/Manga.types.ts';
 import { Chapters } from '@/features/chapter/services/Chapters.ts';
 import { ALL_APP_METADATA_KEY_PREFIXES } from '@/features/metadata/Metadata.constants.ts';
-import type { MigrateMode, MigrateOptions } from '@/features/migration/Migration.types.ts';
 import type {
-    ChapterBookmarkInfo,
-    ChapterDownloadInfo,
-    ChapterIdInfo,
-    ChapterNumberInfo,
-    ChapterReadInfo,
-} from '@/features/chapter/Chapter.types.ts';
-import type { GqlMetaHolder } from '@/features/metadata/Metadata.types.ts';
+    MangaToMigrate,
+    MangaToMigrateTo,
+    MigrateAction,
+    MigrateActionCreator,
+    MigrateMode,
+    MigrateOptions,
+    MigrationChapter,
+} from '@/features/migration/Migration.types.ts';
 import { getMetadataServerSettings } from '@/features/settings/services/ServerSettingsMetadata.ts';
-
-type MangaToMigrate = NonNullable<GetMangaToMigrateQuery['manga']>;
-type MangaToMigrateTo = NonNullable<GetMangaToMigrateToFetchMutation['fetchManga']>['manga'];
-
-export type MigrationChapter = ChapterIdInfo &
-    ChapterReadInfo &
-    ChapterBookmarkInfo &
-    ChapterNumberInfo &
-    ChapterDownloadInfo &
-    GqlMetaHolder;
-
-type MigrateAction = { copy: () => Promise<unknown>[]; cleanup: () => Promise<unknown>[] };
-type MigrateActionCreator = () => MigrateAction;
-
-const performMigrationAction = async (migrateAction: keyof MigrateAction, ...actions: MigrateAction[]) =>
-    Promise.all(actions.flatMap((action) => action[migrateAction]()));
+import { Queue } from '@/lib/Queue.ts';
+import type { TrackerIdInfo } from '@/features/tracker/Tracker.types.ts';
+import { assertIsDefined } from '@/base/Asserts.ts';
 
 export class MangaMigration {
+    private static trackerQueue = new Map<TrackerIdInfo['id'], Queue>();
+
+    private static getOrCreateQueue(trackerId: TrackerIdInfo['id']): Queue {
+        if (!MangaMigration.trackerQueue.has(trackerId)) {
+            MangaMigration.trackerQueue.set(trackerId, new Queue(1));
+        }
+
+        const queue = MangaMigration.trackerQueue.get(trackerId);
+
+        assertIsDefined(queue);
+
+        return queue;
+    }
+
     static async migrate(
         mangaToMigrate: MangaToMigrate | null | undefined,
         mangaToMigrateTo: MangaToMigrateTo | null | undefined,
@@ -77,7 +74,7 @@ export class MangaMigration {
                 // only happens in case the copy succeeded
 
                 // oxlint-disable-next-line no-await-in-loop
-                await performMigrationAction(migrationAction, ...actions);
+                await Promise.all(actions.flatMap((action) => action[migrationAction]()));
             }
         };
 
@@ -281,12 +278,23 @@ export class MangaMigration {
             copy: () =>
                 trackBindingsToAdd.map(
                     (trackRecord) =>
-                        requestManager.bindTracker(
-                            mangaToMigrateTo.id,
-                            trackRecord.trackerId,
-                            trackRecord.remoteId,
-                            trackRecord.private,
-                        ).response,
+                        MangaMigration.getOrCreateQueue(trackRecord.trackerId).enqueue(
+                            String(mangaToMigrate.id),
+                            async () => {
+                                try {
+                                    await requestManager.bindTracker(
+                                        mangaToMigrateTo.id,
+                                        trackRecord.trackerId,
+                                        trackRecord.remoteId,
+                                        trackRecord.private,
+                                    ).response;
+                                } finally {
+                                    await new Promise((resolve) => {
+                                        setTimeout(resolve, 500);
+                                    });
+                                }
+                            },
+                        ).promise,
                 ),
             cleanup: () =>
                 mode === 'migrate'

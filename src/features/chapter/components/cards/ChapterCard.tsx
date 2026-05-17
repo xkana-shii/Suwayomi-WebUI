@@ -38,12 +38,15 @@ import type {
     ChapterDownloadInfo,
     ChapterIdInfo,
     ChapterMangaInfo,
+    ChapterNameInfo,
     ChapterNumberInfo,
     ChapterReadInfo,
     ChapterScanlatorInfo,
     ChapterFillermarkInfo,
+    ChapterSourceOrderInfo,
 } from '@/features/chapter/Chapter.types.ts';
 import { MediaQuery } from '@/base/utils/MediaQuery.tsx';
+import type { ChapterType } from '@/lib/graphql/generated/graphql-base.types.ts';
 
 type TChapter = ChapterIdInfo &
     ChapterMangaInfo &
@@ -53,6 +56,8 @@ type TChapter = ChapterIdInfo &
     ChapterNumberInfo &
     ChapterScanlatorInfo &
     ChapterFillermarkInfo &
+    ChapterNameInfo &
+    ChapterSourceOrderInfo &
     Pick<ChapterType, 'name' | 'sourceOrder' | 'uploadDate'>;
 
 interface IProps {

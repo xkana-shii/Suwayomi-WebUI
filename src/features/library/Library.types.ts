@@ -6,8 +6,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import type { MangaStatus, MangaType, TrackerType } from '@/lib/graphql/generated/graphql.ts';
+import type { MangaStatus } from '@/lib/graphql/generated/graphql-base.types.ts';
 import type { GridLayout } from '@/base/Base.types.ts';
+import type { MangaDescriptionInfo, MangaIdInfo, MangaTitleInfo } from '@/features/manga/Manga.types.ts';
+import type { TrackerIdInfo } from '@/features/tracker/Tracker.types.ts';
 
 export type MetadataLibrarySettings = {
     showAddToLibraryCategorySelectDialog: boolean;
@@ -40,7 +42,7 @@ export interface LibraryOptions {
     hasUnreadChapters: NullAndUndefined<boolean>;
     hasReadChapters: NullAndUndefined<boolean>;
     hasDuplicateChapters: NullAndUndefined<boolean>;
-    hasTrackerBinding: Record<TrackerType['id'], NullAndUndefined<boolean>>;
+    hasTrackerBinding: Record<TrackerIdInfo['id'], NullAndUndefined<boolean>>;
     hasStatus: Record<MangaStatus, NullAndUndefined<boolean>>;
 }
 
@@ -56,10 +58,14 @@ export type TTrackRecordNodeMin = {
     remoteTitle?: string | null;
 };
 
-// Include trackRecords and thumbnailUrl for hashing and worker UI
-export type TMangaDuplicate = Pick<MangaType, 'id' | 'title' | 'description' | 'thumbnailUrl'> & {
-    trackRecords?: { nodes: TTrackRecordNodeMin[] } | null;
-};
+// Include thumbnailUrl and trackRecords for hashing and worker UI
+// while keeping the legacy MangaId/Title/Description intersection so older code still type-checks.
+export type TMangaDuplicate = MangaIdInfo &
+    MangaTitleInfo &
+    MangaDescriptionInfo & {
+        thumbnailUrl?: string | null;
+        trackRecords?: { nodes: TTrackRecordNodeMin[] } | null;
+    };
 
 export type TMangaDuplicates<Manga> = Record<string, Manga[]>;
 

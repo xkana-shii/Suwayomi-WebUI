@@ -17,51 +17,55 @@ import { DEFAULT_FULL_FAB_HEIGHT } from '@/base/components/buttons/StyledFab.tsx
 import { MigrationContinueButton } from '@/features/migration/components/MigrationContinueButton.tsx';
 import { plural } from '@lingui/core/macro';
 import { MigrationEntryGroup } from '@/features/migration/components/MIgrationEntryGroup.tsx';
+import { MigrationEntries } from '@/features/migration/MigrationEntries.ts';
 
 export const MigrationExecute = () => {
     const { t } = useLingui();
     const entries = MigrationManager.useEntries();
     const progress = MigrationManager.useMigrationProgress();
 
-    useAppTitleAndAction(MigrationManager.isPhaseComplete() ? t`Migration complete` : t`Migrating`, undefined, [
-        MigrationManager.isPhaseComplete(),
-    ]);
+    useAppTitleAndAction(
+        (() => {
+            if (MigrationManager.getState().isAborted) {
+                return t`Aborted`;
+            }
+
+            if (MigrationManager.isPhaseComplete()) {
+                return t`Migration complete`;
+            }
+
+            return t`Migrating`;
+        })(),
+        undefined,
+        [MigrationManager.isPhaseComplete()],
+    );
 
     const entryList = useMemo(() => Object.values(entries), [entries]);
     const migratingEntries = useMemo(
         () =>
-            entryList
-                .filter((entry) =>
-                    [MigrationEntryStatus.SEARCH_COMPLETE, MigrationEntryStatus.MIGRATING].includes(entry.status),
-                )
-                .toSorted((a, b) => {
-                    if (a.status === MigrationEntryStatus.MIGRATING && b.status !== MigrationEntryStatus.MIGRATING) {
-                        return -1;
-                    }
-
-                    if (a.status !== MigrationEntryStatus.MIGRATING && b.status === MigrationEntryStatus.MIGRATING) {
-                        return 1;
-                    }
-
-                    return entryList.indexOf(a) - entryList.indexOf(b);
-                }),
+            MigrationEntries.getActiveEntriesSorted(
+                entryList,
+                MigrationEntryStatus.MIGRATING,
+                MigrationEntryStatus.SEARCH_COMPLETE,
+                MigrationEntryStatus.MIGRATING,
+            ),
         [entryList],
     );
     const migratedEntries = useMemo(
-        () => entryList.filter((entry) => entry.status === MigrationEntryStatus.MIGRATION_COMPLETE),
+        () => MigrationEntries.getHaveStatusSorted(entryList, MigrationEntryStatus.MIGRATION_COMPLETE),
         [entryList],
     );
     const failedEntries = useMemo(
-        () => entryList.filter((entry) => entry.status === MigrationEntryStatus.MIGRATION_FAILED),
+        () => MigrationEntries.getHaveStatusSorted(entryList, MigrationEntryStatus.MIGRATION_FAILED),
         [entryList],
     );
-    const excludedEntries = useMemo(() => entryList.filter((entry) => entry.isExcluded), [entryList]);
+    const excludedEntries = useMemo(() => MigrationEntries.getExcluded(entryList), [entryList]);
     const noMatchEntries = useMemo(
-        () => entryList.filter((entry) => entry.status === MigrationEntryStatus.NO_MATCH),
+        () => MigrationEntries.getHaveStatusSorted(entryList, MigrationEntryStatus.NO_MATCH),
         [entryList],
     );
     const outdatedEntries = useMemo(
-        () => entryList.filter((entry) => entry.status === MigrationEntryStatus.OUTDATED),
+        () => MigrationEntries.getHaveStatusSorted(entryList, MigrationEntryStatus.OUTDATED),
         [entryList],
     );
 
@@ -140,7 +144,7 @@ export const MigrationExecute = () => {
             <MigrationContinueButton
                 title={MigrationManager.isPhaseComplete() ? t`Done` : t`Abort`}
                 onClick={() =>
-                    MigrationManager.isPhaseComplete() ? MigrationManager.reset() : MigrationManager.abort()
+                    MigrationManager.isPhaseComplete() ? MigrationManager.reset() : MigrationManager.stop()
                 }
             />
         </>

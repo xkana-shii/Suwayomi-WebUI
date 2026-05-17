@@ -6,7 +6,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import { useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Chip from '@mui/material/Chip';
@@ -35,58 +35,61 @@ import DragHandle from '@mui/icons-material/DragHandle';
 import { languageCodeToName } from '@/base/utils/Languages.ts';
 import { DEFAULT_FULL_FAB_HEIGHT } from '@/base/components/buttons/StyledFab.tsx';
 import Stack from '@mui/material/Stack';
+import { EmptyViewAbsoluteCentered } from '@/base/components/feedback/EmptyViewAbsoluteCentered.tsx';
 
-const SourceCard = ({
-    source,
-    onToggle,
-    isCurrentSource,
-    isSelected,
-    isDragging,
-}: {
-    source: SourceItem;
-    onToggle: (id: SourceIdInfo['id']) => void;
-    isCurrentSource: boolean;
-    isSelected: boolean;
-    isDragging?: boolean;
-}) => {
-    const { t } = useLingui();
+const SourceCard = memo(
+    ({
+        source,
+        onToggle,
+        isCurrentSource,
+        isSelected,
+        isDragging,
+    }: {
+        source: SourceItem;
+        onToggle: (id: SourceIdInfo['id']) => void;
+        isCurrentSource: boolean;
+        isSelected: boolean;
+        isDragging?: boolean;
+    }) => {
+        const { t } = useLingui();
 
-    return (
-        <StyledGroupItemWrapper>
-            <Card>
-                <CardActionArea onClick={() => onToggle(source.id)}>
-                    <ListCardContent sx={{ justifyContent: 'space-between' }}>
-                        <Stack sx={{ flexFlow: 'row', gap: 1, alignItems: 'center' }}>
-                            <ListCardAvatar
-                                iconUrl={requestManager.getValidImgUrlFor(source.iconUrl)}
-                                alt={source.name}
-                                slots={{ spinnerImageProps: { ignoreQueue: true } }}
-                            />
-                            <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                                <Typography variant="h6" component="h3">
-                                    {source.name}
-                                </Typography>
-                                <Typography variant="caption">{languageCodeToName(source.lang)}</Typography>
-                            </Box>
-                        </Stack>
-                        <Stack sx={{ flexDirection: 'row', gap: 4 }}>
-                            {isCurrentSource && (
-                                <Chip size="small" label={t`Current source`} color="primary" variant="outlined" />
-                            )}
-                            {isSelected && (
-                                <Box>
-                                    <DragHandle sx={{ mr: 2, cursor: isDragging ? 'grabbing' : 'grab' }} />
+        return (
+            <StyledGroupItemWrapper>
+                <Card>
+                    <CardActionArea onClick={() => onToggle(source.id)}>
+                        <ListCardContent sx={{ justifyContent: 'space-between' }}>
+                            <Stack sx={{ flexFlow: 'row', gap: 1, alignItems: 'center' }}>
+                                <ListCardAvatar
+                                    iconUrl={requestManager.getValidImgUrlFor(source.iconUrl)}
+                                    alt={source.name}
+                                    slots={{ spinnerImageProps: { ignoreQueue: true } }}
+                                />
+                                <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                                    <Typography variant="h6" component="h3">
+                                        {source.name}
+                                    </Typography>
+                                    <Typography variant="caption">{languageCodeToName(source.lang)}</Typography>
                                 </Box>
-                            )}
-                        </Stack>
-                    </ListCardContent>
-                </CardActionArea>
-            </Card>
-        </StyledGroupItemWrapper>
-    );
-};
+                            </Stack>
+                            <Stack sx={{ flexDirection: 'row', gap: 4 }}>
+                                {isCurrentSource && (
+                                    <Chip size="small" label={t`Current source`} color="primary" variant="outlined" />
+                                )}
+                                {isSelected && (
+                                    <Box>
+                                        <DragHandle sx={{ mr: 2, cursor: isDragging ? 'grabbing' : 'grab' }} />
+                                    </Box>
+                                )}
+                            </Stack>
+                        </ListCardContent>
+                    </CardActionArea>
+                </Card>
+            </StyledGroupItemWrapper>
+        );
+    },
+);
 
-export const MigrationSourceList = ({
+export const MigrationDestinationSourceList = ({
     sources,
     handleSelection,
     selectedSourceIds,
@@ -159,6 +162,10 @@ export const MigrationSourceList = ({
         handlePriorityChange(oldIndex, newIndex);
     };
 
+    if (!allSources.length) {
+        return <EmptyViewAbsoluteCentered message={t`No sources available to migrate to`} />;
+    }
+
     return (
         <DndContext
             sensors={dndSensors}
@@ -175,7 +182,11 @@ export const MigrationSourceList = ({
                     groupCounts={groupCounts}
                     computeItemKey={computeItemKey}
                     groupContent={(index) => {
-                        const [group] = groupedSourcesBySelectionState[index];
+                        const [group, sourcesOfGroup] = groupedSourcesBySelectionState[index];
+
+                        if (!sourcesOfGroup.length) {
+                            return null;
+                        }
 
                         return (
                             <StyledGroupHeader
@@ -191,7 +202,7 @@ export const MigrationSourceList = ({
                                     {group ? t`Selected` : t`Available`}
                                 </Typography>
 
-                                {group && !!selectedSources.length && (
+                                {group && (
                                     <Typography variant="body2" color="text.secondary">
                                         {t`Drag to prioritize`}
                                     </Typography>

@@ -353,6 +353,10 @@ msgstr "Abort"
 msgid "Abort migration"
 msgstr "Abort migration"
 
+#: src/features/migration/screens/MigrationExecute.tsx
+msgid "Aborted"
+msgstr "Aborted"
+
 #: src/features/navigation-bar/NavigationBar.constants.ts
 #: src/features/settings/screens/About.tsx
 msgid "About"
@@ -564,7 +568,7 @@ msgstr "Automatically refresh metadata"
 msgid "Automatically use webtoon mode for entries that are detected to likely use the long strip format"
 msgstr "Automatically use webtoon mode for entries that are detected to likely use the long strip format"
 
-#: src/features/migration/components/MigrationSourceList.tsx
+#: src/features/migration/components/MigrationDestinationSourceList.tsx
 msgid "Available"
 msgstr "Available"
 
@@ -1200,7 +1204,7 @@ msgstr "Creating theme…"
 msgid "Crimson"
 msgstr "Crimson"
 
-#: src/features/migration/components/MigrationSourceList.tsx
+#: src/features/migration/components/MigrationDestinationSourceList.tsx
 msgid "Current source"
 msgstr "Current source"
 
@@ -1496,7 +1500,7 @@ msgstr "Downloading"
 msgid "Downloads"
 msgstr "Downloads"
 
-#: src/features/migration/components/MigrationSourceList.tsx
+#: src/features/migration/components/MigrationDestinationSourceList.tsx
 msgid "Drag to prioritize"
 msgstr "Drag to prioritize"
 
@@ -2439,6 +2443,10 @@ msgstr "Migrate"
 msgid "Migrate \"{0}\""
 msgstr "Migrate \"{0}\""
 
+#: src/features/manga/Manga.constants.ts
+msgid "Migrate selected"
+msgstr "Migrate selected"
+
 #: src/features/migration/screens/MigrationExecute.tsx
 msgid "Migrating"
 msgstr "Migrating"
@@ -2584,6 +2592,10 @@ msgstr "No match found"
 #: src/features/reader/viewer/ReaderChapterViewer.tsx
 msgid "No pages found"
 msgstr "No pages found"
+
+#: src/features/migration/components/MigrationDestinationSourceList.tsx
+msgid "No sources available to migrate to"
+msgstr "No sources available to migrate to"
 
 #: src/features/browse/sources/Sources.tsx
 msgid "No sources found. Install Some extensions first."
@@ -3214,7 +3226,7 @@ msgstr "Select enabled sources"
 msgid "Select pinned sources"
 msgstr "Select pinned sources"
 
-#: src/features/migration/components/MigrationSourceList.tsx
+#: src/features/migration/components/MigrationDestinationSourceList.tsx
 msgid "Selected"
 msgstr "Selected"
 

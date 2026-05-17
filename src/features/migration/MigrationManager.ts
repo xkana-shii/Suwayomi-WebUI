@@ -38,10 +38,19 @@ import type {
     GetServerSettingsQueryVariables,
     MangaMigrationFieldsFragment,
 } from '@/lib/graphql/generated/graphql.ts';
-import { FetchSourceMangaType } from '@/lib/graphql/generated/graphql.ts';
+import { FetchSourceMangaType } from '@/lib/graphql/generated/graphql-base.types.ts';
 import { GET_SERVER_SETTINGS } from '@/lib/graphql/settings/SettingsQuery.ts';
 import { MangaMigration } from '@/features/migration/MangaMigration.ts';
-import type { MangaIdInfo } from '@/features/manga/Manga.types.ts';
+import type {
+    MangaArtistInfo,
+    MangaAuthorInfo,
+    MangaHighestChapterNumberInfo,
+    MangaIdInfo,
+    MangaSourceIdInfo,
+    MangaSourceNameInfo,
+    MangaThumbnailInfo,
+    MangaTitleInfo,
+} from '@/features/manga/Manga.types.ts';
 import type { SourceIdInfo } from '@/features/source/Source.types.ts';
 import { assertIsDefined } from '@/base/Asserts.ts';
 import { ReactRouter } from '@/lib/react-router/ReactRouter.ts';
@@ -57,6 +66,7 @@ import { ZustandUtil } from '@/lib/zustand/ZustandUtil.ts';
 import { getErrorMessage } from '@/lib/HelperFunctions.ts';
 import isEqual from 'lodash/fp/isEqual';
 import uniqBy from 'lodash/fp/uniqBy';
+import { MigrationEntries } from '@/features/migration/MigrationEntries.ts';
 
 const RESUMABLE_PHASES: readonly MigrationPhase[] = [MigrationPhase.SEARCHING, MigrationPhase.MIGRATING];
 
@@ -209,8 +219,9 @@ export class MigrationManager {
                 );
             case MigrationPhase.MIGRATING:
                 return (
+                    MigrationManager.getState().isAborted ||
                     MigrationManager.getState().migrationProgress.completed ===
-                    MigrationManager.getState().migrationProgress.total
+                        MigrationManager.getState().migrationProgress.total
                 );
             default:
                 return false;
@@ -285,7 +296,16 @@ export class MigrationManager {
         });
     }
 
-    static selectMangas(mangas: MangaMigrationFieldsFragment[]): void {
+    static selectMangas(
+        mangas: (MangaIdInfo &
+            MangaTitleInfo &
+            MangaArtistInfo &
+            MangaAuthorInfo &
+            MangaHighestChapterNumberInfo &
+            MangaThumbnailInfo &
+            MangaSourceIdInfo &
+            MangaSourceNameInfo)[],
+    ): void {
         MigrationManager.ensureIsInValidPhase([MigrationPhase.SELECT_MANGAS]);
 
         const isSingleManga = mangas.length === 1;
@@ -388,22 +408,10 @@ export class MigrationManager {
         }
     }
 
-    static getMigratableEntries(): MigratableEntry[] {
-        const { entries } = MigrationManager.getState();
-
-        return Object.values(entries).filter(
-            (entry): entry is MigratableEntry =>
-                [MigrationEntryStatus.SEARCH_COMPLETE, MigrationEntryStatus.MIGRATING].includes(entry.status) &&
-                !entry.isExcluded &&
-                entry.selectedMatchMangaId != null &&
-                entry.selectedMatchSourceId != null,
-        );
-    }
-
     static async startMigration(options: Omit<MigrateOptions, 'mangaIdToMigrateTo'>): Promise<void> {
         MigrationManager.ensureIsInValidPhase([MigrationPhase.SEARCHING]);
 
-        const migratableEntries = MigrationManager.getMigratableEntries();
+        const migratableEntries = MigrationEntries.getMigratable(Object.values(MigrationManager.getState().entries));
 
         await Confirmation.show({
             title: t`Migration information`,
@@ -470,8 +478,22 @@ export class MigrationManager {
         }
     }
 
-    static async abort(reason: unknown = 'abort'): Promise<boolean> {
+    static async stop(reason: unknown = 'stopped'): Promise<boolean> {
         if (!(await MigrationManager.confirmAbort())) {
+            return false;
+        }
+
+        MigrationManager.abortAndResetAbortController(reason);
+
+        MigrationManager.updateState((draft) => {
+            draft.isAborted = true;
+        });
+
+        return true;
+    }
+
+    static async abort(reason: unknown = 'abort'): Promise<boolean> {
+        if (!MigrationManager.getState().isAborted && !(await MigrationManager.confirmAbort())) {
             return false;
         }
 
@@ -496,7 +518,7 @@ export class MigrationManager {
         if (resumeMigrationPhase) {
             assertIsDefined(migrateOptions);
 
-            const migratableEntries = MigrationManager.getMigratableEntries();
+            const migratableEntries = MigrationEntries.getMigratable(Object.values(entries));
 
             MigrationManager.updateState((draft) => {
                 migratableEntries.forEach((entry) => {
@@ -511,8 +533,10 @@ export class MigrationManager {
 
         assertIsDefined(searchOptions);
 
-        const pendingEntries = Object.values(entries).filter((entry) =>
-            [MigrationEntryStatus.PENDING, MigrationEntryStatus.SEARCHING].includes(entry.status),
+        const pendingEntries = MigrationEntries.getHaveStatus(
+            Object.values(entries),
+            MigrationEntryStatus.PENDING,
+            MigrationEntryStatus.SEARCHING,
         );
 
         MigrationManager.updateState((draft) => {

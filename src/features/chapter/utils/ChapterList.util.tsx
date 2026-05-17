@@ -7,14 +7,16 @@
  */
 
 import { useMemo } from 'react';
-import type { ChapterType } from '@/lib/graphql/generated/graphql.ts';
+import type { ChapterType } from '@/lib/graphql/generated/graphql-base.types.ts';
 import type {
     ChapterBookmarkInfo,
     ChapterFillermarkInfo,
     ChapterDownloadInfo,
     ChapterListOptions,
+    ChapterNumberInfo,
     ChapterReadInfo,
     ChapterScanlatorInfo,
+    ChapterSourceOrderInfo,
 } from '@/features/chapter/Chapter.types.ts';
 import type { MangaIdInfo } from '@/features/manga/Manga.types.ts';
 import type { GqlMetaHolder } from '@/features/metadata/Metadata.types.ts';
@@ -74,7 +76,7 @@ function scanlatorFilter(excludedScanlators: string[], { scanlator }: ChapterSca
     return !scanlator || !excludedScanlators.includes(scanlator);
 }
 
-type TChapterSort = Pick<ChapterType, 'sourceOrder' | 'fetchedAt' | 'chapterNumber' | 'uploadDate'>;
+type TChapterSort = ChapterSourceOrderInfo & ChapterNumberInfo & Pick<ChapterType, 'fetchedAt' | 'uploadDate'>;
 const sortChapters = <T extends TChapterSort>(
     chapters: T[],
     { sortBy, reverse }: Pick<ChapterListOptions, 'sortBy' | 'reverse'>,
