@@ -166,8 +166,9 @@ const PreviewTextField = ({
     return <TextField {...textFieldProps} />;
 };
 
-// Cast Autocomplete to "any" at usage sites to avoid type incompatibilities across MUI versions
+// Bypass MUI generic overload typing by casting to any where needed
 const AutocompleteAny = Autocomplete as unknown as React.ComponentType<any>;
+const StackAny = Stack as unknown as React.ComponentType<any>;
 
 const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void }) => {
     const { t } = useLingui();
@@ -248,7 +249,7 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
     return (
         <>
             <DialogContent>
-                <Stack sx={{ gap: 2, mt: 1 }}>
+                <StackAny sx={{ gap: 2, mt: 1 }}>
                     <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
                         <Box sx={{ position: 'relative', flexShrink: 0, width: 120 }}>
                             <SpinnerImage
@@ -277,7 +278,7 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
                             </IconButton>
                         </Box>
 
-                        <Stack sx={{ gap: 1, flex: 1 }}>
+                        <StackAny sx={{ gap: 1, flex: 1 }}>
                             <PreviewTextField fieldLabel={t`Title`} previewValue={manga.title} value={title} onChange={setTitle} />
                             <PreviewTextField
                                 fieldLabel={t`Author`}
@@ -291,7 +292,7 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
                                 value={artist}
                                 onChange={setArtist}
                             />
-                        </Stack>
+                        </StackAny>
                     </Box>
 
                     <TextField
@@ -335,7 +336,7 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
                         minRows={3}
                         maxRows={6}
                     />
-                </Stack>
+                </StackAny>
             </DialogContent>
 
             <DialogActions sx={{ justifyContent: 'space-between', flexWrap: 'wrap', gap: 1 }}>
@@ -398,7 +399,7 @@ const MatchResultCard = ({
             <CardActionArea onClick={onSelect}>
                 <CardContent>
                     <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
-                        <Stack direction="row" spacing={2} sx={{ flex: 1, minWidth: 0 }}>
+                        <StackAny direction="row" spacing={2} sx={{ flex: 1, minWidth: 0 }}>
                             <Box sx={{ flexShrink: 0 }}>
                                 {result.coverUrl ? (
                                     externalUrl ? (
@@ -435,7 +436,7 @@ const MatchResultCard = ({
                                 ) : null}
                             </Box>
 
-                            <Stack spacing={1} sx={{ minWidth: 0, flex: 1 }}>
+                            <StackAny spacing={1} sx={{ minWidth: 0, flex: 1 }}>
                                 {externalUrl ? (
                                     <a
                                         href={externalUrl}
@@ -444,37 +445,37 @@ const MatchResultCard = ({
                                         style={{ color: 'inherit', textDecoration: 'none' }}
                                         onClick={(e) => e.stopPropagation()}
                                     >
-                                        <Stack direction="row" spacing={1} alignItems="center">
+                                        <StackAny direction="row" spacing={1} alignItems="center">
                                             <Typography variant="h6" noWrap sx={{ minWidth: 0 }}>
                                                 {result.title}
                                             </Typography>
                                             {selected && <CheckCircleIcon color="primary" />}
-                                        </Stack>
+                                        </StackAny>
                                     </a>
                                 ) : (
-                                    <Stack direction="row" spacing={1} alignItems="center">
+                                    <StackAny direction="row" spacing={1} alignItems="center">
                                         <Typography variant="h6" noWrap sx={{ minWidth: 0 }}>
                                             {result.title}
                                         </Typography>
                                         {selected && <CheckCircleIcon color="primary" />}
-                                    </Stack>
+                                    </StackAny>
                                 )}
 
-                                <Stack direction="row" spacing={1}>
+                                <StackAny direction="row" spacing={1}>
                                     <Typography variant="body2" color="text.secondary" sx={{ minWidth: 70 }}>
                                         {t`Author`}
                                     </Typography>
                                     <Typography variant="body2">{result.author ?? '-'}</Typography>
-                                </Stack>
+                                </StackAny>
 
-                                <Stack direction="row" spacing={1}>
+                                <StackAny direction="row" spacing={1}>
                                     <Typography variant="body2" color="text.secondary" sx={{ minWidth: 70 }}>
                                         {t`Year`}
                                     </Typography>
                                     <Typography variant="body2">{result.year ?? '-'}</Typography>
-                                </Stack>
-                            </Stack>
-                        </Stack>
+                                </StackAny>
+                            </StackAny>
+                        </StackAny>
 
                         {externalUrl ? (
                             <IconButton
@@ -592,8 +593,8 @@ const MatchTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => voi
     return (
         <>
             <DialogContent dividers>
-                <Stack sx={{ gap: 2 }}>
-                    <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                <StackAny sx={{ gap: 2 }}>
+                    <StackAny direction="row" spacing={1} flexWrap="wrap" useFlexGap>
                         {PROVIDERS.map((p) => {
                             const sel = provider === p;
                             return (
@@ -622,7 +623,7 @@ const MatchTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => voi
                                 </Button>
                             );
                         })}
-                    </Stack>
+                    </StackAny>
 
                     <Box sx={{ display: 'flex', gap: 1 }}>
                         <TextField
@@ -665,7 +666,7 @@ const MatchTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => voi
                             {t`Search for manga to match metadata`}
                         </Typography>
                     )}
-                </Stack>
+                </StackAny>
             </DialogContent>
 
             <DialogActions>
