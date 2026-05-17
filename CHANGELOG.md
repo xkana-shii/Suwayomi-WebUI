@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased] (Preview)
 
+### Added
+
+- (**Migration**) Add a search option to ignore outdated matches
+
 ### Changed
 
 - (**Migration**) Show "abort" button during active bulk migration search
@@ -15,6 +19,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - (**Migration**) Sort manga to migrate selection by title and by recently added to the library
 - (**Migration**) Sort destination source selection by same order as browse source page
 - (**Migration**) Sort entries in search/execution page by title
+- (**Migration**) Prevent a manual selected match from getting automatically overwritten by a new-found match
+- (**Migration**) Abort active search when selecting a match through the manual search
 
 ### Fixed
 
@@ -22,6 +28,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - (**Migration**) Fix retry button never being shown for failed search/migration entries
 - (**Migration**) Fix showing an empty "Available" source group header when all sources are selected
 - (**Migration**) Fix showing no info message when no sources are available to select as destinations
+- (**Migration**) Fix duplicated search matches after resuming the migration search
+- (**Migration**) Fix search progress not getting updated after a manual search
 - (**Reader**) Fix scrollbar appearing with "fit to widt/height/screen" page scale mode and applied safe area insets
 - (**Reader**) Fix wrongly positioned mobile progress bar current page indicator
 - (**Reader**) Fix mobile progress bar previous/next chapter button visibility on hover and while disabled
