@@ -32,12 +32,44 @@ export type AboutWebUi = {
   updateTimestamp: Scalars['LongString']['output'];
 };
 
+export type ApplyMetadataMatchInput = {
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  externalId: Scalars['String']['input'];
+  includeCover: Scalars['Boolean']['input'];
+  mangaId: Scalars['Int']['input'];
+  provider: Scalars['String']['input'];
+};
+
+export type ApplyMetadataMatchPayload = {
+  __typename?: 'ApplyMetadataMatchPayload';
+  clientMutationId?: Maybe<Scalars['String']['output']>;
+  manga: MangaType;
+};
+
 export enum AuthMode {
   BasicAuth = 'BASIC_AUTH',
   None = 'NONE',
   SimpleLogin = 'SIMPLE_LOGIN',
   UiLogin = 'UI_LOGIN'
 }
+
+export enum BackupCreateState {
+  CreatingCategories = 'CREATING_CATEGORIES',
+  CreatingManga = 'CREATING_MANGA',
+  CreatingMeta = 'CREATING_META',
+  CreatingSettings = 'CREATING_SETTINGS',
+  Failure = 'FAILURE',
+  Idle = 'IDLE',
+  Success = 'SUCCESS'
+}
+
+export type BackupCreateStatus = {
+  __typename?: 'BackupCreateStatus';
+  mangaProgress: Scalars['Int']['output'];
+  state: BackupCreateState;
+  title?: Maybe<Scalars['String']['output']>;
+  totalManga: Scalars['Int']['output'];
+};
 
 export enum BackupRestoreState {
   Failure = 'FAILURE',
@@ -180,6 +212,7 @@ export type ChapterConditionInput = {
   id?: InputMaybe<Scalars['Int']['input']>;
   isBookmarked?: InputMaybe<Scalars['Boolean']['input']>;
   isDownloaded?: InputMaybe<Scalars['Boolean']['input']>;
+  isFillermarked?: InputMaybe<Scalars['Boolean']['input']>;
   isRead?: InputMaybe<Scalars['Boolean']['input']>;
   lastPageRead?: InputMaybe<Scalars['Int']['input']>;
   lastReadAt?: InputMaybe<Scalars['LongString']['input']>;
@@ -207,6 +240,7 @@ export type ChapterFilterInput = {
   inLibrary?: InputMaybe<BooleanFilterInput>;
   isBookmarked?: InputMaybe<BooleanFilterInput>;
   isDownloaded?: InputMaybe<BooleanFilterInput>;
+  isFillermarked?: InputMaybe<BooleanFilterInput>;
   isRead?: InputMaybe<BooleanFilterInput>;
   lastPageRead?: InputMaybe<IntFilterInput>;
   lastReadAt?: InputMaybe<LongFilterInput>;
@@ -266,6 +300,7 @@ export type ChapterType = {
   id: Scalars['Int']['output'];
   isBookmarked: Scalars['Boolean']['output'];
   isDownloaded: Scalars['Boolean']['output'];
+  isFillermarked: Scalars['Boolean']['output'];
   isRead: Scalars['Boolean']['output'];
   lastPageRead: Scalars['Int']['output'];
   lastReadAt: Scalars['LongString']['output'];
@@ -335,6 +370,13 @@ export type ConnectKoSyncAccountInput = {
   password: Scalars['String']['input'];
   serverAddress: Scalars['String']['input'];
   username: Scalars['String']['input'];
+};
+
+export type CreateBackupAsyncPayload = {
+  __typename?: 'CreateBackupAsyncPayload';
+  clientMutationId?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  status?: Maybe<BackupCreateStatus>;
 };
 
 export type CreateBackupInput = {
@@ -1212,6 +1254,7 @@ export type MangaType = {
   chaptersLastFetchedAt?: Maybe<Scalars['LongString']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   downloadCount: Scalars['Int']['output'];
+  fillermarkCount: Scalars['Int']['output'];
   firstUnreadChapter?: Maybe<ChapterType>;
   genre: Array<Scalars['String']['output']>;
   hasDuplicateChapters: Scalars['Boolean']['output'];
@@ -1284,6 +1327,16 @@ export type MetaType = {
   value: Scalars['String']['output'];
 };
 
+export type MetadataSearchResultType = {
+  __typename?: 'MetadataSearchResultType';
+  author?: Maybe<Scalars['String']['output']>;
+  coverUrl?: Maybe<Scalars['String']['output']>;
+  description?: Maybe<Scalars['String']['output']>;
+  externalId: Scalars['String']['output'];
+  title: Scalars['String']['output'];
+  year?: Maybe<Scalars['Int']['output']>;
+};
+
 export type MultiSelectListPreference = {
   __typename?: 'MultiSelectListPreference';
   currentValue?: Maybe<Array<Scalars['String']['output']>>;
@@ -1301,11 +1354,13 @@ export type MultiSelectListPreference = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  applyMetadataMatch?: Maybe<ApplyMetadataMatchPayload>;
   bindTrack: BindTrackPayload;
   clearCachedImages: ClearCachedImagesPayload;
   clearDownloader?: Maybe<ClearDownloaderPayload>;
   connectKoSyncAccount: KoSyncConnectPayload;
   createBackup: CreateBackupPayload;
+  createBackupAsync: CreateBackupAsyncPayload;
   createCategory?: Maybe<CreateCategoryPayload>;
   deleteCategory?: Maybe<DeleteCategoryPayload>;
   deleteCategoryMeta?: Maybe<DeleteCategoryMetaPayload>;
@@ -1340,9 +1395,11 @@ export type Mutation = {
   pushKoSyncProgress?: Maybe<PushKoSyncProgressPayload>;
   refreshToken: RefreshTokenPayload;
   reorderChapterDownload?: Maybe<ReorderChapterDownloadPayload>;
+  resetMangaMetadataToSource?: Maybe<ResetMangaMetadataToSourcePayload>;
   resetSettings: ResetSettingsPayload;
   resetWebUIUpdateStatus?: Maybe<WebUiUpdateStatus>;
   restoreBackup: RestoreBackupPayload;
+  searchMetadataProvider?: Maybe<SearchMetadataProviderPayload>;
   setCategoryMeta?: Maybe<SetCategoryMetaPayload>;
   setCategoryMetas?: Maybe<SetCategoryMetasPayload>;
   setChapterMeta?: Maybe<SetChapterMetaPayload>;
@@ -1354,6 +1411,7 @@ export type Mutation = {
   setSettings: SetSettingsPayload;
   setSourceMeta?: Maybe<SetSourceMetaPayload>;
   setSourceMetas?: Maybe<SetSourceMetasPayload>;
+  shutdownServer?: Maybe<ShutdownServerPayload>;
   startDownloader?: Maybe<StartDownloaderPayload>;
   stopDownloader?: Maybe<StopDownloaderPayload>;
   trackProgress?: Maybe<TrackProgressPayload>;
@@ -1370,12 +1428,19 @@ export type Mutation = {
   updateLibraryManga?: Maybe<UpdateLibraryMangaPayload>;
   updateManga?: Maybe<UpdateMangaPayload>;
   updateMangaCategories?: Maybe<UpdateMangaCategoriesPayload>;
+  updateMangaDetails?: Maybe<UpdateMangaDetailsPayload>;
   updateMangas?: Maybe<UpdateMangasPayload>;
   updateMangasCategories?: Maybe<UpdateMangasCategoriesPayload>;
   updateSourcePreference?: Maybe<UpdateSourcePreferencePayload>;
   updateStop: UpdateStopPayload;
   updateTrack: UpdateTrackPayload;
   updateWebUI?: Maybe<WebUiUpdatePayload>;
+  uploadMangaCover?: Maybe<UploadMangaCoverPayload>;
+};
+
+
+export type MutationApplyMetadataMatchArgs = {
+  input: ApplyMetadataMatchInput;
 };
 
 
@@ -1400,6 +1465,11 @@ export type MutationConnectKoSyncAccountArgs = {
 
 
 export type MutationCreateBackupArgs = {
+  input?: InputMaybe<CreateBackupInput>;
+};
+
+
+export type MutationCreateBackupAsyncArgs = {
   input?: InputMaybe<CreateBackupInput>;
 };
 
@@ -1574,6 +1644,11 @@ export type MutationReorderChapterDownloadArgs = {
 };
 
 
+export type MutationResetMangaMetadataToSourceArgs = {
+  input: ResetMangaMetadataToSourceInput;
+};
+
+
 export type MutationResetSettingsArgs = {
   input: ResetSettingsInput;
 };
@@ -1581,6 +1656,11 @@ export type MutationResetSettingsArgs = {
 
 export type MutationRestoreBackupArgs = {
   input: RestoreBackupInput;
+};
+
+
+export type MutationSearchMetadataProviderArgs = {
+  input: SearchMetadataProviderInput;
 };
 
 
@@ -1636,6 +1716,11 @@ export type MutationSetSourceMetaArgs = {
 
 export type MutationSetSourceMetasArgs = {
   input: SetSourceMetasInput;
+};
+
+
+export type MutationShutdownServerArgs = {
+  input: ShutdownServerInput;
 };
 
 
@@ -1719,6 +1804,11 @@ export type MutationUpdateMangaCategoriesArgs = {
 };
 
 
+export type MutationUpdateMangaDetailsArgs = {
+  input: UpdateMangaDetailsInput;
+};
+
+
 export type MutationUpdateMangasArgs = {
   input: UpdateMangasInput;
 };
@@ -1746,6 +1836,11 @@ export type MutationUpdateTrackArgs = {
 
 export type MutationUpdateWebUiArgs = {
   input: WebUiUpdateInput;
+};
+
+
+export type MutationUploadMangaCoverArgs = {
+  input: UploadMangaCoverInput;
 };
 
 export type Node = CategoryMetaType | CategoryType | ChapterMetaType | ChapterType | DownloadType | DownloadUpdate | ExtensionType | GlobalMetaType | MangaMetaType | MangaType | PartialSettingsType | SettingsType | SourceMetaType | SourceType | TrackRecordType | TrackerType;
@@ -1856,6 +1951,7 @@ export type PartialSettingsType = Settings & {
   maxLogFileSize?: Maybe<Scalars['String']['output']>;
   maxLogFiles?: Maybe<Scalars['Int']['output']>;
   maxLogFolderSize?: Maybe<Scalars['String']['output']>;
+  maxPagesInParallel?: Maybe<Scalars['Int']['output']>;
   maxSourcesInParallel?: Maybe<Scalars['Int']['output']>;
   opdsCbzMimetype?: Maybe<CbzMediaType>;
   opdsChapterSortOrder?: Maybe<SortOrder>;
@@ -1934,6 +2030,7 @@ export type PartialSettingsTypeInput = {
   maxLogFileSize?: InputMaybe<Scalars['String']['input']>;
   maxLogFiles?: InputMaybe<Scalars['Int']['input']>;
   maxLogFolderSize?: InputMaybe<Scalars['String']['input']>;
+  maxPagesInParallel?: InputMaybe<Scalars['Int']['input']>;
   maxSourcesInParallel?: InputMaybe<Scalars['Int']['input']>;
   opdsCbzMimetype?: InputMaybe<CbzMediaType>;
   opdsChapterSortOrder?: InputMaybe<SortOrder>;
@@ -1996,6 +2093,7 @@ export type Query = {
   chapters: ChapterNodeList;
   checkForServerUpdates: Array<CheckForServerUpdatesPayload>;
   checkForWebUIUpdate: WebUiUpdateCheck;
+  createStatus?: Maybe<BackupCreateStatus>;
   downloadStatus: DownloadStatus;
   extension: ExtensionType;
   extensions: ExtensionNodeList;
@@ -2053,6 +2151,11 @@ export type QueryChaptersArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   offset?: InputMaybe<Scalars['Int']['input']>;
   order?: InputMaybe<Array<ChapterOrderInput>>;
+};
+
+
+export type QueryCreateStatusArgs = {
+  id: Scalars['String']['input'];
 };
 
 
@@ -2194,6 +2297,18 @@ export type ReorderChapterDownloadPayload = {
   downloadStatus: DownloadStatus;
 };
 
+export type ResetMangaMetadataToSourceInput = {
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['Int']['input'];
+  resetCover: Scalars['Boolean']['input'];
+};
+
+export type ResetMangaMetadataToSourcePayload = {
+  __typename?: 'ResetMangaMetadataToSourcePayload';
+  clientMutationId?: Maybe<Scalars['String']['output']>;
+  manga: MangaType;
+};
+
 export type ResetSettingsInput = {
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
 };
@@ -2215,6 +2330,19 @@ export type RestoreBackupPayload = {
   clientMutationId?: Maybe<Scalars['String']['output']>;
   id: Scalars['String']['output'];
   status?: Maybe<BackupRestoreStatus>;
+};
+
+export type SearchMetadataProviderInput = {
+  author?: InputMaybe<Scalars['String']['input']>;
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  provider: Scalars['String']['input'];
+  query: Scalars['String']['input'];
+};
+
+export type SearchMetadataProviderPayload = {
+  __typename?: 'SearchMetadataProviderPayload';
+  clientMutationId?: Maybe<Scalars['String']['output']>;
+  results: Array<MetadataSearchResultType>;
 };
 
 export type SearchTrackerInput = {
@@ -2456,6 +2584,7 @@ export type Settings = {
   maxLogFileSize?: Maybe<Scalars['String']['output']>;
   maxLogFiles?: Maybe<Scalars['Int']['output']>;
   maxLogFolderSize?: Maybe<Scalars['String']['output']>;
+  maxPagesInParallel?: Maybe<Scalars['Int']['output']>;
   maxSourcesInParallel?: Maybe<Scalars['Int']['output']>;
   opdsCbzMimetype?: Maybe<CbzMediaType>;
   opdsChapterSortOrder?: Maybe<SortOrder>;
@@ -2599,6 +2728,7 @@ export type SettingsType = Settings & {
   maxLogFileSize: Scalars['String']['output'];
   maxLogFiles: Scalars['Int']['output'];
   maxLogFolderSize: Scalars['String']['output'];
+  maxPagesInParallel: Scalars['Int']['output'];
   maxSourcesInParallel: Scalars['Int']['output'];
   opdsCbzMimetype: CbzMediaType;
   opdsChapterSortOrder: SortOrder;
@@ -2623,6 +2753,16 @@ export type SettingsType = Settings & {
   webUIFlavor: WebUiFlavor;
   webUIInterface: WebUiInterface;
   webUIUpdateCheckInterval: Scalars['Float']['output'];
+};
+
+export type ShutdownServerInput = {
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ShutdownServerPayload = {
+  __typename?: 'ShutdownServerPayload';
+  clientMutationId?: Maybe<Scalars['String']['output']>;
+  success: Scalars['Boolean']['output'];
 };
 
 export type SortFilter = {
@@ -3142,6 +3282,7 @@ export type UpdateChapterInput = {
 
 export type UpdateChapterPatchInput = {
   isBookmarked?: InputMaybe<Scalars['Boolean']['input']>;
+  isFillermarked?: InputMaybe<Scalars['Boolean']['input']>;
   isRead?: InputMaybe<Scalars['Boolean']['input']>;
   lastPageRead?: InputMaybe<Scalars['Int']['input']>;
 };
@@ -3229,6 +3370,27 @@ export type UpdateMangaCategoriesPatchInput = {
 
 export type UpdateMangaCategoriesPayload = {
   __typename?: 'UpdateMangaCategoriesPayload';
+  clientMutationId?: Maybe<Scalars['String']['output']>;
+  manga: MangaType;
+};
+
+export type UpdateMangaDetailsInput = {
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['Int']['input'];
+  patch: UpdateMangaDetailsPatchInput;
+};
+
+export type UpdateMangaDetailsPatchInput = {
+  artist?: InputMaybe<Scalars['String']['input']>;
+  author?: InputMaybe<Scalars['String']['input']>;
+  description?: InputMaybe<Scalars['String']['input']>;
+  genre?: InputMaybe<Array<Scalars['String']['input']>>;
+  status?: InputMaybe<MangaStatus>;
+  title?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateMangaDetailsPayload = {
+  __typename?: 'UpdateMangaDetailsPayload';
   clientMutationId?: Maybe<Scalars['String']['output']>;
   manga: MangaType;
 };
@@ -3367,6 +3529,18 @@ export type UpdaterUpdates = {
   mangaUpdates: Array<MangaUpdateType>;
   /** Indicates whether updates have been omitted based on the "maxUpdates" subscription variable. In case updates have been omitted, the "updateStatus" query should be re-fetched. */
   omittedUpdates: Scalars['Boolean']['output'];
+};
+
+export type UploadMangaCoverInput = {
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  cover: Scalars['Upload']['input'];
+  id: Scalars['Int']['input'];
+};
+
+export type UploadMangaCoverPayload = {
+  __typename?: 'UploadMangaCoverPayload';
+  clientMutationId?: Maybe<Scalars['String']['output']>;
+  manga: MangaType;
 };
 
 export type ValidateBackupInput = {
