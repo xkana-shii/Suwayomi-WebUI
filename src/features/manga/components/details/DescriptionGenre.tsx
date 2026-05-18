@@ -6,7 +6,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import { useCallback, useMemo, useState } from 'react';
 import Chip from '@mui/material/Chip';
 import Collapse from '@mui/material/Collapse';
 import Stack from '@mui/material/Stack';
@@ -24,6 +23,7 @@ import type {
 } from '@/features/manga/Manga.types.ts';
 import { SearchLink } from '@/features/manga/components/details/SearchLink.tsx';
 import { MarkdownRenderer } from '@/base/components/MarkdownRenderer.tsx';
+import { useCallback, useMemo, useState } from 'react';
 
 const OPEN_CLOSE_BUTTON_HEIGHT = '35px';
 const DESCRIPTION_COLLAPSED_SIZE = 75;
@@ -41,8 +41,9 @@ function normalizeDescription(input?: string | null): string | undefined {
     s = s.replace(/(?:\n\s*[-*_]{3,}\s*)+$/, '');
     // Remove trailing spaces at end of lines
     s = s.replaceAll(/[ \t]+(\n|$)/g, '\n');
-    // Collapse runs of 3+ newlines into exactly two (preserve paragraph separation but avoid huge gaps)
-    s = s.replaceAll(/\n{3,}/g, '\n\n');
+    // Collapse runs of 2+ newlines into exactly two (preserve a single blank-line paragraph separation,
+    // but normalize multiple empty lines down to one).
+    s = s.replaceAll(/\n{2,}/g, '\n\n');
     // Trim leading/trailing whitespace and newlines
     s = s.trim();
     return s;

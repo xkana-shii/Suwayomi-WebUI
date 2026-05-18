@@ -9,64 +9,82 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
 import rehypeSanitize from 'rehype-sanitize';
 import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Icon from '@mui/material/Icon';
+import Typography from '@mui/material/Typography';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
 import { useTheme } from '@mui/material/styles';
-import Typography from '@mui/material/Typography';
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
 
 type MarkdownRendererProps = {
+    /** Markdown source string. Renders nothing when falsy. */
     source?: string | null;
     className?: string;
-    loadImages?: boolean; // when false, inline images are replaced with a placeholder icon
+    /** When false, inline images are replaced with a labelled placeholder icon. */
+    loadImages?: boolean;
     maxHeight?: string | number;
 };
 
-// A focused sanitize schema that explicitly allows the tags/attributes we want.
-const sanitizeSchema: any = {
+// ---------------------------------------------------------------------------
+// Sanitize schema
+// ---------------------------------------------------------------------------
+
+const SANITIZE_SCHEMA = {
     tagNames: [
-        'p',
-        'h1',
-        'h2',
-        'h3',
-        'h4',
-        'h5',
-        'h6',
-        'blockquote',
-        'ul',
-        'ol',
-        'li',
-        'pre',
-        'code',
-        'hr',
-        'br',
-        'table',
-        'thead',
-        'tbody',
-        'tr',
-        'th',
-        'td',
-        'a',
-        'strong',
-        'em',
-        'img',
+        'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+        'blockquote', 'ul', 'ol', 'li',
+        'pre', 'code', 'hr', 'br',
+        'table', 'thead', 'tbody', 'tr', 'th', 'td',
+        'a', 'strong', 'em', 'img', 'input',
     ],
     attributes: {
-        a: ['href', 'title'],
-        img: ['src', 'alt', 'title'],
-        '*': ['className', 'align'],
+        a:     ['href', 'title'],
+        img:   ['src', 'alt', 'title'],
+        input: ['type', 'checked', 'disabled'],
+        '*':   ['className', 'align'],
     },
     protocols: {
         href: ['http', 'https', 'mailto', 'tel'],
-        src: ['http', 'https', 'data'],
+        src:  ['http', 'https', 'data'],
     },
 };
+
+// rehype-sanitize typing workaround for react-markdown/unified.
+const REHYPE_PLUGINS = [[rehypeSanitize, SANITIZE_SCHEMA]] as any;
+const REMARK_PLUGINS = [remarkGfm, remarkBreaks] as any[];
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/** Returns true when every child is empty whitespace or a <br /> element. */
+function isParagraphEmpty(children: React.ReactNode): boolean {
+    const childArray = React.Children.toArray(children);
+    if (childArray.length === 0) {return true;}
+    return childArray.every((c) => {
+        if (typeof c === 'string') {return /^\s*$/.test(c);}
+        if (React.isValidElement(c)) {
+            const t = typeof c.type === 'string' ? c.type.toLowerCase() : '';
+            return t === 'br';
+        }
+        return false;
+    });
+}
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
 
 export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
     source,
@@ -76,156 +94,145 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
 }) => {
     const theme = useTheme();
 
-    if (!source) {
-        return null;
-    }
+    if (!source) {return null;}
 
-    // rehypePlugins: cast to satisfy react-markdown/unified typings.
-    const rehypePlugins = [[rehypeSanitize, sanitizeSchema]] as unknown as any;
+    const escapedSource = source.replaceAll('~~', '\\~\\~');
+
+    // Komikku markdownPadding.block = 3.dp -> theme.spacing(3)
+    const BLOCK_GAP = theme.spacing(1.5);
 
     return (
         <Box
             className={className}
             sx={{
                 color: theme.palette.text.primary,
-                // tighter spacing than browser defaults to avoid large gaps
                 '& h1, & h2, & h3, & h4, & h5, & h6': {
-                    marginTop: theme.spacing(1),
-                    marginBottom: theme.spacing(0.5),
+                    mt: theme.spacing(1),
+                    mb: BLOCK_GAP,
                 },
                 '& p': {
-                    marginTop: 0,
-                    marginBottom: theme.spacing(1),
+                    mt: 0,
+                    mb: BLOCK_GAP,
+                    lineHeight: 1.45,
                 },
+                '& p + p': { mt: BLOCK_GAP },
                 '& a': {
                     color: theme.palette.primary.main,
                     textDecoration: 'none',
                     '&:hover': { textDecoration: 'underline' },
                 },
-                '& pre': {
-                    background: theme.palette.action.hover,
-                    padding: theme.spacing(1),
-                    borderRadius: 1,
-                    overflow: 'auto',
-                    margin: theme.spacing(1, 0),
-                },
-                '& code': {
-                    fontFamily: 'monospace',
-                    background: theme.palette.action.hover,
-                    padding: '2px 4px',
-                    borderRadius: '4px',
-                    fontSize: '0.95em',
-                },
-                '& table': {
-                    marginTop: theme.spacing(1),
-                    marginBottom: theme.spacing(1),
-                    width: '100%',
-                    borderCollapse: 'collapse',
-                },
-                '& th, & td': {
-                    border: `1px solid ${theme.palette.divider}`,
-                    padding: theme.spacing(0.5),
-                },
-                '& img': {
-                    maxWidth: '100%',
-                    display: 'block',
-                },
-                // Use border-top for hr so it stays visible across themes
-                '& hr': {
-                    border: 0,
-                    borderTop: `1px solid ${theme.palette.divider}`,
-                    height: 0,
-                    margin: theme.spacing(1, 0),
-                },
+                '& img': { maxWidth: '100%', display: 'block' },
                 maxHeight: maxHeight ?? 'auto',
                 overflow: maxHeight ? 'auto' : undefined,
             }}
         >
             <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                rehypePlugins={rehypePlugins}
+                remarkPlugins={REMARK_PLUGINS}
+                rehypePlugins={REHYPE_PLUGINS}
                 components={{
-                    // paragraphs: wrap in MUI Typography for consistent spacing
-                    p: ({ children, ...rest }: any) => (
-                        <Typography component="div" variant="body2" {...rest}>
-                            {children}
-                        </Typography>
-                    ),
-                    // links: open external links in new tab and render children explicitly
-                    a: ({ children, href, ...rest }: any) => {
+                    // --- Paragraph ---
+                    p: ({ children, className: cls }: any) =>
+                        isParagraphEmpty(children) ? (
+                            <Box sx={{ height: BLOCK_GAP }} />
+                        ) : (
+                            <Typography component="p" variant="body2" className={cls}>
+                                {children}
+                            </Typography>
+                        ),
+
+                    // --- Links ---
+                    a: ({ children, href, title, className: cls }: any) => {
+                        const allowed = href && /^(https?:|mailto:|tel:|\/)/i.test(href);
                         const isInternal = href && (href.startsWith('/') || href.startsWith(window.location.origin));
-                        // eslint-disable-next-line react/jsx-no-target-blank
+                        const isBlank = !isInternal && allowed;
                         return (
                             <a
-                                {...rest}
-                                href={href}
-                                target={isInternal ? undefined : '_blank'}
-                                rel={isInternal ? undefined : 'noopener noreferrer'}
+                                className={cls}
+                                href={allowed ? href : undefined}
+                                title={title}
+                                target={isBlank ? '_blank' : undefined}
+                                // noreferrer implies noopener; satisfies both react/jsx-no-target-blank
+                                // and oxc's stricter jsx-no-target-blank rule.
+                                rel={isBlank ? 'noreferrer' : undefined}
                             >
                                 {children}
                             </a>
                         );
                     },
-                    // images: either render the image or a placeholder icon
-                    img: ({ src, alt, title, ...rest }: any) => {
-                        if (!loadImages) {
-                            return (
-                                <Box
-                                    component="div"
-                                    sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1 }}
-                                >
-                                    <Icon fontSize="small" color="action">
-                                        <ImageOutlinedIcon />
-                                    </Icon>
-                                    <Typography variant="body2" color="text.secondary">
-                                        {alt ?? ''}
-                                    </Typography>
-                                </Box>
-                            );
-                        }
-                        return (
+
+                    // --- Images ---
+                    img: ({ src, alt, title, className: cls }: any) =>
+                        loadImages ? (
                             // eslint-disable-next-line jsx-a11y/img-redundant-alt
                             <img
-                                {...rest}
+                                className={cls}
                                 src={src}
                                 alt={alt ?? ''}
                                 title={title}
                                 loading="lazy"
                                 style={{ maxWidth: '100%', borderRadius: 4 }}
                             />
-                        );
-                    },
-                    // unordered lists: rely on browser markup but wrap in Box for spacing
-                    ul: ({ children, ...rest }: any) => (
-                        <Box component="ul" sx={{ pl: 3, mb: 1 }} {...rest}>
+                        ) : (
+                            <Box
+                                component="span"
+                                sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.5 }}
+                                className={cls}
+                            >
+                                <ImageOutlinedIcon fontSize="small" color="action" />
+                                <Typography component="span" variant="body2" color="text.secondary">
+                                    {alt ?? ''}
+                                </Typography>
+                            </Box>
+                        ),
+
+                    // --- Lists ---
+                    ul: ({ children, className: cls }: any) => (
+                        <Box component="ul" sx={{ pl: theme.spacing(3), mb: theme.spacing(1) }} className={cls}>
                             {children}
                         </Box>
                     ),
-                    // ordered lists
-                    ol: ({ children, ...rest }: any) => (
-                        <Box component="ol" sx={{ pl: 3, mb: 1 }} {...rest}>
+                    ol: ({ children, className: cls }: any) => (
+                        <Box component="ol" sx={{ pl: theme.spacing(3), mb: theme.spacing(1) }} className={cls}>
                             {children}
                         </Box>
                     ),
-                    // list item
-                    li: ({ children }: any) => <Box component="li">{children}</Box>,
-                    // code blocks & inline code
-                    code: ({ inline, children }: any) => {
-                        if (inline) {
-                            return (
-                                <Box
-                                    component="code"
-                                    sx={{ fontFamily: 'monospace', bgcolor: 'action.hover', px: 0.5, py: 0 }}
-                                >
-                                    {children}
-                                </Box>
-                            );
-                        }
-                        // For block code, react-markdown wraps with <pre><code> so we only render children here.
-                        return (
+                    li: ({ children, checked }: any) =>
+                        typeof checked === 'boolean' ? (
+                            <Box component="li" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                <input type="checkbox" checked={checked} disabled aria-hidden className="task-checkbox" />
+                                <Box component="span">{children}</Box>
+                            </Box>
+                        ) : (
+                            <Box component="li">{children}</Box>
+                        ),
+
+                    // --- Code ---
+                    // react-markdown v7+: detect inline by absence of a newline in content.
+                    code: ({ node, children, className: cls }: any) => {
+                        const isInline = !node?.position?.start?.line ||
+                            node.position.start.line === node.position.end?.line;
+                        return isInline ? (
+                            <Box
+                                component="code"
+                                sx={{ fontFamily: 'monospace', bgcolor: 'action.hover', px: 0.5 }}
+                                className={cls}
+                            >
+                                {children}
+                            </Box>
+                        ) : (
                             <Box
                                 component="pre"
-                                sx={{ whiteSpace: 'pre', p: 1, bgcolor: 'action.hover', borderRadius: 1 }}
+                                sx={{
+                                    whiteSpace: 'pre',
+                                    p: theme.spacing(1),
+                                    bgcolor: theme.palette.mode === 'dark'
+                                        ? theme.palette.background.paper
+                                        : 'action.hover',
+                                    borderRadius: 1,
+                                    overflow: 'auto',
+                                    my: BLOCK_GAP,
+                                }}
+                                className={cls}
                             >
                                 <Box component="code" sx={{ fontFamily: 'monospace' }}>
                                     {children}
@@ -233,24 +240,27 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
                             </Box>
                         );
                     },
-                    // tables: wrap in Paper so they look consistent with the app
-                    table: ({ children, ...rest }: any) => (
-                        <Paper variant="outlined" sx={{ width: '100%', overflowX: 'auto', my: 1 }} {...rest}>
-                            <Box component="div" sx={{ px: 1 }}>
-                                {children}
-                            </Box>
-                        </Paper>
+
+                    // --- Tables ---
+                    table: ({ children, className: cls }: any) => (
+                        <TableContainer
+                            component={Paper}
+                            variant="outlined"
+                            sx={{ width: '100%', my: BLOCK_GAP }}
+                            className={cls}
+                        >
+                            <Table size="small">{children}</Table>
+                        </TableContainer>
                     ),
                     thead: ({ children }: any) => <TableHead>{children}</TableHead>,
                     tbody: ({ children }: any) => <TableBody>{children}</TableBody>,
-                    tr: ({ children }: any) => <TableRow>{children}</TableRow>,
-                    th: ({ children }: any) => (
-                        <TableCell component="th" sx={{ fontWeight: 'bold' }}>
-                            {children}
-                        </TableCell>
+                    tr:    ({ children }: any) => <TableRow>{children}</TableRow>,
+                    th:    ({ children }: any) => (
+                        <TableCell component="th" sx={{ fontWeight: 'bold' }}>{children}</TableCell>
                     ),
-                    td: ({ children }: any) => <TableCell>{children}</TableCell>,
-                    // horizontal rule: use visible border-top
+                    td:    ({ children }: any) => <TableCell>{children}</TableCell>,
+
+                    // --- Horizontal rule ---
                     hr: () => (
                         <Box
                             component="hr"
@@ -258,21 +268,32 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
                                 border: 0,
                                 borderTop: `1px solid ${theme.palette.divider}`,
                                 height: 0,
-                                my: 1,
+                                my: BLOCK_GAP,
                             }}
                         />
                     ),
-                    // blockquote: render with an accent left border
+
+                    // --- Blockquote ---
                     blockquote: ({ children }: any) => (
-                        <Box sx={{ borderLeft: `4px solid ${theme.palette.action.selected}`, pl: 2, my: 1 }}>
-                            <Typography variant="body2" sx={{ fontStyle: 'italic' }}>
+                        <Box
+                            sx={{
+                                borderLeft: `4px solid ${theme.palette.action.selected}`,
+                                pl: theme.spacing(2),
+                                pr: theme.spacing(2),
+                                '& p': { mt: 0, mb: 0 },
+                            }}
+                        >
+                            <Typography
+                                variant="body2"
+                                sx={{ fontStyle: 'italic', py: theme.spacing(0.5) }}
+                            >
                                 {children}
                             </Typography>
                         </Box>
                     ),
                 }}
             >
-                {source}
+                {escapedSource}
             </ReactMarkdown>
         </Box>
     );
