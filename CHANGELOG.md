@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 - (**Migration**) Add a search option to ignore outdated matches
+- (**Migration**) Add a search option to ignore matches with missing chapters
 
 ### Changed
 
@@ -21,6 +22,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - (**Migration**) Sort entries in search/execution page by title
 - (**Migration**) Prevent a manual selected match from getting automatically overwritten by a new-found match
 - (**Migration**) Abort active search when selecting a match through the manual search
+- (**Migration**) Sort unselected matched entries by 1. their latest chapter, 2. their source priority, 3. their title
 
 ### Fixed
 
@@ -34,6 +36,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - (**Reader**) Fix wrongly positioned mobile progress bar current page indicator
 - (**Reader**) Fix mobile progress bar previous/next chapter button visibility on hover and while disabled
 - (**Reader**) Fix jumping back to the first page on window resize
+- (**Browse**) Fix showing only nsfw sources in the browse source page when the "show nsfw" setting is disabled
 
 ## [20260509.01] (r3147) - 2026-05-09
 
