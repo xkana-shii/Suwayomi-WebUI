@@ -90,6 +90,9 @@ export const APP_METADATA: Record<
     deleteChaptersWithBookmark: {
         convert: convertToBoolean,
     },
+    deleteChaptersWithFillermark: {
+        convert: convertToBoolean,
+    },
     downloadAheadLimit: {
         convert: convertToNumber,
         toConstrainedValue: (value: number) => {

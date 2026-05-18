@@ -1,9 +1,4 @@
-import {FieldPolicy, FieldReadFunction, Reference, TypePolicies, TypePolicy} from '@apollo/client/cache';
-import {
-	GetChaptersMangaQuery, GetDownloadStatusQueryVariables, GetGlobalMetadataQueryVariables,
-	GetMangaScreenQueryVariables, GetSourceBrowseQueryVariables, GetUpdateStatusQueryVariables, GetWebuiUpdateStatusQueryVariables,
-} from "@/lib/graphql/generated/graphql.ts";
-import {FieldFunctionOptions} from "@apollo/client/cache";
+import {FieldPolicy, FieldReadFunction, TypePolicies, TypePolicy} from '@apollo/client/cache';
 export type AboutServerPayloadKeySpecifier = ('buildTime' | 'buildType' | 'discord' | 'github' | 'name' | 'revision' | 'version' | AboutServerPayloadKeySpecifier)[];
 export type AboutServerPayloadFieldPolicy = {
 	buildTime?: FieldPolicy<any> | FieldReadFunction<any>,

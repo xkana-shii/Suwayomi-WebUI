@@ -166,9 +166,7 @@ export const DownloadSettings = () => {
                     />
                 </ListItem>
                 <ListItem>
-                    <ListItemText
-                        primary={t('download.settings.delete_chapters.label.allow_deletion_of_fillermarked')}
-                    />
+                    <ListItemText primary={t`Allow deleting fillermarked chapters`} />
                     <Switch
                         edge="end"
                         checked={metadataSettings.deleteChaptersWithFillermark}

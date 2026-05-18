@@ -156,7 +156,12 @@ export class ReaderService {
 
     static useUpdateChapter(): (patch: UpdateChapterPatchInput) => void {
         const {
-            settings: { deleteChaptersWhileReading, deleteChaptersWithBookmark, updateProgressAfterReading },
+            settings: {
+                deleteChaptersWhileReading,
+                deleteChaptersWithBookmark,
+                deleteChaptersWithFillermark,
+                updateProgressAfterReading,
+            },
         } = useMetadataServerSettings();
 
         return useCallback(
@@ -187,6 +192,7 @@ export class ReaderService {
                         patch,
                         deleteChaptersWhileReading,
                         deleteChaptersWithBookmark,
+                        deleteChaptersWithFillermark,
                         shouldSkipDupChapters,
                     );
 

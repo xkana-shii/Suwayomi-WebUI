@@ -18,7 +18,6 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Icon from '@mui/material/Icon';
 import ImageOutlinedIcon from '@mui/icons-material/ImageOutlined';
-import Stack from '@mui/material/Stack';
 import { useTheme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 
@@ -171,14 +170,17 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
                     img: ({ src, alt, title, ...rest }: any) => {
                         if (!loadImages) {
                             return (
-                                <Stack direction="row" alignItems="center" gap={1}>
+                                <Box
+                                    component="div"
+                                    sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: 1 }}
+                                >
                                     <Icon fontSize="small" color="action">
                                         <ImageOutlinedIcon />
                                     </Icon>
                                     <Typography variant="body2" color="text.secondary">
                                         {alt ?? ''}
                                     </Typography>
-                                </Stack>
+                                </Box>
                             );
                         }
                         return (

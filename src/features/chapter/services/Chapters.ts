@@ -225,16 +225,22 @@ export class Chapters {
     }
 
     static async markAsRead(
-        chapters: (ChapterIdInfo & ChapterDownloadInfo & ChapterBookmarkInfo)[],
+        chapters: (ChapterIdInfo & ChapterDownloadInfo & ChapterBookmarkInfo & ChapterFillermarkInfo)[],
         wasManuallyMarkedAsRead: boolean = false,
         trackProgressMangaId?: MangaIdInfo['id'],
         disableConfirmation?: boolean,
     ): Promise<void> {
-        const { deleteChaptersManuallyMarkedRead, deleteChaptersWithBookmark, updateProgressManualMarkRead } =
-            await getMetadataServerSettings();
+        const {
+            deleteChaptersManuallyMarkedRead,
+            deleteChaptersWithBookmark,
+            deleteChaptersWithFillermark,
+            updateProgressManualMarkRead,
+        } = await getMetadataServerSettings();
         const chapterIdsToDelete =
             deleteChaptersManuallyMarkedRead && wasManuallyMarkedAsRead
-                ? Chapters.getIds(Chapters.getDeletable(chapters, deleteChaptersWithBookmark))
+                ? Chapters.getIds(
+                      Chapters.getDeletable(chapters, deleteChaptersWithBookmark, deleteChaptersWithFillermark),
+                  )
                 : [];
         return Chapters.executeAction(
             'mark_as_read',
@@ -352,7 +358,11 @@ export class Chapters {
             ? {
                   wasManuallyMarkedAsRead: boolean;
                   trackProgressMangaId?: MangaIdInfo['id'];
-                  chapters: (ChapterIdInfo & ChapterDownloadInfo & ChapterBookmarkInfo & ChapterReadInfo)[];
+                  chapters: (ChapterIdInfo &
+                      ChapterDownloadInfo &
+                      ChapterBookmarkInfo &
+                      ChapterFillermarkInfo &
+                      ChapterReadInfo)[];
               }
             : {
                   wasManuallyMarkedAsRead?: never;

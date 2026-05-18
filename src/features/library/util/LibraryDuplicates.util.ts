@@ -9,6 +9,7 @@
 import { enhancedCleanup } from '@/base/utils/Strings.ts';
 import type { TMangaDuplicate, TMangaDuplicateResult, TMangaDuplicates } from '@/features/library/Library.types.ts';
 import type { MangaTitleInfo } from '@/features/manga/Manga.types.ts';
+import type { MangaType } from '@/lib/graphql/generated/graphql-base.types';
 
 export const findDuplicatesByTitle = <Manga extends MangaTitleInfo>(
     libraryMangas: Manga[],

@@ -43,6 +43,7 @@ export const SERVER_SETTINGS_METADATA_DEFAULT: MetadataServerSettings = {
     deleteChaptersManuallyMarkedRead: false,
     deleteChaptersWhileReading: 0,
     deleteChaptersWithBookmark: false,
+    deleteChaptersWithFillermark: false,
     downloadAheadLimit: 0,
 
     // library

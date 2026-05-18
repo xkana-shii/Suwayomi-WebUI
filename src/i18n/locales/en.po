@@ -449,6 +449,10 @@ msgstr "All"
 msgid "Allow deleting bookmarked chapters"
 msgstr "Allow deleting bookmarked chapters"
 
+#: src/features/downloads/screens/DownloadSettings.tsx
+msgid "Allow deleting fillermarked chapters"
+msgstr "Allow deleting fillermarked chapters"
+
 #: src/base/components/inputs/LanguageSelect.tsx
 #: src/features/source/components/SourceLanguageSelect.tsx
 msgid "Allowed Languages"
@@ -472,13 +476,13 @@ msgstr "Appearance"
 msgid "Apply"
 msgstr "Apply"
 
-#: src/features/manga/components/details/EditMangaMetadataDialog.tsx
-msgid "Applying..."
-msgstr "Applying..."
-
 #: src/features/reader/settings/general/components/ReaderSettingSafeAreaInset.tsx
 msgid "Apply safe area padding"
 msgstr "Apply safe area padding"
+
+#: src/features/manga/components/details/EditMangaMetadataDialog.tsx
+msgid "Applying..."
+msgstr "Applying..."
 
 #: src/features/migration/MigrationManager.ts
 msgid "Are you sure you want to abort the migration?"
@@ -738,7 +742,6 @@ msgstr "Call timeout"
 #: src/features/category/components/CategoriesInclusionSetting.tsx
 #: src/features/category/components/CategorySelect.tsx
 #: src/features/category/components/CreateOrEditCategoryDialog.tsx
-#: src/features/manga/components/details/EditMangaMetadataDialog.tsx
 #: src/features/manga/components/details/EditMangaMetadataDialog.tsx
 #: src/features/migration/components/MigrationBulkSearchOptionsDialog.tsx
 #: src/features/migration/components/MigrationOptionsDialog.tsx
@@ -1644,6 +1647,10 @@ msgstr "Failed to connect to KOReader Sync server."
 msgid "Failed to disconnect from KOReader Sync server."
 msgstr "Failed to disconnect from KOReader Sync server."
 
+#: src/features/manga/components/details/EditMangaMetadataDialog.tsx
+msgid "Failed to reset metadata"
+msgstr "Failed to reset metadata"
+
 #: src/features/backup/screens/Backup.tsx
 #: src/features/browse/extensions/Extensions.tsx
 #: src/features/browse/screens/BrowseSettings.tsx
@@ -1837,12 +1844,9 @@ msgid "Global update (last update: {date})"
 msgstr "Global update (last update: {date})"
 
 #: src/features/tracker/components/cards/TrackerActiveCard.tsx
-#: src/features/tracker/components/cards/TrackerActiveCard.tsx
-#: src/features/tracker/components/cards/TrackerActiveCard.tsx
 msgid "global.error.label.failed_to_copy"
 msgstr "global.error.label.failed_to_copy"
 
-#: src/features/tracker/components/cards/TrackerActiveCard.tsx
 #: src/features/tracker/components/cards/TrackerActiveCard.tsx
 msgid "global.label.copied"
 msgstr "global.label.copied"
@@ -2427,6 +2431,10 @@ msgid "Metadata applied successfully"
 msgstr "Metadata applied successfully"
 
 #: src/features/manga/components/details/EditMangaMetadataDialog.tsx
+msgid "Metadata reset to source"
+msgstr "Metadata reset to source"
+
+#: src/features/manga/components/details/EditMangaMetadataDialog.tsx
 msgid "Metadata updated successfully"
 msgstr "Metadata updated successfully"
 
@@ -2568,10 +2576,6 @@ msgstr "No downloads"
 #: src/features/library/screens/LibraryDuplicates.tsx
 msgid "No duplicate tracker groups found"
 msgstr "No duplicate tracker groups found"
-
-#: src/features/manga/components/details/EditMangaMetadataDialog.tsx
-msgid "No external link available for this provider"
-msgstr "No external link available for this provider"
 
 #: src/features/global-search/screens/SearchAll.tsx
 #: src/features/manga/components/MangaGrid.tsx
@@ -2868,10 +2872,6 @@ msgstr "Progress bar style"
 msgid "Prompt"
 msgstr "Prompt"
 
-#: src/features/manga/components/details/EditMangaMetadataDialog.tsx
-msgid "Provider"
-msgstr "Provider"
-
 #: src/features/manga/Manga.constants.ts
 msgid "Publishing finished"
 msgstr "Publishing finished"
@@ -3009,11 +3009,23 @@ msgstr "Removed non library manga from categories"
 msgid "Reset"
 msgstr "Reset"
 
+#: src/features/manga/components/details/EditMangaMetadataDialog.tsx
+msgid "Reset cover too"
+msgstr "Reset cover too"
+
 #: src/base/components/settings/DateSetting.tsx
 #: src/base/components/settings/NumberSetting.tsx
 #: src/base/components/settings/TimeSetting.tsx
 msgid "Reset to Default"
 msgstr "Reset to Default"
+
+#: src/features/manga/components/details/EditMangaMetadataDialog.tsx
+msgid "Reset to source"
+msgstr "Reset to source"
+
+#: src/features/manga/components/details/EditMangaMetadataDialog.tsx
+msgid "Resetting..."
+msgstr "Resetting..."
 
 #: src/features/settings/screens/ServerSettings.tsx
 msgid "Response fallback"
@@ -3333,6 +3345,7 @@ msgid "Show icon in system tray"
 msgstr "Show icon in system tray"
 
 #: src/base/components/feedback/EmptyView.tsx
+#: src/features/manga/components/details/EditMangaMetadataDialog.tsx
 #: src/features/tracker/components/cards/TrackerMangaCard.tsx
 msgid "Show less"
 msgstr "Show less"
@@ -3340,6 +3353,7 @@ msgstr "Show less"
 #: src/base/components/feedback/EmptyView.tsx
 #: src/base/components/feedback/SnackbarWithDescription.tsx
 #: src/features/global-search/screens/SearchAll.tsx
+#: src/features/manga/components/details/EditMangaMetadataDialog.tsx
 #: src/features/migration/components/migration-entry/MigrationDestinationEntry.tsx
 #: src/features/tracker/components/cards/TrackerMangaCard.tsx
 msgid "Show more"
@@ -3800,14 +3814,9 @@ msgid "Tracking"
 msgstr "Tracking"
 
 #: src/features/tracker/components/cards/TrackerActiveCard.tsx
-#: src/features/tracker/components/cards/TrackerActiveCard.tsx
-#: src/features/tracker/components/cards/TrackerActiveCard.tsx
 msgid "tracking.action.copy_title.label"
 msgstr "tracking.action.copy_title.label"
 
-#: src/features/tracker/components/cards/TrackerActiveCard.tsx
-#: src/features/tracker/components/cards/TrackerActiveCard.tsx
-#: src/features/tracker/components/cards/TrackerActiveCard.tsx
 #: src/features/tracker/components/cards/TrackerActiveCard.tsx
 msgid "tracking.action.copy_url.label"
 msgstr "tracking.action.copy_url.label"
@@ -4085,6 +4094,10 @@ msgstr "With \"Completed\" status"
 #: src/features/settings/Settings.constants.ts
 msgid "With unread chapter(s)"
 msgstr "With unread chapter(s)"
+
+#: src/features/manga/components/details/EditMangaMetadataDialog.tsx
+msgid "Year"
+msgstr "Year"
 
 #: src/base/utils/DateHelper.ts
 msgid "Yesterday"

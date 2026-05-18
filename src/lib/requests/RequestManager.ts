@@ -200,6 +200,7 @@ import type {
     DeleteSourceMetasInput,
     FetchSourceMangaInput,
     FilterChangeInput,
+    MangaStatus,
     RestoreBackupInput,
     SetCategoryMetasInput,
     SetChapterMetasInput,
@@ -978,7 +979,7 @@ export class RequestManager {
             }
 
             return this.imageQueue.enqueue(sourceId, url, request, priority);
-        } catch  {
+        } catch {
             return this.imageQueue.enqueue(sourceId, url, request, priority);
         }
     }
@@ -2354,10 +2355,7 @@ export class RequestManager {
         return this.doRequest(GQLMethod.MUTATION, UPDATE_MANGA_DETAILS, { input: { id, patch } });
     }
 
-    public resetMangaMetadataToSource(
-        id: number,
-        resetCover = true,
-    ): AbortableApolloMutationResponse<any> {
+    public resetMangaMetadataToSource(id: number, resetCover = true): AbortableApolloMutationResponse<any> {
         return this.doRequest(GQLMethod.MUTATION, RESET_MANGA_METADATA_TO_SOURCE, {
             input: { id, resetCover },
         });
