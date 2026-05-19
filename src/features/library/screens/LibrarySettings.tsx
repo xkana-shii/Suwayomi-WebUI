@@ -33,7 +33,7 @@ import {
 } from '@/features/settings/services/ServerSettingsMetadata.ts';
 import { requestManager } from '@/lib/requests/RequestManager.ts';
 import { Mangas } from '@/features/manga/services/Mangas.ts';
-import { EmptyViewAbsoluteCentered } from '@/base/components/feedback/EmptyViewAbsoluteCentered.tsx';
+import { EmptyView } from '@/base/components/feedback/EmptyView.tsx';
 import { defaultPromiseErrorHandler } from '@/lib/DefaultPromiseErrorHandler.ts';
 import { LoadingPlaceholder } from '@/base/components/feedback/LoadingPlaceholder.tsx';
 import { ListItemLink } from '@/base/components/lists/ListItemLink.tsx';
@@ -168,7 +168,7 @@ export function LibrarySettings() {
     const error = serverSettings.error ?? metadataServerSettingsError ?? categories.error;
     if (error) {
         return (
-            <EmptyViewAbsoluteCentered
+            <EmptyView
                 message={t`Unable to load data`}
                 messageExtra={getErrorMessage(error)}
                 retry={() => {
@@ -327,13 +327,13 @@ export function LibrarySettings() {
                 await loadSourcesIfNeeded(true);
                 try {
                     await categories.refetch();
-                } catch (_) {}
+                } catch (_) {
+                }
                 try {
                     await requestManager.graphQLClient.client.refetchQueries({ include: 'active' });
-                } catch (_) {}
+                } catch (_) {
+                }
             } catch (e) {
-                // If forced refresh fails, still continue; user can manually refresh as fallback
-                // but bubble a small warning so user knows data may be stale
                 makeToast(t`Could not refresh source list after clearing`, 'warning');
             }
         } catch (e) {
@@ -495,95 +495,120 @@ export function LibrarySettings() {
                 </DialogTitle>
 
                 <DialogContent sx={{ whiteSpace: 'normal', overflow: 'auto', p: 0 }}>
-                    <List sx={{ p: 0 }}>
-                        {sources.map((s) => (
-                            <ListItem key={s.id} disablePadding>
-                                <ListItemButton
-                                    onClick={() => toggleSource(s.id)}
-                                    selected={s.selected}
-                                    dense
-                                    sx={{
-                                        mb: 1,
-                                        bgcolor: s.selected ? 'action.selected' : 'transparent',
-                                        transition: 'background-color 150ms',
-                                        '&:hover': {
-                                            bgcolor: s.selected ? 'action.selected' : 'action.hover',
-                                        },
-                                        borderRadius: 1,
-                                        alignItems: 'center',
-                                        width: '100%',
-                                    }}
-                                >
-                                    <ListItemAvatar sx={{ minWidth: 40 }}>
-                                        {/* If we have an icon URL (string, not empty) use the standard avatar pipeline */}
-                                        {s.iconUrl ? (
-                                            <ListCardAvatar
-                                                iconUrl={s.iconUrl}
-                                                alt={s.name}
-                                                slots={{
-                                                    avatarProps: {
-                                                        sx: { width: 32, height: 32 },
-                                                    },
-                                                    spinnerImageProps: {
-                                                        ignoreQueue: true,
-                                                    },
-                                                }}
-                                            />
-                                        ) : (
-                                            // Browse-style fallback when icon missing:
-                                            // broken image icon + small refresh button
-                                            <Box
-                                                sx={{
-                                                    width: 32,
-                                                    height: 32,
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    flexDirection: 'column',
-                                                }}
-                                            >
-                                                <BrokenImageIcon fontSize="small" />
-                                                <IconButton
-                                                    size="small"
-                                                    onClick={(ev) => {
-                                                        ev.stopPropagation();
-                                                        refreshIcon(s.id);
+                    {/* If there are no sources to clear, show a compact EmptyView that fits in the dialog */}
+                    {sources.length === 0 ? (
+                        <Box
+                            sx={{
+                                p: 4,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                minHeight: 180,
+                            }}
+                        >
+                            <EmptyView
+                                message={t`Nothing to clear`}
+                                retry={async () => {
+                                    setSources([]);
+                                    await loadSourcesIfNeeded(true);
+                                    if ((sources.length ?? 0) === 0) {
+                                        setClearDialogOpen(false);
+                                    }
+                                }}
+                            />
+                        </Box>
+                    ) : (
+                        <List sx={{ p: 0 }}>
+                            {sources.map((s) => (
+                                <ListItem key={s.id} disablePadding>
+                                    <ListItemButton
+                                        onClick={() => toggleSource(s.id)}
+                                        selected={s.selected}
+                                        dense
+                                        sx={{
+                                            mb: 1,
+                                            bgcolor: s.selected ? 'action.selected' : 'transparent',
+                                            transition: 'background-color 150ms',
+                                            '&:hover': {
+                                                bgcolor: s.selected ? 'action.selected' : 'action.hover',
+                                            },
+                                            borderRadius: 1,
+                                            alignItems: 'center',
+                                            width: '100%',
+                                        }}
+                                    >
+                                        <ListItemAvatar sx={{ minWidth: 40 }}>
+                                            {s.iconUrl ? (
+                                                <ListCardAvatar
+                                                    iconUrl={s.iconUrl}
+                                                    alt={s.name}
+                                                    slots={{
+                                                        avatarProps: {
+                                                            sx: { width: 32, height: 32 },
+                                                        },
+                                                        spinnerImageProps: {
+                                                            ignoreQueue: true,
+                                                        },
                                                     }}
-                                                    aria-label="refresh-icon"
-                                                    sx={{ mt: 0.25 }}
+                                                />
+                                            ) : (
+                                                <Box
+                                                    sx={{
+                                                        width: 32,
+                                                        height: 32,
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        flexDirection: 'column',
+                                                    }}
                                                 >
-                                                    <RefreshIcon fontSize="small" />
-                                                </IconButton>
-                                            </Box>
-                                        )}
-                                    </ListItemAvatar>
+                                                    <BrokenImageIcon fontSize="small" />
+                                                    <IconButton
+                                                        size="small"
+                                                        onClick={(ev) => {
+                                                            ev.stopPropagation();
+                                                            refreshIcon(s.id);
+                                                        }}
+                                                        aria-label="refresh-icon"
+                                                        sx={{ mt: 0.25 }}
+                                                    >
+                                                        <RefreshIcon fontSize="small" />
+                                                    </IconButton>
+                                                </Box>
+                                            )}
+                                        </ListItemAvatar>
 
-                                    <ListItemText
-                                        primary={`${s.name}${s.lang ? ` (${s.lang.toUpperCase()})` : ''}`}
-                                        secondary={`${s.count} non-library entries in database`}
-                                        sx={{ pr: '56px' }}
-                                        primaryTypographyProps={{
-                                            sx: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' },
-                                        }}
-                                        secondaryTypographyProps={{
-                                            sx: { overflow: 'hidden', textOverflow: 'ellipsis' },
-                                        }}
-                                    />
-                                </ListItemButton>
+                                        <ListItemText
+                                            primary={`${s.name}${s.lang ? ` (${s.lang.toUpperCase()})` : ''}`}
+                                            secondary={`${s.count} non-library entries in database`}
+                                            sx={{ pr: '56px' }}
+                                            primaryTypographyProps={{
+                                                sx: {
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    whiteSpace: 'nowrap',
+                                                },
+                                            }}
+                                            secondaryTypographyProps={{
+                                                sx: { overflow: 'hidden', textOverflow: 'ellipsis' },
+                                            }}
+                                        />
+                                    </ListItemButton>
 
-                                <ListItemSecondaryAction sx={{ right: 12 }}>
-                                    <Checkbox
-                                        edge="end"
-                                        checked={s.selected}
-                                        onClick={(e) => e.stopPropagation()}
-                                        onChange={() => toggleSource(s.id)}
-                                        disabled={isClearing}
-                                        inputProps={{ 'aria-label': `select-source-${s.id}` }}
-                                    />
-                                </ListItemSecondaryAction>
-                            </ListItem>
-                        ))}
-                    </List>
+                                    <ListItemSecondaryAction sx={{ right: 12 }}>
+                                        <Checkbox
+                                            edge="end"
+                                            checked={s.selected}
+                                            onClick={(e) => e.stopPropagation()}
+                                            onChange={() => toggleSource(s.id)}
+                                            disabled={isClearing}
+                                            inputProps={{ 'aria-label': `select-source-${s.id}` }}
+                                        />
+                                    </ListItemSecondaryAction>
+                                </ListItem>
+                            ))}
+                        </List>
+                    )}
                 </DialogContent>
                 <DialogActions>
                     <Button
