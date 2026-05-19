@@ -147,6 +147,11 @@ export type ClearCachedImagesPayloadFieldPolicy = {
 	clientMutationId?: FieldPolicy<any> | FieldReadFunction<any>,
 	downloadedThumbnails?: FieldPolicy<any> | FieldReadFunction<any>
 };
+export type ClearDatabasePayloadKeySpecifier = ('clientMutationId' | 'success' | ClearDatabasePayloadKeySpecifier)[];
+export type ClearDatabasePayloadFieldPolicy = {
+	clientMutationId?: FieldPolicy<any> | FieldReadFunction<any>,
+	success?: FieldPolicy<any> | FieldReadFunction<any>
+};
 export type ClearDownloaderPayloadKeySpecifier = ('clientMutationId' | 'downloadStatus' | ClearDownloaderPayloadKeySpecifier)[];
 export type ClearDownloaderPayloadFieldPolicy = {
 	clientMutationId?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -564,11 +569,12 @@ export type MultiSelectListPreferenceFieldPolicy = {
 	title?: FieldPolicy<any> | FieldReadFunction<any>,
 	visible?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type MutationKeySpecifier = ('applyMetadataMatch' | 'bindTrack' | 'clearCachedImages' | 'clearDownloader' | 'connectKoSyncAccount' | 'createBackup' | 'createBackupAsync' | 'createCategory' | 'deleteCategory' | 'deleteCategoryMeta' | 'deleteCategoryMetas' | 'deleteChapterMeta' | 'deleteChapterMetas' | 'deleteDownloadedChapter' | 'deleteDownloadedChapters' | 'deleteGlobalMeta' | 'deleteGlobalMetas' | 'deleteMangaMeta' | 'deleteMangaMetas' | 'deleteSourceMeta' | 'deleteSourceMetas' | 'dequeueChapterDownload' | 'dequeueChapterDownloads' | 'enqueueChapterDownload' | 'enqueueChapterDownloads' | 'fetchChapterPages' | 'fetchChapters' | 'fetchExtensions' | 'fetchManga' | 'fetchSourceManga' | 'fetchTrack' | 'installExternalExtension' | 'login' | 'loginTrackerCredentials' | 'loginTrackerOAuth' | 'logoutKoSyncAccount' | 'logoutTracker' | 'pullKoSyncProgress' | 'pushKoSyncProgress' | 'refreshToken' | 'reorderChapterDownload' | 'resetMangaMetadataToSource' | 'resetSettings' | 'resetWebUIUpdateStatus' | 'restoreBackup' | 'searchMetadataProvider' | 'setCategoryMeta' | 'setCategoryMetas' | 'setChapterMeta' | 'setChapterMetas' | 'setGlobalMeta' | 'setGlobalMetas' | 'setMangaMeta' | 'setMangaMetas' | 'setSettings' | 'setSourceMeta' | 'setSourceMetas' | 'shutdownServer' | 'startDownloader' | 'stopDownloader' | 'trackProgress' | 'unbindTrack' | 'updateCategories' | 'updateCategory' | 'updateCategoryManga' | 'updateCategoryOrder' | 'updateChapter' | 'updateChapters' | 'updateExtension' | 'updateExtensions' | 'updateLibrary' | 'updateLibraryManga' | 'updateManga' | 'updateMangaCategories' | 'updateMangaDetails' | 'updateMangas' | 'updateMangasCategories' | 'updateSourcePreference' | 'updateStop' | 'updateTrack' | 'updateWebUI' | 'uploadMangaCover' | MutationKeySpecifier)[];
+export type MutationKeySpecifier = ('applyMetadataMatch' | 'bindTrack' | 'clearCachedImages' | 'clearDatabase' | 'clearDownloader' | 'connectKoSyncAccount' | 'createBackup' | 'createBackupAsync' | 'createCategory' | 'deleteCategory' | 'deleteCategoryMeta' | 'deleteCategoryMetas' | 'deleteChapterMeta' | 'deleteChapterMetas' | 'deleteDownloadedChapter' | 'deleteDownloadedChapters' | 'deleteGlobalMeta' | 'deleteGlobalMetas' | 'deleteMangaMeta' | 'deleteMangaMetas' | 'deleteSourceMeta' | 'deleteSourceMetas' | 'dequeueChapterDownload' | 'dequeueChapterDownloads' | 'enqueueChapterDownload' | 'enqueueChapterDownloads' | 'fetchChapterPages' | 'fetchChapters' | 'fetchExtensions' | 'fetchManga' | 'fetchSourceManga' | 'fetchTrack' | 'installExternalExtension' | 'login' | 'loginTrackerCredentials' | 'loginTrackerOAuth' | 'logoutKoSyncAccount' | 'logoutTracker' | 'pullKoSyncProgress' | 'pushKoSyncProgress' | 'refreshToken' | 'reorderChapterDownload' | 'resetMangaMetadataToSource' | 'resetSettings' | 'resetWebUIUpdateStatus' | 'restoreBackup' | 'searchMetadataProvider' | 'setCategoryMeta' | 'setCategoryMetas' | 'setChapterMeta' | 'setChapterMetas' | 'setGlobalMeta' | 'setGlobalMetas' | 'setMangaMeta' | 'setMangaMetas' | 'setSettings' | 'setSourceMeta' | 'setSourceMetas' | 'shutdownServer' | 'startDownloader' | 'stopDownloader' | 'trackProgress' | 'unbindTrack' | 'updateCategories' | 'updateCategory' | 'updateCategoryManga' | 'updateCategoryOrder' | 'updateChapter' | 'updateChapters' | 'updateExtension' | 'updateExtensions' | 'updateLibrary' | 'updateLibraryManga' | 'updateManga' | 'updateMangaCategories' | 'updateMangaDetails' | 'updateMangas' | 'updateMangasCategories' | 'updateSourcePreference' | 'updateStop' | 'updateTrack' | 'updateWebUI' | 'uploadMangaCover' | MutationKeySpecifier)[];
 export type MutationFieldPolicy = {
 	applyMetadataMatch?: FieldPolicy<any> | FieldReadFunction<any>,
 	bindTrack?: FieldPolicy<any> | FieldReadFunction<any>,
 	clearCachedImages?: FieldPolicy<any> | FieldReadFunction<any>,
+	clearDatabase?: FieldPolicy<any> | FieldReadFunction<any>,
 	clearDownloader?: FieldPolicy<any> | FieldReadFunction<any>,
 	connectKoSyncAccount?: FieldPolicy<any> | FieldReadFunction<any>,
 	createBackup?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -1143,7 +1149,7 @@ export type SourceNodeListFieldPolicy = {
 	pageInfo?: FieldPolicy<any> | FieldReadFunction<any>,
 	totalCount?: FieldPolicy<any> | FieldReadFunction<any>
 };
-export type SourceTypeKeySpecifier = ('baseUrl' | 'displayName' | 'extension' | 'filters' | 'iconUrl' | 'id' | 'isConfigurable' | 'isNsfw' | 'lang' | 'manga' | 'meta' | 'name' | 'preferences' | 'supportsLatest' | SourceTypeKeySpecifier)[];
+export type SourceTypeKeySpecifier = ('baseUrl' | 'displayName' | 'extension' | 'filters' | 'iconUrl' | 'id' | 'isConfigurable' | 'isNsfw' | 'lang' | 'manga' | 'meta' | 'name' | 'nonLibraryCount' | 'preferences' | 'supportsLatest' | SourceTypeKeySpecifier)[];
 export type SourceTypeFieldPolicy = {
 	baseUrl?: FieldPolicy<any> | FieldReadFunction<any>,
 	displayName?: FieldPolicy<any> | FieldReadFunction<any>,
@@ -1157,6 +1163,7 @@ export type SourceTypeFieldPolicy = {
 	manga?: FieldPolicy<any> | FieldReadFunction<any>,
 	meta?: FieldPolicy<any> | FieldReadFunction<any>,
 	name?: FieldPolicy<any> | FieldReadFunction<any>,
+	nonLibraryCount?: FieldPolicy<any> | FieldReadFunction<any>,
 	preferences?: FieldPolicy<any> | FieldReadFunction<any>,
 	supportsLatest?: FieldPolicy<any> | FieldReadFunction<any>
 };
@@ -1542,6 +1549,10 @@ export type StrictTypedTypePolicies = {
 	ClearCachedImagesPayload?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | ClearCachedImagesPayloadKeySpecifier | (() => undefined | ClearCachedImagesPayloadKeySpecifier),
 		fields?: ClearCachedImagesPayloadFieldPolicy,
+	},
+	ClearDatabasePayload?: Omit<TypePolicy, "fields" | "keyFields"> & {
+		keyFields?: false | ClearDatabasePayloadKeySpecifier | (() => undefined | ClearDatabasePayloadKeySpecifier),
+		fields?: ClearDatabasePayloadFieldPolicy,
 	},
 	ClearDownloaderPayload?: Omit<TypePolicy, "fields" | "keyFields"> & {
 		keyFields?: false | ClearDownloaderPayloadKeySpecifier | (() => undefined | ClearDownloaderPayloadKeySpecifier),
