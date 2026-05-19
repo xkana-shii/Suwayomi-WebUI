@@ -40,3 +40,12 @@ export const SHUTDOWN_SERVER = gql`
         }
     }
 `;
+
+export const CLEAR_DATABASE = gql`
+    mutation CLEAR_DATABASE($input: ClearDatabaseInput = {}) {
+        clearDatabase(input: $input) {
+            clientMutationId
+            success
+        }
+    }
+`;

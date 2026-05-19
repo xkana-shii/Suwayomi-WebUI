@@ -355,6 +355,18 @@ export type ClearCachedImagesPayload = {
   downloadedThumbnails?: Maybe<Scalars['Boolean']['output']>;
 };
 
+export type ClearDatabaseInput = {
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+  keepReadManga?: InputMaybe<Scalars['Boolean']['input']>;
+  sourceIds?: InputMaybe<Array<Scalars['Int']['input']>>;
+};
+
+export type ClearDatabasePayload = {
+  __typename?: 'ClearDatabasePayload';
+  clientMutationId?: Maybe<Scalars['String']['output']>;
+  success: Scalars['Boolean']['output'];
+};
+
 export type ClearDownloaderInput = {
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
 };
@@ -1357,6 +1369,7 @@ export type Mutation = {
   applyMetadataMatch?: Maybe<ApplyMetadataMatchPayload>;
   bindTrack: BindTrackPayload;
   clearCachedImages: ClearCachedImagesPayload;
+  clearDatabase?: Maybe<ClearDatabasePayload>;
   clearDownloader?: Maybe<ClearDownloaderPayload>;
   connectKoSyncAccount: KoSyncConnectPayload;
   createBackup: CreateBackupPayload;
@@ -1451,6 +1464,11 @@ export type MutationBindTrackArgs = {
 
 export type MutationClearCachedImagesArgs = {
   input: ClearCachedImagesInput;
+};
+
+
+export type MutationClearDatabaseArgs = {
+  input: ClearDatabaseInput;
 };
 
 
@@ -2871,6 +2889,7 @@ export type SourceType = {
   manga: MangaNodeList;
   meta: Array<SourceMetaType>;
   name: Scalars['String']['output'];
+  nonLibraryCount: Scalars['Int']['output'];
   preferences: Array<Preference>;
   supportsLatest: Scalars['Boolean']['output'];
 };
