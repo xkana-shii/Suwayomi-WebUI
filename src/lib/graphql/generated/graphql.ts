@@ -934,7 +934,7 @@ export type GetMigratableSourcesQuery = { __typename: 'Query', mangas: { __typen
 export type GetSourcesWithCountsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetSourcesWithCountsQuery = { __typename: 'Query', sources: { __typename: 'SourceNodeList', nodes: Array<{ __typename: 'SourceType', id: string, name: string, lang: string, nonLibraryCount: number }> } };
+export type GetSourcesWithCountsQuery = { __typename: 'Query', sources: { __typename: 'SourceNodeList', nodes: Array<{ __typename: 'SourceType', id: string, name: string, lang: string, nonLibraryCount: number, iconUrl: string, extension: { __typename: 'ExtensionType', pkgName: string } }> } };
 
 export type TrackerBaseFieldsFragment = { __typename: 'TrackerType', id: number, name: string, icon: string, isLoggedIn: boolean, isTokenExpired: boolean };
 

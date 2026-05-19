@@ -358,7 +358,7 @@ export type ClearCachedImagesPayload = {
 export type ClearDatabaseInput = {
   clientMutationId?: InputMaybe<Scalars['String']['input']>;
   keepReadManga?: InputMaybe<Scalars['Boolean']['input']>;
-  sourceIds?: InputMaybe<Array<Scalars['Int']['input']>>;
+  sourceIds?: InputMaybe<Array<Scalars['LongString']['input']>>;
 };
 
 export type ClearDatabasePayload = {
