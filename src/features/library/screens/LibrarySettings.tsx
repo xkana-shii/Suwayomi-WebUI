@@ -12,6 +12,15 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Switch from '@mui/material/Switch';
 import ListSubheader from '@mui/material/ListSubheader';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogActions from '@mui/material/DialogActions';
+import Button from '@mui/material/Button';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import TextField from '@mui/material/TextField';
 import { useLingui } from '@lingui/react/macro';
 import { plural, t as translate } from '@lingui/core/macro';
 import { GlobalUpdateSettings } from '@/features/settings/components/globalUpdate/GlobalUpdateSettings.tsx';
@@ -38,6 +47,8 @@ import type { MetadataLibrarySettings } from '@/features/library/Library.types.t
 import { AppRoutes } from '@/base/AppRoute.constants.ts';
 import { getErrorMessage } from '@/lib/HelperFunctions.ts';
 import { useAppTitle } from '@/features/navigation-bar/hooks/useAppTitle.ts';
+import { useState } from 'react';
+import { CLEAR_DATABASE } from '@/lib/graphql/server/ServerInfoMutation.ts';
 
 const removeNonLibraryMangasFromCategories = async (): Promise<void> => {
     try {
@@ -120,6 +131,35 @@ export function LibrarySettings() {
         );
     }
 
+    // State for the new Clear Database dialog
+    const [isClearDialogOpen, setClearDialogOpen] = useState(false);
+    const [keepReadManga, setKeepReadManga] = useState(true);
+    const [confirmText, setConfirmText] = useState('');
+    const [isClearing, setIsClearing] = useState(false);
+
+    const openClearDialog = () => {
+        setConfirmText('');
+        setKeepReadManga(true);
+        setClearDialogOpen(true);
+    };
+
+    const handleClearDatabase = async () => {
+        setIsClearing(true);
+        try {
+            await requestManager.graphQLClient.client.mutate({
+                mutation: CLEAR_DATABASE,
+                variables: { input: { keepReadManga } },
+            });
+            makeToast(t`Database cleared`, 'success');
+            setClearDialogOpen(false);
+        } catch (e) {
+            makeToast(t`Could not clear database`, 'error', getErrorMessage(e));
+        } finally {
+            setIsClearing(false);
+            setConfirmText('');
+        }
+    };
+
     return (
         <List sx={{ pt: 0 }}>
             <List
@@ -197,6 +237,15 @@ export function LibrarySettings() {
                         secondary={t`Remove non library manga from categories`}
                     />
                 </ListItemButton>
+
+                {/* New Clear Database action (calls server clearDatabase mutation) */}
+                <ListItemButton onClick={openClearDialog}>
+                    <ListItemText
+                        primary={t`Clear database`}
+                        secondary={t`Remove non-library manga from the database`}
+                    />
+                </ListItemButton>
+
                 <ListItemLink to={AppRoutes.settings.childRoutes.library.childRoutes.duplicates.path}>
                     <ListItemText
                         primary={t`Duplicated entries`}
@@ -204,6 +253,60 @@ export function LibrarySettings() {
                     />
                 </ListItemLink>
             </List>
+
+            {/* Clear Database confirmation dialog */}
+            <Dialog
+                open={isClearDialogOpen}
+                onClose={() => {
+                    if (!isClearing) {setClearDialogOpen(false);}
+                }}
+                fullWidth
+                maxWidth="sm"
+            >
+                <DialogTitle>{t`Clear database`}</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        {t`This will delete all non-library manga entries from the server database. This action cannot be undone.`}
+                    </DialogContentText>
+
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={keepReadManga}
+                                onChange={(e) => setKeepReadManga(e.target.checked)}
+                                disabled={isClearing}
+                            />
+                        }
+                        label={t`Keep manga that have read chapters`}
+                    />
+
+                    <TextField
+                        label={t`Type "CLEAR" to confirm`}
+                        value={confirmText}
+                        onChange={(e) => setConfirmText(e.target.value)}
+                        fullWidth
+                        margin="normal"
+                        disabled={isClearing}
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button
+                        onClick={() => {
+                            if (!isClearing) {setClearDialogOpen(false);}
+                        }}
+                        disabled={isClearing}
+                    >
+                        {t`Cancel`}
+                    </Button>
+                    <Button
+                        onClick={() => handleClearDatabase()}
+                        disabled={isClearing || confirmText !== 'CLEAR'}
+                        variant="contained"
+                    >
+                        {isClearing ? t`Clearing…` : t`Ok`}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </List>
     );
 }

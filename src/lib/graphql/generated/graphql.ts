@@ -741,6 +741,20 @@ export type ResetWebuiUpdateStatusMutationVariables = Exact<{ [key: string]: nev
 
 export type ResetWebuiUpdateStatusMutation = { __typename: 'Mutation', resetWebUIUpdateStatus: { __typename: 'WebUIUpdateStatus', state: Types.UpdateState, info: { __typename: 'WebUIUpdateInfo', channel: Types.WebUiChannel, tag: string } } | null };
 
+export type ShutdownServerMutationVariables = Exact<{
+  input?: Types.ShutdownServerInput | null | undefined;
+}>;
+
+
+export type ShutdownServerMutation = { __typename: 'Mutation', shutdownServer: { __typename: 'ShutdownServerPayload', clientMutationId: string | null, success: boolean } | null };
+
+export type ClearDatabaseMutationVariables = Exact<{
+  input?: Types.ClearDatabaseInput | null | undefined;
+}>;
+
+
+export type ClearDatabaseMutation = { __typename: 'Mutation', clearDatabase: { __typename: 'ClearDatabasePayload', clientMutationId: string | null, success: boolean } | null };
+
 export type GetAboutQueryVariables = Exact<{ [key: string]: never; }>;
 
 
