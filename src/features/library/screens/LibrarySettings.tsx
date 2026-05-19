@@ -209,7 +209,7 @@ export function LibrarySettings() {
                     const count = Number(s.nonLibraryCount ?? s.count ?? 0);
 
                     // prefer explicit source.iconUrl, otherwise fallback to extension pkgName
-                    const sourceIconPath = typeof s.iconUrl === 'string' && s.iconUrl.length ? s.iconUrl : undefined;
+                    const sourceIconPath = buildExtensionIconPath(s);
                     const extensionPkg = s?.extension?.pkgName ?? undefined;
                     const finalIconPath =
                         sourceIconPath ??
@@ -322,16 +322,21 @@ export function LibrarySettings() {
             setConfirmOpen(false);
             setClearDialogOpen(false);
 
+            // Force refresh sources and other related queries so the updated counts appear immediately
             try {
                 setSources([]); // clear local cache so loadSourcesIfNeeded(true) actually reloads
                 await loadSourcesIfNeeded(true);
+                // refetch categories query to update counts if needed
                 try {
                     await categories.refetch();
                 } catch (_) {
+                    // intentionally ignore category refetch failures
                 }
+                // ask Apollo to refetch active queries (best-effort)
                 try {
                     await requestManager.graphQLClient.client.refetchQueries({ include: 'active' });
                 } catch (_) {
+                    // intentionally ignore refetch failures
                 }
             } catch (e) {
                 makeToast(t`Could not refresh source list after clearing`, 'warning');
@@ -370,6 +375,7 @@ export function LibrarySettings() {
                         edge="end"
                         checked={settings.showAddToLibraryCategorySelectDialog}
                         onChange={(e) => setSettingValue('showAddToLibraryCategorySelectDialog', e.target.checked)}
+                        aria-label="show-add-to-library-category"
                     />
                 </ListItem>
                 <ListItem>
@@ -381,6 +387,7 @@ export function LibrarySettings() {
                         edge="end"
                         checked={settings.removeMangaFromCategories}
                         onChange={(e) => setSettingValue('removeMangaFromCategories', e.target.checked)}
+                        aria-label="remove-manga-from-categories"
                     />
                 </ListItem>
             </List>
@@ -397,11 +404,7 @@ export function LibrarySettings() {
                         primary={t`Ignore filters when searching`}
                         secondary={t`Search results will include manga that do not match the current filters`}
                     />
-                    <Switch
-                        edge="end"
-                        checked={settings.ignoreFilters}
-                        onChange={(e) => setSettingValue('ignoreFilters', e.target.checked)}
-                    />
+                    <Switch edge="end" checked={settings.ignoreFilters} onChange={(e) => setSettingValue('ignoreFilters', e.target.checked)} aria-label="ignore-filters" />
                 </ListItem>
             </List>
 
@@ -418,10 +421,7 @@ export function LibrarySettings() {
                 }
             >
                 <ListItemButton onClick={() => removeNonLibraryMangasFromCategories()}>
-                    <ListItemText
-                        primary={t`Cleanup database`}
-                        secondary={t`Remove non library manga from categories`}
-                    />
+                    <ListItemText primary={t`Cleanup database`} secondary={t`Remove non library manga from categories`} />
                 </ListItemButton>
 
                 {/* Outer Clear database row opens the dialog */}
@@ -435,10 +435,7 @@ export function LibrarySettings() {
                 </ListItem>
 
                 <ListItemLink to={AppRoutes.settings.childRoutes.library.childRoutes.duplicates.path}>
-                    <ListItemText
-                        primary={t`Duplicated entries`}
-                        secondary={t`Show all duplicated entries in your library`}
-                    />
+                    <ListItemText primary={t`Duplicated entries`} secondary={t`Show all duplicated entries in your library`} />
                 </ListItemLink>
             </List>
 
@@ -451,15 +448,7 @@ export function LibrarySettings() {
                     }
                 }}
                 fullWidth={false}
-                PaperProps={{
-                    sx: {
-                        width: 'auto',
-                        display: 'inline-block',
-                        maxWidth: '80vw',
-                        maxHeight: '80vh',
-                        p: 0,
-                    },
-                }}
+                PaperProps={{ sx: { width: 'auto', display: 'inline-block', maxWidth: '80vw', maxHeight: '80vh', p: 0 } } as any}
             >
                 <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, pl: 2, pb: 1 }}>
                     <Box component="span" sx={{ flex: 1 }}>
@@ -497,15 +486,7 @@ export function LibrarySettings() {
                 <DialogContent sx={{ whiteSpace: 'normal', overflow: 'auto', p: 0 }}>
                     {/* If there are no sources to clear, show a compact EmptyView that fits in the dialog */}
                     {sources.length === 0 ? (
-                        <Box
-                            sx={{
-                                p: 4,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                minHeight: 180,
-                            }}
-                        >
+                        <Box sx={{ p: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 180 }}>
                             <EmptyView
                                 message={t`Nothing to clear`}
                                 retry={async () => {
@@ -543,25 +524,12 @@ export function LibrarySettings() {
                                                     iconUrl={s.iconUrl}
                                                     alt={s.name}
                                                     slots={{
-                                                        avatarProps: {
-                                                            sx: { width: 32, height: 32 },
-                                                        },
-                                                        spinnerImageProps: {
-                                                            ignoreQueue: true,
-                                                        },
+                                                        avatarProps: { sx: { width: 32, height: 32 } as any },
+                                                        spinnerImageProps: { ignoreQueue: true },
                                                     }}
                                                 />
                                             ) : (
-                                                <Box
-                                                    sx={{
-                                                        width: 32,
-                                                        height: 32,
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        flexDirection: 'column',
-                                                    }}
-                                                >
+                                                <Box sx={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
                                                     <BrokenImageIcon fontSize="small" />
                                                     <IconButton
                                                         size="small"
@@ -582,16 +550,8 @@ export function LibrarySettings() {
                                             primary={`${s.name}${s.lang ? ` (${s.lang.toUpperCase()})` : ''}`}
                                             secondary={`${s.count} non-library entries in database`}
                                             sx={{ pr: '56px' }}
-                                            primaryTypographyProps={{
-                                                sx: {
-                                                    overflow: 'hidden',
-                                                    textOverflow: 'ellipsis',
-                                                    whiteSpace: 'nowrap',
-                                                },
-                                            }}
-                                            secondaryTypographyProps={{
-                                                sx: { overflow: 'hidden', textOverflow: 'ellipsis' },
-                                            }}
+                                            primaryTypographyProps={{ sx: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } } as any}
+                                            secondaryTypographyProps={{ sx: { overflow: 'hidden', textOverflow: 'ellipsis' } } as any}
                                         />
                                     </ListItemButton>
 
@@ -602,7 +562,7 @@ export function LibrarySettings() {
                                             onClick={(e) => e.stopPropagation()}
                                             onChange={() => toggleSource(s.id)}
                                             disabled={isClearing}
-                                            inputProps={{ 'aria-label': `select-source-${s.id}` }}
+                                            aria-label={`select-source-${s.id}`}
                                         />
                                     </ListItemSecondaryAction>
                                 </ListItem>
@@ -636,32 +596,17 @@ export function LibrarySettings() {
                     }
                 }}
                 fullWidth={false}
-                PaperProps={{
-                    sx: {
-                        width: 'auto',
-                        display: 'inline-block',
-                        maxWidth: '60vw',
-                        p: 0,
-                    },
-                }}
+                PaperProps={{ sx: { width: 'auto', display: 'inline-block', maxWidth: '60vw', p: 0 } } as any}
             >
                 <DialogTitle sx={{ pl: 2, pb: 1 }}>{t`Are you sure?`}</DialogTitle>
 
                 <DialogContent sx={{ whiteSpace: 'normal', p: 0 }}>
-                    <DialogContentText sx={{ mb: 2, px: 2 }}>
-                        {t`You're about to remove entries from the database`}
-                    </DialogContentText>
+                    <DialogContentText sx={{ mb: 2, px: 2 }}>{t`You're about to remove entries from the database`}</DialogContentText>
 
                     <ListItem disableGutters sx={{ px: 2 }}>
                         <ListItemText primary={t`Keep entries with read chapters`} />
                         <ListItemSecondaryAction sx={{ right: 8 }}>
-                            <Switch
-                                checked={keepReadManga}
-                                onChange={(e) => setKeepReadManga(e.target.checked)}
-                                disabled={isClearing}
-                                edge="end"
-                                inputProps={{ 'aria-label': 'keep-read-switch' }}
-                            />
+                            <Switch checked={keepReadManga} onChange={(e) => setKeepReadManga(e.target.checked)} disabled={isClearing} edge="end" aria-label="keep-read-switch" />
                         </ListItemSecondaryAction>
                     </ListItem>
                 </DialogContent>
