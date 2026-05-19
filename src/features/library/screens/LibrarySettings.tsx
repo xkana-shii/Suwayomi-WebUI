@@ -242,7 +242,6 @@ export function LibrarySettings() {
         setClearDialogOpen(true);
     };
 
-    // select-all icon handler
     const handleSelectAllClick = async (ev?: React.MouseEvent) => {
         ev?.stopPropagation();
         setIsClearing(false);
@@ -251,7 +250,6 @@ export function LibrarySettings() {
         setClearDialogOpen(true);
     };
 
-    // invert selection icon handler
     const handleInvertClick = async (ev?: React.MouseEvent) => {
         ev?.stopPropagation();
         setIsClearing(false);
@@ -293,14 +291,11 @@ export function LibrarySettings() {
         );
     };
 
-    // Open confirmation dialog from main dialog's Delete button
     const openConfirmDialog = () => {
         setConfirmOpen(true);
     };
 
-    // Called when user confirms removal in confirmation dialog
     const handleConfirmRemove = async () => {
-        // keep ids as strings
         const selectedIds = sources.filter((s) => s.selected).map((s) => String(s.id));
 
         if (!selectedIds.length) {
@@ -312,7 +307,6 @@ export function LibrarySettings() {
         try {
             await requestManager.graphQLClient.client.mutate({
                 mutation: CLEAR_DATABASE,
-                // pass ids as strings so no integer overflow occurs
                 variables: { input: { keepReadManga, sourceIds: selectedIds } },
             });
 
@@ -322,22 +316,15 @@ export function LibrarySettings() {
             setConfirmOpen(false);
             setClearDialogOpen(false);
 
-            // Force refresh sources and other related queries so the updated counts appear immediately
             try {
-                setSources([]); // clear local cache so loadSourcesIfNeeded(true) actually reloads
+                setSources([]);
                 await loadSourcesIfNeeded(true);
-                // refetch categories query to update counts if needed
-                try {
-                    await categories.refetch();
-                } catch (_) {
-                    // intentionally ignore category refetch failures
-                }
-                // ask Apollo to refetch active queries (best-effort)
-                try {
-                    await requestManager.graphQLClient.client.refetchQueries({ include: 'active' });
-                } catch (_) {
-                    // intentionally ignore refetch failures
-                }
+                await categories
+                    .refetch()
+                    .catch(defaultPromiseErrorHandler('LibrarySettings::refetchCategoriesAfterClear'));
+                await requestManager.graphQLClient.client
+                    .refetchQueries({ include: 'active' })
+                    .catch(defaultPromiseErrorHandler('LibrarySettings::refetchQueriesAfterClear'));
             } catch (e) {
                 makeToast(t`Could not refresh source list after clearing`, 'warning');
             }
@@ -404,7 +391,12 @@ export function LibrarySettings() {
                         primary={t`Ignore filters when searching`}
                         secondary={t`Search results will include manga that do not match the current filters`}
                     />
-                    <Switch edge="end" checked={settings.ignoreFilters} onChange={(e) => setSettingValue('ignoreFilters', e.target.checked)} aria-label="ignore-filters" />
+                    <Switch
+                        edge="end"
+                        checked={settings.ignoreFilters}
+                        onChange={(e) => setSettingValue('ignoreFilters', e.target.checked)}
+                        aria-label="ignore-filters"
+                    />
                 </ListItem>
             </List>
 
@@ -421,10 +413,12 @@ export function LibrarySettings() {
                 }
             >
                 <ListItemButton onClick={() => removeNonLibraryMangasFromCategories()}>
-                    <ListItemText primary={t`Cleanup database`} secondary={t`Remove non library manga from categories`} />
+                    <ListItemText
+                        primary={t`Cleanup database`}
+                        secondary={t`Remove non library manga from categories`}
+                    />
                 </ListItemButton>
 
-                {/* Outer Clear database row opens the dialog */}
                 <ListItem disablePadding>
                     <ListItemButton onClick={openClearDialog}>
                         <ListItemText
@@ -435,12 +429,19 @@ export function LibrarySettings() {
                 </ListItem>
 
                 <ListItemLink to={AppRoutes.settings.childRoutes.library.childRoutes.duplicates.path}>
-                    <ListItemText primary={t`Duplicated entries`} secondary={t`Show all duplicated entries in your library`} />
+                    <ListItemText
+                        primary={t`Duplicated entries`}
+                        secondary={t`Show all duplicated entries in your library`}
+                    />
                 </ListItemLink>
             </List>
 
-            {/* Clear Database dialog */}
             <Dialog
+                {...({
+                    PaperProps: {
+                        sx: { width: 'auto', display: 'inline-block', maxWidth: '80vw', maxHeight: '80vh', p: 0 },
+                    },
+                } as any)}
                 open={isClearDialogOpen}
                 onClose={() => {
                     if (!isClearing) {
@@ -448,7 +449,6 @@ export function LibrarySettings() {
                     }
                 }}
                 fullWidth={false}
-                PaperProps={{ sx: { width: 'auto', display: 'inline-block', maxWidth: '80vw', maxHeight: '80vh', p: 0 } } as any}
             >
                 <DialogTitle sx={{ display: 'flex', alignItems: 'center', gap: 1, pl: 2, pb: 1 }}>
                     <Box component="span" sx={{ flex: 1 }}>
@@ -484,9 +484,16 @@ export function LibrarySettings() {
                 </DialogTitle>
 
                 <DialogContent sx={{ whiteSpace: 'normal', overflow: 'auto', p: 0 }}>
-                    {/* If there are no sources to clear, show a compact EmptyView that fits in the dialog */}
                     {sources.length === 0 ? (
-                        <Box sx={{ p: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 180 }}>
+                        <Box
+                            sx={{
+                                p: 4,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                minHeight: 180,
+                            }}
+                        >
                             <EmptyView
                                 message={t`Nothing to clear`}
                                 retry={async () => {
@@ -529,7 +536,16 @@ export function LibrarySettings() {
                                                     }}
                                                 />
                                             ) : (
-                                                <Box sx={{ width: 32, height: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+                                                <Box
+                                                    sx={{
+                                                        width: 32,
+                                                        height: 32,
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        flexDirection: 'column',
+                                                    }}
+                                                >
                                                     <BrokenImageIcon fontSize="small" />
                                                     <IconButton
                                                         size="small"
@@ -547,11 +563,21 @@ export function LibrarySettings() {
                                         </ListItemAvatar>
 
                                         <ListItemText
-                                            primary={`${s.name}${s.lang ? ` (${s.lang.toUpperCase()})` : ''}`}
-                                            secondary={`${s.count} non-library entries in database`}
-                                            sx={{ pr: '56px' }}
-                                            primaryTypographyProps={{ sx: { overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' } } as any}
-                                            secondaryTypographyProps={{ sx: { overflow: 'hidden', textOverflow: 'ellipsis' } } as any}
+                                            {...({
+                                                primary: `${s.name}${s.lang ? ` (${s.lang.toUpperCase()})` : ''}`,
+                                                secondary: `${s.count} non-library entries in database`,
+                                                sx: { pr: '56px' },
+                                                primaryTypographyProps: {
+                                                    sx: {
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        whiteSpace: 'nowrap',
+                                                    },
+                                                },
+                                                secondaryTypographyProps: {
+                                                    sx: { overflow: 'hidden', textOverflow: 'ellipsis' },
+                                                },
+                                            } as any)}
                                         />
                                     </ListItemButton>
 
@@ -587,8 +613,8 @@ export function LibrarySettings() {
                 </DialogActions>
             </Dialog>
 
-            {/* Confirmation dialog */}
             <Dialog
+                {...({ PaperProps: { sx: { width: 'auto', display: 'inline-block', maxWidth: '60vw', p: 0 } } } as any)}
                 open={isConfirmOpen}
                 onClose={() => {
                     if (!isClearing) {
@@ -596,17 +622,24 @@ export function LibrarySettings() {
                     }
                 }}
                 fullWidth={false}
-                PaperProps={{ sx: { width: 'auto', display: 'inline-block', maxWidth: '60vw', p: 0 } } as any}
             >
                 <DialogTitle sx={{ pl: 2, pb: 1 }}>{t`Are you sure?`}</DialogTitle>
 
                 <DialogContent sx={{ whiteSpace: 'normal', p: 0 }}>
-                    <DialogContentText sx={{ mb: 2, px: 2 }}>{t`You're about to remove entries from the database`}</DialogContentText>
+                    <DialogContentText
+                        sx={{ mb: 2, px: 2 }}
+                    >{t`You're about to remove entries from the database`}</DialogContentText>
 
                     <ListItem disableGutters sx={{ px: 2 }}>
                         <ListItemText primary={t`Keep entries with read chapters`} />
                         <ListItemSecondaryAction sx={{ right: 8 }}>
-                            <Switch checked={keepReadManga} onChange={(e) => setKeepReadManga(e.target.checked)} disabled={isClearing} edge="end" aria-label="keep-read-switch" />
+                            <Switch
+                                checked={keepReadManga}
+                                onChange={(e) => setKeepReadManga(e.target.checked)}
+                                disabled={isClearing}
+                                edge="end"
+                                aria-label="keep-read-switch"
+                            />
                         </ListItemSecondaryAction>
                     </ListItem>
                 </DialogContent>

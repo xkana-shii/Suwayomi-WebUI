@@ -488,7 +488,12 @@ msgstr "Applying..."
 msgid "Are you sure you want to abort the migration?"
 msgstr "Are you sure you want to abort the migration?"
 
+#: src/features/settings/screens/About.tsx
+msgid "Are you sure you want to shut down the server?"
+msgstr "Are you sure you want to shut down the server?"
+
 #: src/features/chapter/services/Chapters.ts
+#: src/features/library/screens/LibrarySettings.tsx
 #: src/features/manga/hooks/useManageMangaLibraryState.tsx
 #: src/features/manga/services/Mangas.ts
 #: src/features/source/browse/components/SourceOptions.tsx
@@ -754,11 +759,13 @@ msgstr "Call timeout"
 #: src/features/category/components/CategoriesInclusionSetting.tsx
 #: src/features/category/components/CategorySelect.tsx
 #: src/features/category/components/CreateOrEditCategoryDialog.tsx
+#: src/features/library/screens/LibrarySettings.tsx
 #: src/features/manga/components/details/EditMangaMetadataDialog.tsx
 #: src/features/migration/components/MigrationBulkSearchOptionsDialog.tsx
 #: src/features/migration/components/MigrationOptionsDialog.tsx
 #: src/features/reader/hotkeys/settings/components/RecordHotkey.tsx
 #: src/features/settings/components/globalUpdate/GlobalUpdateSettingsEntries.tsx
+#: src/features/settings/screens/About.tsx
 #: src/features/source/browse/components/SourceOptions.tsx
 #: src/features/source/components/SourceLanguageSelect.tsx
 #: src/features/source/configuration/components/EditTextPreference.tsx
@@ -897,6 +904,10 @@ msgstr "Clear"
 msgid "Clear cache"
 msgstr "Clear cache"
 
+#: src/features/library/screens/LibrarySettings.tsx
+msgid "Clear database"
+msgstr "Clear database"
+
 #: src/features/settings/screens/ImagesSettings.tsx
 msgid "Cleared the cache"
 msgstr "Cleared the cache"
@@ -953,6 +964,10 @@ msgstr "Completed"
 #: src/features/settings/components/images/Processing.tsx
 msgid "Compression level"
 msgstr "Compression level"
+
+#: src/features/library/screens/LibrarySettings.tsx
+msgid "Confirm"
+msgstr "Confirm"
 
 #: src/features/settings/components/images/Processing.tsx
 msgid "Connect timeout"
@@ -1044,6 +1059,10 @@ msgstr "Could not check for update"
 msgid "Could not check for updates"
 msgstr "Could not check for updates"
 
+#: src/features/library/screens/LibrarySettings.tsx
+msgid "Could not clear database"
+msgstr "Could not clear database"
+
 #: src/features/settings/screens/ImagesSettings.tsx
 msgid "Could not clear the cache"
 msgstr "Could not clear the cache"
@@ -1064,6 +1083,10 @@ msgstr "Could not create theme"
 #: src/features/theme/components/ThemeList.tsx
 msgid "Could not delete theme \"{0}\""
 msgstr "Could not delete theme \"{0}\""
+
+#: src/features/library/screens/LibrarySettings.tsx
+msgid "Could not fetch sources"
+msgstr "Could not fetch sources"
 
 #: src/features/manga/components/details/MangaDetails.tsx
 msgid "Could not find source. Check your installed extensions."
@@ -1125,6 +1148,10 @@ msgstr "Could not log out from KOReader Sync"
 msgid "Could not migrate manga"
 msgstr "Could not migrate manga"
 
+#: src/features/library/screens/LibrarySettings.tsx
+msgid "Could not refresh source list after clearing"
+msgstr "Could not refresh source list after clearing"
+
 #: src/features/downloads/screens/DownloadQueue.tsx
 msgid "Could not remove all downloads from the queue"
 msgstr "Could not remove all downloads from the queue"
@@ -1166,6 +1193,10 @@ msgstr "Could not save theme changes"
 #: src/features/global-search/screens/SearchAll.tsx
 msgid "Could not search source"
 msgstr "Could not search source"
+
+#: src/features/settings/screens/About.tsx
+msgid "Could not send shutdown command"
+msgstr "Could not send shutdown command"
 
 #: src/features/updates/components/UpdateChecker.tsx
 msgid "Could not stop global update"
@@ -1287,6 +1318,10 @@ msgstr "Darken"
 msgid "Database"
 msgstr "Database"
 
+#: src/features/library/screens/LibrarySettings.tsx
+msgid "Database cleared"
+msgstr "Database cleared"
+
 #: src/features/settings/screens/ServerSettings.tsx
 msgid "Database url"
 msgstr "Database url"
@@ -1320,6 +1355,7 @@ msgstr "Default category when adding new manga to the library"
 #: src/features/category/components/CategorySettingsCard.tsx
 #: src/features/chapter/Chapter.constants.ts
 #: src/features/downloads/components/DownloadQueueChapterCard.tsx
+#: src/features/library/screens/LibrarySettings.tsx
 #: src/features/reader/hotkeys/settings/components/Hotkey.tsx
 #: src/features/settings/components/images/KeyValueItem.tsx
 #: src/features/settings/components/images/Processing.tsx
@@ -1348,6 +1384,10 @@ msgstr "Delete downloaded"
 msgid "Delete finished chapters while reading"
 msgstr "Delete finished chapters while reading"
 
+#: src/features/library/screens/LibrarySettings.tsx
+msgid "Delete history for entries that are not saved in your library"
+msgstr "Delete history for entries that are not saved in your library"
+
 #: src/features/source/browse/components/SourceOptions.tsx
 msgid "Delete search"
 msgstr "Delete search"
@@ -1365,6 +1405,10 @@ msgstr "Deleted theme \"{0}\""
 #: src/features/theme/components/ThemeList.tsx
 msgid "Deleting theme \"{0}\"…"
 msgstr "Deleting theme \"{0}\"…"
+
+#: src/features/library/screens/LibrarySettings.tsx
+msgid "Deleting…"
+msgstr "Deleting…"
 
 #: src/features/migration/Migration.constants.ts
 #: src/features/settings/screens/ServerSettings.tsx
@@ -2113,6 +2157,10 @@ msgstr "Invalid repository url"
 msgid "Invert"
 msgstr "Invert"
 
+#: src/features/library/screens/LibrarySettings.tsx
+msgid "Invert selection"
+msgstr "Invert selection"
+
 #: src/features/reader/settings/layout/components/ReaderSettingTapZoneInvertMode.tsx
 msgid "Invert tap zones"
 msgstr "Invert tap zones"
@@ -2140,6 +2188,10 @@ msgstr "JWT audience claim"
 #: src/features/settings/screens/ServerSettings.tsx
 msgid "JWT refresh token expiry"
 msgstr "JWT refresh token expiry"
+
+#: src/features/library/screens/LibrarySettings.tsx
+msgid "Keep entries with read chapters"
+msgstr "Keep entries with read chapters"
 
 #: src/features/settings/Settings.constants.ts
 msgid "Keep local"
@@ -2631,6 +2683,10 @@ msgstr "No sources found. Install Some extensions first."
 msgid "No sources installed"
 msgstr "No sources installed"
 
+#: src/features/library/screens/LibrarySettings.tsx
+msgid "No sources selected"
+msgstr "No sources selected"
+
 #: src/features/backup/Backup.utils.ts
 #: src/features/category/components/CategoriesInclusionSetting.tsx
 #: src/features/downloads/screens/DownloadSettings.tsx
@@ -2647,6 +2703,10 @@ msgstr "Not yet published"
 #: src/features/tracker/Tracker.constants.ts
 msgid "Not yet released"
 msgstr "Not yet released"
+
+#: src/features/library/screens/LibrarySettings.tsx
+msgid "Nothing to clear"
+msgstr "Nothing to clear"
 
 #: src/features/tracker/Tracker.constants.ts
 msgid "Novel"
@@ -2699,6 +2759,7 @@ msgstr "Offset double spreads"
 #: src/features/chapter/services/Chapters.ts
 #: src/features/manga/services/Mangas.ts
 #: src/features/settings/components/globalUpdate/GlobalUpdateSettingsEntries.tsx
+#: src/features/settings/screens/About.tsx
 #: src/features/source/browse/components/SourceOptions.tsx
 #: src/features/source/components/SourceLanguageSelect.tsx
 #: src/features/source/configuration/components/EditTextPreference.tsx
@@ -3249,6 +3310,7 @@ msgstr "Select a device to use its server stored UI settings"
 #: src/base/collection/components/SelectableCollectionSelectAll.tsx
 #: src/base/collection/components/SelectableCollectionSelectMode.tsx
 #: src/base/components/settings/CheckboxListSetting.tsx
+#: src/features/library/screens/LibrarySettings.tsx
 msgid "Select all"
 msgstr "Select all"
 
@@ -3426,6 +3488,18 @@ msgstr "Shows a dialog in case the version got updated. This dialog will be show
 msgid "Shows a dialog in case the version of the server has changed"
 msgstr "Shows a dialog in case the version of the server has changed"
 
+#: src/features/settings/screens/About.tsx
+msgid "Shut down server"
+msgstr "Shut down server"
+
+#: src/features/settings/screens/About.tsx
+msgid "Shutdown command sent. The server should stop shortly."
+msgstr "Shutdown command sent. The server should stop shortly."
+
+#: src/features/settings/screens/About.tsx
+msgid "Shutting down…"
+msgstr "Shutting down…"
+
 #: src/features/settings/Settings.constants.ts
 msgid "Simple Login"
 msgstr "Simple Login"
@@ -3577,6 +3651,10 @@ msgstr "Stop"
 #: src/features/updates/components/UpdateChecker.tsx
 msgid "Stop global update"
 msgstr "Stop global update"
+
+#: src/features/settings/screens/About.tsx
+msgid "Stop the running Suwayomi-Server process from the WebUI"
+msgstr "Stop the running Suwayomi-Server process from the WebUI"
 
 #: src/features/reader/overlay/navigation/desktop/quick-settings/components/ReaderNavBarDesktopPageScale.tsx
 #: src/features/reader/settings/layout/components/ReaderSettingStretchPage.tsx
@@ -4165,6 +4243,10 @@ msgstr "You have not read any series yet."
 #: src/features/browse/extensions/Extensions.tsx
 msgid "You have to add a extension repository to be able to install extensions"
 msgstr "You have to add a extension repository to be able to install extensions"
+
+#: src/features/library/screens/LibrarySettings.tsx
+msgid "You're about to remove entries from the database"
+msgstr "You're about to remove entries from the database"
 
 #: src/features/settings/Settings.constants.ts
 msgid "Your browser will prompt you to enter credentials with a dialog."
