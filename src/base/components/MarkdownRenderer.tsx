@@ -42,21 +42,42 @@ type MarkdownRendererProps = {
 
 const SANITIZE_SCHEMA = {
     tagNames: [
-        'p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-        'blockquote', 'ul', 'ol', 'li',
-        'pre', 'code', 'hr', 'br',
-        'table', 'thead', 'tbody', 'tr', 'th', 'td',
-        'a', 'strong', 'em', 'img', 'input',
+        'p',
+        'h1',
+        'h2',
+        'h3',
+        'h4',
+        'h5',
+        'h6',
+        'blockquote',
+        'ul',
+        'ol',
+        'li',
+        'pre',
+        'code',
+        'hr',
+        'br',
+        'table',
+        'thead',
+        'tbody',
+        'tr',
+        'th',
+        'td',
+        'a',
+        'strong',
+        'em',
+        'img',
+        'input',
     ],
     attributes: {
-        a:     ['href', 'title'],
-        img:   ['src', 'alt', 'title'],
+        a: ['href', 'title'],
+        img: ['src', 'alt', 'title'],
         input: ['type', 'checked', 'disabled'],
-        '*':   ['className', 'align'],
+        '*': ['className', 'align'],
     },
     protocols: {
         href: ['http', 'https', 'mailto', 'tel'],
-        src:  ['http', 'https', 'data'],
+        src: ['http', 'https', 'data'],
     },
 };
 
@@ -71,9 +92,13 @@ const REMARK_PLUGINS = [remarkGfm, remarkBreaks] as any[];
 /** Returns true when every child is empty whitespace or a <br /> element. */
 function isParagraphEmpty(children: React.ReactNode): boolean {
     const childArray = React.Children.toArray(children);
-    if (childArray.length === 0) {return true;}
+    if (childArray.length === 0) {
+        return true;
+    }
     return childArray.every((c) => {
-        if (typeof c === 'string') {return /^\s*$/.test(c);}
+        if (typeof c === 'string') {
+            return /^\s*$/.test(c);
+        }
         if (React.isValidElement(c)) {
             const t = typeof c.type === 'string' ? c.type.toLowerCase() : '';
             return t === 'br';
@@ -94,7 +119,9 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
 }) => {
     const theme = useTheme();
 
-    if (!source) {return null;}
+    if (!source) {
+        return null;
+    }
 
     const escapedSource = source.replaceAll('~~', '\\~\\~');
 
@@ -199,7 +226,13 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
                     li: ({ children, checked }: any) =>
                         typeof checked === 'boolean' ? (
                             <Box component="li" sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                                <input type="checkbox" checked={checked} disabled aria-hidden className="task-checkbox" />
+                                <input
+                                    type="checkbox"
+                                    checked={checked}
+                                    disabled
+                                    aria-hidden
+                                    className="task-checkbox"
+                                />
                                 <Box component="span">{children}</Box>
                             </Box>
                         ) : (
@@ -209,8 +242,8 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
                     // --- Code ---
                     // react-markdown v7+: detect inline by absence of a newline in content.
                     code: ({ node, children, className: cls }: any) => {
-                        const isInline = !node?.position?.start?.line ||
-                            node.position.start.line === node.position.end?.line;
+                        const isInline =
+                            !node?.position?.start?.line || node.position.start.line === node.position.end?.line;
                         return isInline ? (
                             <Box
                                 component="code"
@@ -225,9 +258,8 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
                                 sx={{
                                     whiteSpace: 'pre',
                                     p: theme.spacing(1),
-                                    bgcolor: theme.palette.mode === 'dark'
-                                        ? theme.palette.background.paper
-                                        : 'action.hover',
+                                    bgcolor:
+                                        theme.palette.mode === 'dark' ? theme.palette.background.paper : 'action.hover',
                                     borderRadius: 1,
                                     overflow: 'auto',
                                     my: BLOCK_GAP,
@@ -254,11 +286,13 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
                     ),
                     thead: ({ children }: any) => <TableHead>{children}</TableHead>,
                     tbody: ({ children }: any) => <TableBody>{children}</TableBody>,
-                    tr:    ({ children }: any) => <TableRow>{children}</TableRow>,
-                    th:    ({ children }: any) => (
-                        <TableCell component="th" sx={{ fontWeight: 'bold' }}>{children}</TableCell>
+                    tr: ({ children }: any) => <TableRow>{children}</TableRow>,
+                    th: ({ children }: any) => (
+                        <TableCell component="th" sx={{ fontWeight: 'bold' }}>
+                            {children}
+                        </TableCell>
                     ),
-                    td:    ({ children }: any) => <TableCell>{children}</TableCell>,
+                    td: ({ children }: any) => <TableCell>{children}</TableCell>,
 
                     // --- Horizontal rule ---
                     hr: () => (
@@ -283,10 +317,7 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
                                 '& p': { mt: 0, mb: 0 },
                             }}
                         >
-                            <Typography
-                                variant="body2"
-                                sx={{ fontStyle: 'italic', py: theme.spacing(0.5) }}
-                            >
+                            <Typography variant="body2" sx={{ fontStyle: 'italic', py: theme.spacing(0.5) }}>
                                 {children}
                             </Typography>
                         </Box>

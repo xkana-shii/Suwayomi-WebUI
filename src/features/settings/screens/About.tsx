@@ -119,7 +119,10 @@ export function About() {
                     }
                 >
                     <ListItem>
-                        <ListItemText primary={t`Server`} secondary={`${aboutServer.name} (${aboutServer.buildType})`} />
+                        <ListItemText
+                            primary={t`Server`}
+                            secondary={`${aboutServer.name} (${aboutServer.buildType})`}
+                        />
                     </ListItem>
                     <ListItem>
                         <ListItemText
@@ -197,7 +200,10 @@ export function About() {
                         <ListItemText primary={t`GitHub Server`} secondary={aboutServer.github} />
                     </ListItemLink>
                     <ListItemLink to="https://github.com/Suwayomi/Suwayomi-WebUI" target="_blank" rel="noreferrer">
-                        <ListItemText primary={t`GitHub WebUI`} secondary="https://github.com/Suwayomi/Suwayomi-WebUI" />
+                        <ListItemText
+                            primary={t`GitHub WebUI`}
+                            secondary="https://github.com/Suwayomi/Suwayomi-WebUI"
+                        />
                     </ListItemLink>
                     <ListItemLink to={aboutServer.discord} target="_blank" rel="noreferrer">
                         <ListItemText primary={t`Discord`} secondary={aboutServer.discord} />
@@ -208,7 +214,9 @@ export function About() {
             <Dialog
                 open={isShutdownDialogOpen}
                 onClose={() => {
-                    if (!isShuttingDown) {setShutdownDialogOpen(false);}
+                    if (!isShuttingDown) {
+                        setShutdownDialogOpen(false);
+                    }
                 }}
                 fullWidth
                 maxWidth="sm"
@@ -220,7 +228,9 @@ export function About() {
                 <DialogActions>
                     <Button
                         onClick={() => {
-                            if (!isShuttingDown) {setShutdownDialogOpen(false);}
+                            if (!isShuttingDown) {
+                                setShutdownDialogOpen(false);
+                            }
                         }}
                     >
                         {t`Cancel`}

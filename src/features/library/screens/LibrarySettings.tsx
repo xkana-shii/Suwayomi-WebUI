@@ -193,47 +193,48 @@ export function LibrarySettings() {
     }
 
     // helper to fetch and set sources (only those with nonLibraryCount > 0)
-const loadSourcesIfNeeded = async (force = false) => {
-    if (!force && sources.length > 0) {
-        return;
-    }
-    try {
-        const resp: any = await requestManager.graphQLClient.client.query({
-            query: GET_SOURCES_WITH_COUNTS,
-            fetchPolicy: 'no-cache',
-        });
+    const loadSourcesIfNeeded = async (force = false) => {
+        if (!force && sources.length > 0) {
+            return;
+        }
+        try {
+            const resp: any = await requestManager.graphQLClient.client.query({
+                query: GET_SOURCES_WITH_COUNTS,
+                fetchPolicy: 'no-cache',
+            });
 
-        const nodes = resp.data?.sources?.nodes ?? [];
-        const filtered = nodes
-            .map((s: any) => {
-                const count = Number(s.nonLibraryCount ?? s.count ?? 0);
+            const nodes = resp.data?.sources?.nodes ?? [];
+            const filtered = nodes
+                .map((s: any) => {
+                    const count = Number(s.nonLibraryCount ?? s.count ?? 0);
 
-                // prefer explicit source.iconUrl, otherwise fallback to extension pkgName
-                const sourceIconPath = typeof s.iconUrl === 'string' && s.iconUrl.length ? s.iconUrl : undefined;
-                const extensionPkg = s?.extension?.pkgName ?? undefined;
-                const finalIconPath =
-                    sourceIconPath ?? (extensionPkg ? `/api/v1/extension/icon/${encodeURIComponent(extensionPkg)}` : undefined);
+                    // prefer explicit source.iconUrl, otherwise fallback to extension pkgName
+                    const sourceIconPath = typeof s.iconUrl === 'string' && s.iconUrl.length ? s.iconUrl : undefined;
+                    const extensionPkg = s?.extension?.pkgName ?? undefined;
+                    const finalIconPath =
+                        sourceIconPath ??
+                        (extensionPkg ? `/api/v1/extension/icon/${encodeURIComponent(extensionPkg)}` : undefined);
 
-                return {
-                    // treat id as string to avoid integer overflow
-                    id: String(s.id),
-                    name: s.name,
-                    lang: s.lang,
-                    count,
-                    selected: false,
-                    iconUrl: finalIconPath ? requestManager.getValidImgUrlFor(finalIconPath) : '',
-                    originalIconPath: sourceIconPath ?? undefined,
-                    iconCacheBuster: undefined,
-                    extensionPkg,
-                };
-            })
-            .filter((s: any) => s.count > 0);
+                    return {
+                        // treat id as string to avoid integer overflow
+                        id: String(s.id),
+                        name: s.name,
+                        lang: s.lang,
+                        count,
+                        selected: false,
+                        iconUrl: finalIconPath ? requestManager.getValidImgUrlFor(finalIconPath) : '',
+                        originalIconPath: sourceIconPath ?? undefined,
+                        iconCacheBuster: undefined,
+                        extensionPkg,
+                    };
+                })
+                .filter((s: any) => s.count > 0);
 
-        setSources(filtered);
-    } catch (e) {
-        makeToast(t`Could not fetch sources`, 'error', getErrorMessage(e));
-    }
-};
+            setSources(filtered);
+        } catch (e) {
+            makeToast(t`Could not fetch sources`, 'error', getErrorMessage(e));
+        }
+    };
 
     const openClearDialog = async () => {
         setIsClearing(false);
@@ -326,12 +327,10 @@ const loadSourcesIfNeeded = async (force = false) => {
                 await loadSourcesIfNeeded(true);
                 try {
                     await categories.refetch();
-                } catch (_) {
-                }
+                } catch (_) {}
                 try {
                     await requestManager.graphQLClient.client.refetchQueries({ include: 'active' });
-                } catch (_) {
-                }
+                } catch (_) {}
             } catch (e) {
                 // If forced refresh fails, still continue; user can manually refresh as fallback
                 // but bubble a small warning so user knows data may be stale

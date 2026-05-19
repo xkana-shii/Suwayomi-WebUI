@@ -279,7 +279,12 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
                         </Box>
 
                         <StackAny sx={{ gap: 1, flex: 1 }}>
-                            <PreviewTextField fieldLabel={t`Title`} previewValue={manga.title} value={title} onChange={setTitle} />
+                            <PreviewTextField
+                                fieldLabel={t`Title`}
+                                previewValue={manga.title}
+                                value={title}
+                                onChange={setTitle}
+                            />
                             <PreviewTextField
                                 fieldLabel={t`Author`}
                                 previewValue={manga.author ?? ''}
@@ -319,7 +324,13 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
                         onChange={(_: React.SyntheticEvent, newValue: string[]) => setGenre(newValue)}
                         renderTags={(value: string[], getTagProps: (params: { index: number }) => any) =>
                             value.map((option: string, index: number) => (
-                                <Chip variant="outlined" label={option} size="small" {...getTagProps({ index })} key={option} />
+                                <Chip
+                                    variant="outlined"
+                                    label={option}
+                                    size="small"
+                                    {...getTagProps({ index })}
+                                    key={option}
+                                />
                             ))
                         }
                         renderInput={(params: AutocompleteRenderInputParams) => (
@@ -634,7 +645,11 @@ const MatchTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => voi
                             fullWidth
                             size="small"
                         />
-                        <IconButton onClick={() => handleSearch()} disabled={isSearching || !searchQuery.trim()} color="primary">
+                        <IconButton
+                            onClick={() => handleSearch()}
+                            disabled={isSearching || !searchQuery.trim()}
+                            color="primary"
+                        >
                             {isSearching ? <CircularProgress size={24} /> : <SearchIcon />}
                         </IconButton>
                     </Box>
