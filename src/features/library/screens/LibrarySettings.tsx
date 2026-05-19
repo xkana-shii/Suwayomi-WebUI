@@ -193,9 +193,8 @@ export function LibrarySettings() {
     }
 
     // helper to fetch and set sources (only those with nonLibraryCount > 0)
-    // helper to fetch and set sources (only those with nonLibraryCount > 0)
-const loadSourcesIfNeeded = async () => {
-    if (sources.length > 0) {
+const loadSourcesIfNeeded = async (force = false) => {
+    if (!force && sources.length > 0) {
         return;
     }
     try {
@@ -269,7 +268,9 @@ const loadSourcesIfNeeded = async () => {
     const refreshIcon = (id: string) => {
         setSources((old) =>
             old.map((s) => {
-                if (s.id !== id) {return s;}
+                if (s.id !== id) {
+                    return s;
+                }
                 const cb = Date.now();
                 if (s.originalIconPath && s.originalIconPath.length) {
                     return {
@@ -300,7 +301,6 @@ const loadSourcesIfNeeded = async () => {
     const handleConfirmRemove = async () => {
         // keep ids as strings
         const selectedIds = sources.filter((s) => s.selected).map((s) => String(s.id));
-        console.debug('LibrarySettings: clearing sources', selectedIds);
 
         if (!selectedIds.length) {
             makeToast(t`No sources selected`, 'error');
@@ -314,11 +314,29 @@ const loadSourcesIfNeeded = async () => {
                 // pass ids as strings so no integer overflow occurs
                 variables: { input: { keepReadManga, sourceIds: selectedIds } },
             });
+
             makeToast(t`Database cleared`, 'success');
+
+            setSources((old) => old.map((s) => ({ ...s, selected: false })));
             setConfirmOpen(false);
             setClearDialogOpen(false);
-            // reset selections
-            setSources((old) => old.map((s) => ({ ...s, selected: false })));
+
+            try {
+                setSources([]); // clear local cache so loadSourcesIfNeeded(true) actually reloads
+                await loadSourcesIfNeeded(true);
+                try {
+                    await categories.refetch();
+                } catch (_) {
+                }
+                try {
+                    await requestManager.graphQLClient.client.refetchQueries({ include: 'active' });
+                } catch (_) {
+                }
+            } catch (e) {
+                // If forced refresh fails, still continue; user can manually refresh as fallback
+                // but bubble a small warning so user knows data may be stale
+                makeToast(t`Could not refresh source list after clearing`, 'warning');
+            }
         } catch (e) {
             makeToast(t`Could not clear database`, 'error', getErrorMessage(e));
         } finally {
