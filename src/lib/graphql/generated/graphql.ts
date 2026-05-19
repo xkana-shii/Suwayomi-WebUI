@@ -741,20 +741,6 @@ export type ResetWebuiUpdateStatusMutationVariables = Exact<{ [key: string]: nev
 
 export type ResetWebuiUpdateStatusMutation = { __typename: 'Mutation', resetWebUIUpdateStatus: { __typename: 'WebUIUpdateStatus', state: Types.UpdateState, info: { __typename: 'WebUIUpdateInfo', channel: Types.WebUiChannel, tag: string } } | null };
 
-export type ShutdownServerMutationVariables = Exact<{
-  input?: Types.ShutdownServerInput | null | undefined;
-}>;
-
-
-export type ShutdownServerMutation = { __typename: 'Mutation', shutdownServer: { __typename: 'ShutdownServerPayload', clientMutationId: string | null, success: boolean } | null };
-
-export type ClearDatabaseMutationVariables = Exact<{
-  input?: Types.ClearDatabaseInput | null | undefined;
-}>;
-
-
-export type ClearDatabaseMutation = { __typename: 'Mutation', clearDatabase: { __typename: 'ClearDatabasePayload', clientMutationId: string | null, success: boolean } | null };
-
 export type GetAboutQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -930,11 +916,6 @@ export type GetMigratableSourcesQueryVariables = Exact<{ [key: string]: never; }
 
 
 export type GetMigratableSourcesQuery = { __typename: 'Query', mangas: { __typename: 'MangaNodeList', nodes: Array<{ __typename: 'MangaType', sourceId: string, source: { __typename: 'SourceType', id: string, name: string, displayName: string, lang: string, iconUrl: string } | null }> } };
-
-export type GetSourcesWithCountsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetSourcesWithCountsQuery = { __typename: 'Query', sources: { __typename: 'SourceNodeList', nodes: Array<{ __typename: 'SourceType', id: string, name: string, lang: string, nonLibraryCount: number }> } };
 
 export type TrackerBaseFieldsFragment = { __typename: 'TrackerType', id: number, name: string, icon: string, isLoggedIn: boolean, isTokenExpired: boolean };
 

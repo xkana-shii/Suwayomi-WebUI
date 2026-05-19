@@ -70,20 +70,3 @@ export const GET_MIGRATABLE_SOURCES = gql`
         }
     }
 `;
-
-export const GET_SOURCES_WITH_COUNTS = gql`
-    query GET_SOURCES_WITH_COUNTS {
-        sources {
-            nodes {
-                id
-                name
-                lang
-                nonLibraryCount
-                iconUrl
-                extension {
-                    pkgName
-                }
-            }
-        }
-    }
-`;
