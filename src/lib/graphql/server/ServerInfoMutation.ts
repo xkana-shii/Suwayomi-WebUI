@@ -31,3 +31,12 @@ export const RESET_WEBUI_UPDATE_STATUS = gql`
         }
     }
 `;
+
+export const SHUTDOWN_SERVER = gql`
+    mutation SHUTDOWN_SERVER($input: ShutdownServerInput = {}) {
+        shutdownServer(input: $input) {
+            clientMutationId
+            success
+        }
+    }
+`;
