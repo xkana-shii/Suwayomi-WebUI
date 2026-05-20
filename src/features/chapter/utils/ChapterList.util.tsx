@@ -12,7 +12,10 @@ import type {
     ChapterBookmarkInfo,
     ChapterFillermarkInfo,
     ChapterDownloadInfo,
+    ChapterListFilterOptions,
+    ChapterListFilterSortOptions,
     ChapterListOptions,
+    ChapterListSortOptions,
     ChapterNumberInfo,
     ChapterReadInfo,
     ChapterScanlatorInfo,
@@ -77,10 +80,7 @@ function scanlatorFilter(excludedScanlators: string[], { scanlator }: ChapterSca
 }
 
 type TChapterSort = ChapterSourceOrderInfo & ChapterNumberInfo & Pick<ChapterType, 'fetchedAt' | 'uploadDate'>;
-const sortChapters = <T extends TChapterSort>(
-    chapters: T[],
-    { sortBy, reverse }: Pick<ChapterListOptions, 'sortBy' | 'reverse'>,
-): T[] => {
+const sortChapters = <T extends TChapterSort>(chapters: T[], { sortBy, reverse }: ChapterListSortOptions): T[] => {
     const sortedChapters: T[] = [...chapters];
 
     switch (sortBy) {
@@ -114,7 +114,7 @@ type TChapterFilter = ChapterReadInfo &
     ChapterFillermarkInfo;
 export function filterChapters<Chapters extends TChapterFilter>(
     chapters: Chapters[],
-    options: ChapterListOptions,
+    options: ChapterListFilterOptions,
 ): Chapters[] {
     return chapters.filter(
         (chp) =>
@@ -128,14 +128,14 @@ export function filterChapters<Chapters extends TChapterFilter>(
 
 export function filterAndSortChapters<Chapters extends TChapterSort & TChapterFilter>(
     chapters: Chapters[],
-    options: ChapterListOptions,
+    options: ChapterListFilterSortOptions,
 ): Chapters[] {
     const filtered = filterChapters(chapters, options);
 
     return sortChapters(filtered, options);
 }
 
-export const isFilterActive = (options: ChapterListOptions) => {
+export const isFilterActive = (options: ChapterListFilterOptions) => {
     const { unread, downloaded, bookmarked, fillermarked, excludedScanlators } = options;
     return (
         unread != null ||
