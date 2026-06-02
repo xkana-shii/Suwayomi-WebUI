@@ -105,6 +105,8 @@ import type {
     GetWebuiUpdateStatusQueryVariables,
     InstallExternalExtensionMutation,
     InstallExternalExtensionMutationVariables,
+    InstallMissingExtensionsFromBackupMutation,
+    InstallMissingExtensionsFromBackupMutationVariables,
     KoSyncLoginMutation,
     KoSyncLoginMutationVariables,
     KoSyncLogoutMutation,
@@ -292,7 +294,11 @@ import {
 import { STOP_UPDATER, UPDATE_LIBRARY } from '@/lib/graphql/updater/UpdaterMutation.ts';
 import { GET_LAST_UPDATE_TIMESTAMP, GET_UPDATE_STATUS } from '@/lib/graphql/updater/UpdaterQuery.ts';
 import { CustomCache } from '@/lib/storage/CustomCache.ts';
-import { CREATE_BACKUP, RESTORE_BACKUP } from '@/lib/graphql/backup/BackupMutation.ts';
+import {
+    CREATE_BACKUP,
+    INSTALL_MISSING_EXTENSIONS_FROM_BACKUP,
+    RESTORE_BACKUP,
+} from '@/lib/graphql/backup/BackupMutation.ts';
 import { GET_RESTORE_STATUS, VALIDATE_BACKUP } from '@/lib/graphql/backup/BackupQuery.ts';
 import { DOWNLOAD_STATUS_SUBSCRIPTION } from '@/lib/graphql/download/DownloaderSubscription.ts';
 import { UPDATER_SUBSCRIPTION } from '@/lib/graphql/updater/UpdaterSubscription.ts';
@@ -3212,6 +3218,19 @@ export class RequestManager {
                 ...options,
             },
         );
+    }
+
+    public installMissingExtensionsFromBackup(
+        backup: File,
+        options?: MutationOptions<
+            InstallMissingExtensionsFromBackupMutation,
+            InstallMissingExtensionsFromBackupMutationVariables
+        >,
+    ): AbortableApolloMutationResponse<InstallMissingExtensionsFromBackupMutation> {
+        return this.doRequest<
+            InstallMissingExtensionsFromBackupMutation,
+            InstallMissingExtensionsFromBackupMutationVariables
+        >(GQLMethod.MUTATION, INSTALL_MISSING_EXTENSIONS_FROM_BACKUP, { backup }, options);
     }
 
     public validateBackupFile(

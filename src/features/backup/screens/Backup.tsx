@@ -30,7 +30,10 @@ import { defaultPromiseErrorHandler } from '@/lib/DefaultPromiseErrorHandler.ts'
 import { getErrorMessage } from '@/lib/HelperFunctions.ts';
 import { useAppTitle } from '@/features/navigation-bar/hooks/useAppTitle.ts';
 import { BackupFlagInclusionDialog } from '@/features/backup/component/BackupFlagInclusionDialog.tsx';
-import { BackupValidationDialog } from '@/features/backup/component/BackupValidationDialog.tsx';
+import {
+    BackupValidationDialog,
+    type BackupValidationDialogResult,
+} from '@/features/backup/component/BackupValidationDialog.tsx';
 import {
     convertToAutoBackupFlags,
     convertToBackupFlags,
@@ -142,6 +145,29 @@ export function Backup() {
         }
     };
 
+    const installMissingExtensionsFromBackup = async (file: File) => {
+        makeToast(t`Installing missing extensions…`, 'info');
+
+        const response = await requestManager.installMissingExtensionsFromBackup(file).response;
+        const payload = response.data?.installMissingExtensionsFromBackup;
+
+        if (!payload) {
+            throw response.error ?? new Error('installMissingExtensionsFromBackup returned no data');
+        }
+
+        requestManager.clearExtensionCache();
+
+        if (payload.installedExtensions.length) {
+            makeToast(t`Missing extensions installed.`, 'success');
+        } else if (payload.unmatchedSources.length) {
+            makeToast(t`Some missing extensions could not be installed.`, 'warning');
+        } else {
+            makeToast(t`No missing extensions needed installation.`, 'info');
+        }
+
+        return payload;
+    };
+
     const validateBackup = async (file: File) => {
         try {
             const validateBackupResponse = await requestManager.validateBackupFile(file, {
@@ -155,13 +181,46 @@ export function Backup() {
 
             if (validateBackupData.missingSources.length || validateBackupData.missingTrackers.length) {
                 try {
-                    await AwaitableComponent.show(
+                    const action = (await AwaitableComponent.show(
                         BackupValidationDialog,
                         {
                             validationResult: validateBackupData,
                         },
                         { id: `backup-validate-${file.name}` },
-                    );
+                    )) as BackupValidationDialogResult;
+
+                    if (action === 'install_all') {
+                        await installMissingExtensionsFromBackup(file);
+
+                        const revalidateBackupResponse = await requestManager.validateBackupFile(file, {
+                            fetchPolicy: 'network-only',
+                        }).response;
+                        const revalidateBackupData = revalidateBackupResponse.data?.validateBackup;
+
+                        if (!revalidateBackupData) {
+                            return false;
+                        }
+
+                        if (revalidateBackupData.missingSources.length || revalidateBackupData.missingTrackers.length) {
+                            try {
+                                const revalidateAction = (await AwaitableComponent.show(
+                                    BackupValidationDialog,
+                                    {
+                                        validationResult: revalidateBackupData,
+                                    },
+                                    { id: `backup-revalidate-${file.name}` },
+                                )) as BackupValidationDialogResult;
+
+                                return revalidateAction === 'restore';
+                            } catch (_) {
+                                return false;
+                            }
+                        }
+
+                        return true;
+                    }
+
+                    return action === 'restore';
                 } catch (_) {
                     return false;
                 }

@@ -2122,6 +2122,10 @@ msgstr "Information"
 msgid "Install"
 msgstr "Install"
 
+#: src/features/backup/component/BackupValidationDialog.tsx
+msgid "Install all"
+msgstr "Install all"
+
 #: src/features/browse/extensions/Extensions.tsx
 msgid "Install external extension"
 msgstr "Install external extension"
@@ -2137,6 +2141,10 @@ msgstr "Installing"
 #: src/features/browse/extensions/Extensions.tsx
 msgid "Installing extension file…"
 msgstr "Installing extension file…"
+
+#: src/features/backup/screens/Backup.tsx
+msgid "Installing missing extensions…"
+msgstr "Installing missing extensions…"
 
 #: src/features/settings/screens/WebUISettings.tsx
 msgid "Interface"
@@ -2589,6 +2597,10 @@ msgstr "Minute"
 msgid "Misc"
 msgstr "Misc"
 
+#: src/features/backup/screens/Backup.tsx
+msgid "Missing extensions installed."
+msgstr "Missing extensions installed."
+
 #. placeholder {0}: entry.missingChapters
 #: src/features/migration/components/migration-entry/MigrationEntryMetadataText.tsx
 msgid "Missing: {0}"
@@ -2678,6 +2690,10 @@ msgstr "No manga matches this filter"
 #: src/features/migration/Migration.constants.ts
 msgid "No match found"
 msgstr "No match found"
+
+#: src/features/backup/screens/Backup.tsx
+msgid "No missing extensions needed installation."
+msgstr "No missing extensions needed installation."
 
 #: src/features/reader/viewer/ReaderChapterViewer.tsx
 msgid "No pages found"
@@ -3567,6 +3583,10 @@ msgstr "SOCKS username"
 #: src/features/settings/screens/ServerSettings.tsx
 msgid "SOCKS version"
 msgstr "SOCKS version"
+
+#: src/features/backup/screens/Backup.tsx
+msgid "Some missing extensions could not be installed."
+msgstr "Some missing extensions could not be installed."
 
 #: src/base/components/feedback/ErrorBoundary.tsx
 msgid ""

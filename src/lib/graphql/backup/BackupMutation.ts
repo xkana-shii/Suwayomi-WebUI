@@ -28,3 +28,32 @@ export const RESTORE_BACKUP = gql`
         }
     }
 `;
+
+export const INSTALL_MISSING_EXTENSIONS_FROM_BACKUP = gql`
+    mutation INSTALL_MISSING_EXTENSIONS_FROM_BACKUP($backup: Upload!) {
+        installMissingExtensionsFromBackup(input: { backup: $backup }) {
+            requestedSources {
+                id
+                name
+            }
+            unmatchedSources {
+                id
+                name
+            }
+            matchedExtensionPkgNames
+            installedExtensions {
+                pkgName
+                name
+                lang
+                versionCode
+                versionName
+                iconUrl
+                repo
+                isNsfw
+                isInstalled
+                isObsolete
+                hasUpdate
+            }
+        }
+    }
+`;

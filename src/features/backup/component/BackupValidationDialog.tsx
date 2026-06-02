@@ -21,13 +21,15 @@ import { BrowseTab } from '@/features/browse/Browse.types.ts';
 import { AppRoutes } from '@/base/AppRoute.constants.ts';
 import type { ValidateBackupResult } from '@/lib/graphql/generated/graphql-base.types.ts';
 
+export type BackupValidationDialogResult = 'restore' | 'install_all';
+
 export const BackupValidationDialog = ({
     validationResult,
     onDismiss,
     onSubmit,
     isVisible,
     onExitComplete,
-}: AwaitableComponentProps & { validationResult: ValidateBackupResult }) => {
+}: AwaitableComponentProps<BackupValidationDialogResult> & { validationResult: ValidateBackupResult }) => {
     const { t } = useLingui();
 
     return (
@@ -67,32 +69,48 @@ export const BackupValidationDialog = ({
                         width: '100%',
                     }}
                 >
-                    {!!validationResult?.missingSources.length && (
-                        <Button
-                            onClick={onDismiss}
-                            component={Link}
-                            to={AppRoutes.browse.path(BrowseTab.EXTENSIONS)}
-                            autoFocus={!!validationResult?.missingSources.length}
-                            variant={validationResult?.missingSources.length ? 'contained' : 'text'}
-                        >
-                            {t`Install`}
-                        </Button>
-                    )}
-                    {!!validationResult?.missingTrackers.length && (
-                        <Button
-                            onClick={onDismiss}
-                            component={Link}
-                            to={AppRoutes.settings.childRoutes.tracking.path}
-                            autoFocus={!!validationResult?.missingTrackers.length}
-                            variant={validationResult?.missingTrackers.length ? 'contained' : 'text'}
-                        >
-                            {t`Log in`}
-                        </Button>
-                    )}
+                    <Stack direction="row">
+                        {!!validationResult?.missingSources.length && (
+                            <>
+                                <Button
+                                    onClick={() => onSubmit('install_all')}
+                                    autoFocus={!!validationResult?.missingSources.length}
+                                    variant="contained"
+                                >
+                                    {t`Install all`}
+                                </Button>
+                                <Button
+                                    onClick={onDismiss}
+                                    component={Link}
+                                    to={AppRoutes.browse.path(BrowseTab.EXTENSIONS)}
+                                >
+                                    {t`Install`}
+                                </Button>
+                            </>
+                        )}
+                        {!!validationResult?.missingTrackers.length && (
+                            <Button
+                                onClick={onDismiss}
+                                component={Link}
+                                to={AppRoutes.settings.childRoutes.tracking.path}
+                                autoFocus={
+                                    !validationResult?.missingSources.length &&
+                                    !!validationResult?.missingTrackers.length
+                                }
+                                variant={
+                                    !validationResult?.missingSources.length && validationResult?.missingTrackers.length
+                                        ? 'contained'
+                                        : 'text'
+                                }
+                            >
+                                {t`Log in`}
+                            </Button>
+                        )}
+                    </Stack>
                     <Stack direction="row">
                         <Button onClick={onDismiss}>{t`Cancel`}</Button>
                         <Button
-                            onClick={onSubmit}
+                            onClick={() => onSubmit('restore')}
                             autoFocus={
                                 !validationResult?.missingSources.length && !validationResult?.missingTrackers.length
                             }
