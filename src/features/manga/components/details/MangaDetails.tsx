@@ -24,7 +24,7 @@ import { CustomTooltip } from '@/base/components/CustomTooltip.tsx';
 import { makeToast } from '@/base/utils/Toast.ts';
 import { Mangas } from '@/features/manga/services/Mangas.ts';
 import { SpinnerImage } from '@/base/components/SpinnerImage.tsx';
-import { CustomButton } from '@/base/components/buttons/CustomButton.tsx';
+import { FlexWrapButton } from '@/base/components/buttons/FlexWrapButton.tsx';
 import { TrackMangaButton } from '@/features/manga/components/TrackMangaButton.tsx';
 import { useManageMangaLibraryState } from '@/features/manga/hooks/useManageMangaLibraryState.tsx';
 import { Metadata as BaseMetadata } from '@/base/components/texts/Metadata.tsx';
@@ -47,7 +47,7 @@ import type {
     MangaTrackRecordInfo,
 } from '@/features/manga/Manga.types.ts';
 import { applyStyles } from '@/base/utils/ApplyStyles.ts';
-import { CustomButtonIcon } from '@/base/components/buttons/CustomButtonIcon.tsx';
+import { CustomIconButton } from '@/base/components/buttons/CustomIconButton.tsx';
 import { Sources } from '@/features/source/services/Sources.ts';
 import type { SourceIdInfo } from '@/features/source/Source.types.ts';
 import { Thumbnail } from '@/features/manga/components/details/Thumbnail.tsx';
@@ -154,7 +154,7 @@ const OpenSourceButton = ({ url }: { url?: string | null }) => {
     return (
         <ButtonGroup>
             <CustomTooltip title={t`Open in browser`} disabled={!url}>
-                <CustomButtonIcon
+                <CustomIconButton
                     size="medium"
                     disabled={!url}
                     component={Link}
@@ -164,10 +164,10 @@ const OpenSourceButton = ({ url }: { url?: string | null }) => {
                     variant="outlined"
                 >
                     <IconBrowser />
-                </CustomButtonIcon>
+                </CustomIconButton>
             </CustomTooltip>
             <CustomTooltip title={t`Open in WebView`} disabled={!url}>
-                <CustomButtonIcon
+                <CustomIconButton
                     size="medium"
                     disabled={!url}
                     component={Link}
@@ -177,7 +177,7 @@ const OpenSourceButton = ({ url }: { url?: string | null }) => {
                     variant="outlined"
                 >
                     <IconWebView />
-                </CustomButtonIcon>
+                </CustomIconButton>
             </CustomTooltip>
         </ButtonGroup>
     );
@@ -288,14 +288,14 @@ export const MangaDetails = ({
                     </MetadataContainer>
                 </ThumbnailMetadataWrapper>
                 <MangaButtonsContainer>
-                    <CustomButton
+                    <FlexWrapButton
                         size={MediaQuery.useIsMobileWidth() ? 'small' : 'medium'}
                         onClick={updateLibraryState}
                         variant={manga.inLibrary ? 'contained' : 'outlined'}
                     >
                         {manga.inLibrary ? <FavoriteIcon /> : <FavoriteBorderIcon />}
                         {manga.inLibrary ? t`In Library` : t`Add To Library`}
-                    </CustomButton>
+                    </FlexWrapButton>
                     <TrackMangaButton manga={manga} />
                     <OpenSourceButton url={manga.realUrl} />
                     <CustomTooltip title={t`Edit Metadata`}>

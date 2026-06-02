@@ -92,7 +92,7 @@ export const BackupValidationDialog = ({
                             <Button
                                 onClick={onDismiss}
                                 component={Link}
-                                to={AppRoutes.settings.childRoutes.tracking.path}
+                                to={AppRoutes.settings.children.tracking.path}
                                 autoFocus={
                                     !validationResult?.missingSources.length &&
                                     !!validationResult?.missingTrackers.length
