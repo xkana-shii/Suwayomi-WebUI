@@ -299,9 +299,9 @@ export const MangaDetails = ({
                     <TrackMangaButton manga={manga} />
                     <OpenSourceButton url={manga.realUrl} />
                     <CustomTooltip title={t`Edit Metadata`}>
-                        <CustomButtonIcon size="medium" variant="outlined" onClick={() => setIsEditDialogOpen(true)}>
+                        <CustomIconButton size="medium" variant="outlined" onClick={() => setIsEditDialogOpen(true)}>
                             <EditIcon />
-                        </CustomButtonIcon>
+                        </CustomIconButton>
                     </CustomTooltip>
                 </MangaButtonsContainer>
             </TopContentWrapper>
