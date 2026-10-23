@@ -47,7 +47,7 @@ export type AddExtensionStorePayload = {
 export type ApplyMetadataMatchInput = {
     clientMutationId?: InputMaybe<Scalars['String']['input']>;
     externalId: Scalars['String']['input'];
-    includeCover: Scalars['Boolean']['input'];
+    includeCover?: InputMaybe<Scalars['Boolean']['input']>;
     mangaId: Scalars['Int']['input'];
     provider: Scalars['String']['input'];
 };
@@ -2950,7 +2950,7 @@ export type ReorderChapterDownloadsInput = {
 export type ResetMangaMetadataToSourceInput = {
     clientMutationId?: InputMaybe<Scalars['String']['input']>;
     id: Scalars['Int']['input'];
-    resetCover: Scalars['Boolean']['input'];
+    resetCover?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type ResetMangaMetadataToSourcePayload = {
