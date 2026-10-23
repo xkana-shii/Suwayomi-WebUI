@@ -1,7 +1,27 @@
 [
     {
         "uiVersion": "PREVIEW",
-        "serverVersion": "r2099"
+        "serverVersion": "r2366"
+    },
+    {
+        "tag": "v20260929.01",
+        "uiVersion": "r3518",
+        "serverVersion": "r2320"
+    },
+    {
+        "tag": "OLD PREVIEW",
+        "uiVersion": "r3423",
+        "serverVersion": "r2244"
+    },
+    {
+        "tag": "v20260726.01",
+        "uiVersion": "r3379",
+        "serverVersion": "r2243"
+    },
+    {
+        "tag": "v20260722.01",
+        "uiVersion": "r3355",
+        "serverVersion": "r2243"
     },
     {
         "tag": "v20260509.01",

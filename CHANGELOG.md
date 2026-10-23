@@ -8,11 +8,159 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- (**Library**) Add setting to notify about new chapters of library entries
+- (**Settings**) Add `databaseSchema`, `hikariMaxPoolSize` settings
+
+### Changed
+
+- (**Global**) Force the navigation bar to be collapsed on smaller devices
+- (**Global/Manga/Chapter**) Show app context menu on the first right click and the native context menu on the second right click
+- (**Manga**) Show the `Default` category in the category selection dialog
+- (**Migration**) Use the bulk migration flow for single entry migrations
+- (**Settings**) Show settings as "two-pane layout" on large screens
+
+### Fixed
+
+- (**Source**) Fix potential white screen when opening the language/source filter in the browse source page
+- (**Manga**) Fix incorrect markdown parsing of descriptions (e.g., \~text\~ being shown as ~~text~~)
+- (**Reader**) Fix entering fullscreen when opening the reader from the library continue read button
+- (**Reader**) Fix reader trying to open/opening the previous/next chapter randomly when first opening the reader or changing the page via the progress bar with a continuous vertical reading mode and original image scale type
+
+## [20260929.01] (r3518) - 2026-09-29
+
+### Added
+
+- (**Global/Search**) Increase appbar search width when active
+- (**Global/Search**) Remember submitted searches and offer them in the search bar, each removable from the dropdown
+- (**Manga**) Add per-manga notes
+- (**Download**) Add button to retry all failed downloads
+- (**Reader**) Add fullscreen setting (does nothing on iOS)
+- (**Library**) Add `reset` button to library filters
+- (**Library**) Add option to apply `tracker` filter either with `AND` or `OR` logic
+- (**Library**) Add fuzzy search, which tolerates typos and words in a different order and shows the closest matches first. Can be turned off in the library settings
+- (**Library**) Add autocomplete to the search bar, suggesting the entries of the category that is being searched. Pressing `tab` selects the suggested live auto-completion
+- (**Sync**) Add sync button to the app bar of the library and updates pages
+- (**Browse/Extension**) Add search suggestions to extensions browse tab
+
+### Changed
+
+- (**Extension**) Install extension when clicking card of uninstalled extension
+- (**Extension**) Show sources of extension as disabled in case the language itself is disabled. Enabling such a source will enable the language as well
+- (**Extension/Source**) Keep language filter sorting stable while changes are temporary
+- (**Extension/Source**) Additionally, show the english name of a language in the language filter
+- (**Updates/History/Downloads**) Show scanlator of chapter
+- (**Updates**) Improve render performance of the collapsed more updates
+- (**Migration**) Improve render performance of the migration search and execution page
+- (**Migration**) Show source id for missing source title for source entries
+- (**Library**) Prevent randomizing category sort order everytime category gets opened
+- (**Library**) Apply `source/tracker/status` filter using `OR` logic. I.e., show entries that are from any of the included `source/tracker/status`
+- (**Reader**) Open the first page when going to the previous chapter
+- (**Download**) Group downloads by source
+- (**Download**) Add series bulk actions
+- (**Download**) Make downloads cancelable outside the download queue page
+- (**Global search**) Show count of entries in the library of each source
+- (**Manga**) Show description as markdown
+- (**Appearance**) Additionally, show the english name of a language in the language select dropdown
+- (**History**) Show the last read chapter per manga per day
+
+### Fixed
+
+- (**Browse**) Fix filtering with nested group changes
+- (**Library**) Fix source filter potentially causing all manga to get filtered out
+- (**Chapter**) Fix missing chapters before the first available one not being considered in the total missing chapter count (Example: chapters 1-5 are missing, first available chapter is 6. Chapters 1-5 weren't counted as missing in the total missing chapter amount)
+- (**Reader**) Fix invisible transition page text
+- (**Category**) Fix being unable to type a trailing space while editing the category name
+- (**Migration**) Fix not respecting the next higher priority source for match selection
+
+### Translations
+
+Feel free to translate the project on [Weblate](https://hosted.weblate.org/projects/suwayomi/suwayomi-webui/)
+
+Thanks to everyone that contributed to the translation of this project.
+
+#### Added
+
+- Catalan (by Kisnov)
+
+#### Updated
+
+- Indonesian (by Arif Budiman)
+- Hebrew (by CyberMageIL)
+- French (by Damien O'Neil)
+- German (by Constantin Piber)
+- Portuguese (by Herta)
+- Chinese (Simplified) (by 無情天)
+- Polish (by UnknownSkyrimPasserby)
+- Russian (by Sazuru)
+- Vietnamese (by Durin)
+- Chinese (Traditional) (by js850604)
+
+### Contributors
+
+Thanks to everyone that contributed to this release
+
+@schroda, @weblate, @cpiber, @Daemonhellz, @Kisnov, @leollo98, @js850604, @kofzhanganguo, @Aryan795, @github-actions[bot], @CyberMageIL, @Sazuru, @Durin-Code, @aitiotekt, @kaiserbh, @dollproxy, @UnknownSkyrimPasserby, @Seanstoppable, @web-flow, @Copilot, @manilkadev3-max, @arifpedia, @NagaYZ
+
+## [20260726.01] (r3379) - 2026-07-26
+
+### Added
+
+- (**Manga**) Add share button (secure context (localhost, https))
+- (**Reader**) Add share button to desktop navigation bar (secure context (localhost, https))
+- (**Library**) Show filtered item count in active category tab
+
+### Changed
+
+- (**Reader**) Hide share button in unsecure context (not localhost or https)
+- (**Reader**) Use device share functionality for "Share" button in reader mobile header (secure context (localhost, https))
+- (**Extension**) Hide extension store copy button in unsecure context (not localhost or https)
+- (**Library**) Open random manga based on active category and filters
+
+### Fixed
+
+- (**Global**) Fix local and session storage being shared between instances on the same domain with different subpaths
+- (**Reader**) Fix electron asking for "wake lock" permission even with the "Keep screen on" setting disabled
+- (**Reader**) Fix page resume in chromium browsers
+
+### Translations
+
+Feel free to translate the project on [Weblate](https://hosted.weblate.org/projects/suwayomi/suwayomi-webui/)
+
+Thanks to everyone that contributed to the translation of this project.
+
+#### Added
+
+- Chinese (Traditional) (by hjd9111202, js850604)
+
+#### Updated
+
+- Chinese (Simplified) (by 無情天)
+- Hebrew (by CyberMageIL)
+- French (by Damien O'Neil)
+
+### Contributors
+
+Thanks to everyone that contributed to this release
+
+@github-actions[bot], @weblate, @CyberMageIL, @Daemonhellz, @hjd9111202, @js850604, @kofzhanganguo, @schroda
+
+## [20260722.01] (r3355) - 2026-07-22
+
+### Added
+
 - (**Migration**) Add a search option to ignore outdated matches
 - (**Migration**) Add a search option to ignore matches with missing chapters
 - (**Migration**) Add "local source" as a possible destination source
 - (**Migration**) Add option to abort entries that are searching or are waiting to get migrated
 - (**Migration**) Add "in library" indicator
+- (**Settings/WebView**) Add setting to enable/disable WebView
+- (**Settings/Sync**) Add sync settings
+- (**Reader**) Add setting to keep the screen on while reading
+- (**Reader**) Add auto background color setting
+- (**Extension**) Support installing external JARs
+- (**Library**) Add source filter
+- (**Library**) Add random sort option to library
+- (**Library**) Add button to open random library entry
 
 ### Changed
 
@@ -28,12 +176,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - (**Migration**) Sort unselected matched entries by 1. their latest chapter, 2. their source priority, 3. their title
 - (**Migration**) Change migration match exclude/include icons
 - (**Migration**) Show the exclude/include button only for an entry with a selected match
+- (**Migration**) Allow resuming a migration only in a secure context (localhost or https)
+- (**Migration**) Show dialog on manual search selection to optionally open the search result entry instead of selecting it
+- (**Migration**) Show "manual search matches" under "other matches"
 - (**Source/Extension**) Rename language "All" to "Multi"
+- (**Settings/Extension**) Renamed "extension repo" to "extension stores"
 - (**Reader**) Simplify changing settings in desktop sidebar
 - (**Reader**) Ignore tap zone clicks while window does not have focus
+- (**Reader**) Improve preloading pages from the previous/next chapter
+- (**Reader**) Show page number with the standard desktop progress bar selected
+- (**Category**) Require confirmation before deleting a category
+- (**Download**) Respect manga chapter filters on bulk manga download in the library
+- (**History**) Show only the last read chapter per manga
+- (**Updates**) Show only the first unread chapter per manga per day
+- (**Manga**) Hide details page title copy button in unsupported environments (secure context (https, localhost) required)
+- (**Library**) Collapse `Status`, `Tracked` and `Source` filters
 
 ### Fixed
 
+- (**General**) Fix long press actions on desktop
 - (**Migration**) Fix aborting bulk migration search/execution while webUI is served on a subpath
 - (**Migration**) Fix retry button never being shown for failed search/migration entries
 - (**Migration**) Fix showing an empty "Available" source group header when all sources are selected
@@ -46,13 +207,60 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - (**Migration**) Fix missing manual search option for in progress entry search without a selected match on mobile
 - (**Migration**) Fix being unable to retry failed search for a match without a selected match
 - (**Migration**) Fix selecting a destination from a source browse search page
+- (**Migration**) Fix being able to migrate an entry to itself
+- (**Migration**) Fix resuming migration when app is opened in multiple tabs
+- (**Migration**) Fix showing "All source searches failed" error while the entry has a selected destination source or matches were found
+- (**Migration**) Fix showing empty expanded "other matches" when selecting the only match
 - (**Reader**) Fix scrollbar appearing with "fit to widt/height/screen" page scale mode and applied safe area insets
 - (**Reader**) Fix wrongly positioned mobile progress bar current page indicator
 - (**Reader**) Fix mobile progress bar previous/next chapter button visibility on hover and while disabled
 - (**Reader**) Fix jumping back to the first page on window resize
 - (**Reader**) Fix chapter not getting marked as read in continuous reading mode in case the last page is not big enough to get marked as the current page
-- (**Reader**) Fix infinite scrolling with disabled transition page
+- (**Reader**) Fix infinite scrolling sometimes not opening previous/next chapter
+- (**Reader**) Fix infinite scroll immediately opening previous chapter with disabled transition page when opening reader
+- (**Reader**) Fix preserving scroll position
+- (**Reader**) Fix missing gap between chapters in continuous vertical and horizontal reading modes with disabled transition page
+- (**Reader**) Fix desktop standard progress bar open/close transition with double page reading mode
 - (**Browse**) Fix showing only nsfw sources in the browse source page when the "show nsfw" setting is disabled
+- (**Browse**) Fix not being able to select some languages as an "allowed language" in some situations (e.g., browser native language "en-GB" prevented "English" from getting visually shown as enabled)
+- (**Manga/Library**) Fix mark as read/unread option not being disabled for manga without any chapters
+- (**Manga/Library**) Fix delete/download option not being disabled for manga without any chapters
+- (**Library**) Fix showing outdated category item after removing non library manga from categories
+- (**Source**) Fix changing configuration settings with multi option selection where a selected option does not exist anymore. (E.g. Komgas "Default libraries" setting, still having a library selected that has been deleted)
+- (**Download**) Fix not respecting chapter list filters for downloads
+- (**Download**) Fix showing outdated download info in for some chapter cards after clearing the download queue
+
+### Translations
+
+Feel free to translate the project on [Weblate](https://hosted.weblate.org/projects/suwayomi/suwayomi-webui/)
+
+Thanks to everyone that contributed to the translation of this project.
+
+#### Added
+
+- Hebrew (by CyberMageIL)
+- Greek (by Philip Prescott-Decie)
+- Portuguese (by Silvery, Rodrigo Marques)
+
+#### Updated
+
+- Chinese (Simplified) (by 清水汐音, ZerOriSama)
+- French (by Damien O'Neil, mrintrepide)
+- German (by Constantin Piber)
+- Spanish (by Tiago Centurion, IJCS, zeedif, Harold Marin Salazar)
+- Korean (by jsyoon)
+
+#### Removed (less than 75% translated)
+
+- Italian (it) (71%)
+- Japanese (ja) (69.7%)
+- Chinese (Traditional) (zh-Hant) (74.9%)
+
+### Contributors
+
+Thanks to everyone that contributed to this release
+
+@schroda, @github-actions[bot], @weblate, @cpiber, @CyberMageIL, @ONeithan, @tigce2, @imzekee0, @aizhimoran, @themaskedshell, @jburkh10, @Seanstoppable, @web-flow, @vtorres-t, @Daemonhellz, @96Angang, @matsuaa, @zeedif, @IJCS, @ZerOri, @presdec, @asqwas22, @mrintrepide, @leollo98, @Alexis-Silvery
 
 ## [20260509.01] (r3147) - 2026-05-09
 
@@ -820,7 +1028,10 @@ Thanks to everyone that contributed to this release
 
 @schroda, @jesusFx, @QuietBlade, @anvstin, @guohuageng, @plum7x, @HiyoriTUK, @aizhimoran, @JiPaix, @Yuhyeong, @a18ccms, @chancez, @rickymcmuffin, @zmmx, @alexandrejournet, @ibaraki-douji, @nitezs, @misaka10843, @Becods, @skrewde, @xconkhi9x, @cnmorocho, @Wip-Sama, @Kefir2105, @RafieHardinur, @SuperMario229, @Alexandre-P-J, @AriaMoradi, @NathanBnm, @FumoVite, @JoHena, @bandysharif, @DevCoz, @comradekingu, @Zereef, @akabhirav
 
-[unreleased]: https://github.com/suwayomi/suwayomi-webui/compare/v20260509.01...HEAD
+[unreleased]: https://github.com/suwayomi/suwayomi-webui/compare/v20260929.01...HEAD
+[20260929.01]: https://github.com/suwayomi/suwayomi-webui/compare/v20260726.01...v20260929.01
+[20260726.01]: https://github.com/suwayomi/suwayomi-webui/compare/v20260722.01...v20260726.01
+[20260722.01]: https://github.com/suwayomi/suwayomi-webui/compare/v20260509.01...v20260722.01
 [20260509.01]: https://github.com/suwayomi/suwayomi-webui/compare/v20260508.01...v20260509.01
 [20260508.01]: https://github.com/suwayomi/suwayomi-webui/compare/v20251230.01...v20260508.01
 [20251230.01]: https://github.com/suwayomi/suwayomi-webui/compare/v20250801.01...v20251230.01

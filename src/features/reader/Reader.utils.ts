@@ -14,8 +14,18 @@ import { Chapters } from '@/features/chapter/services/Chapters.ts';
 import { CHAPTER_READER_FIELDS } from '@/lib/graphql/chapter/ChapterFragments.ts';
 import { isPageOfOutdatedPageLoadStates, isSpreadPage } from '@/features/reader/viewer/pager/ReaderPager.utils.tsx';
 import { coerceIn } from '@/lib/HelperFunctions.ts';
-
 import { DirectionOffset } from '@/base/Base.types.ts';
+import * as ColorThief from 'colorthief';
+import groupBy from 'lodash/fp/groupBy';
+import mapValues from 'lodash/fp/mapValues';
+import maxBy from 'lodash/fp/maxBy';
+import sumBy from 'lodash/fp/sumBy';
+import { defaultPromiseErrorHandler } from '@/lib/DefaultPromiseErrorHandler.ts';
+import {
+    isContinuousReadingMode,
+    isContinuousVerticalReadingMode,
+} from '@/features/reader/settings/ReaderSettings.utils.tsx';
+import { Colors } from '@/lib/Colors.ts';
 
 export const getInitialReaderPageIndex = (
     resumeMode: ReaderResumeMode,
@@ -125,11 +135,152 @@ export const getChapterIdsForDownloadAhead = (
         .filter((id) => !Chapters.isDownloading(id));
 };
 
+const getPageBackgroundColor = (
+    [top, right, bottom, left]: [
+        Top: ColorThief.Color[] | null,
+        Right: ColorThief.Color[] | null,
+        Bottom: ColorThief.Color[] | null,
+        Left: ColorThief.Color[] | null,
+    ],
+    readingMode: ReadingMode,
+): string => {
+    const isContinuousReadingModeFlag = isContinuousReadingMode(readingMode);
+    const isContinuousVerticalReadingModeFlag = isContinuousVerticalReadingMode(readingMode);
+
+    const borderColorPalettes = (() => {
+        if (isContinuousVerticalReadingModeFlag) {
+            return [right, left];
+        }
+
+        if (isContinuousReadingModeFlag) {
+            return [top, bottom];
+        }
+
+        return [top, right, bottom, left];
+    })();
+
+    // oxlint-disable-next-line unicorn/consistent-function-scoping
+    const considerBlack = (hex: string | undefined | null, threshold: number): boolean => {
+        if (!hex) {
+            return true;
+        }
+
+        const { r, g, b } = Colors.hexToRgb(hex);
+        return r <= threshold && g <= threshold && b <= threshold;
+    };
+
+    // oxlint-disable-next-line unicorn/consistent-function-scoping
+    const considerWhite = (hex: string | undefined | null, threshold: number): boolean => {
+        if (!hex) {
+            return true;
+        }
+
+        const { r, g, b } = Colors.hexToRgb(hex);
+        return r >= threshold && g >= threshold && b >= threshold;
+    };
+
+    const getNormalizedColor = (hex: string | undefined | null, threshold: { white: number; black: number }) => {
+        if (!hex || considerWhite(hex, threshold.white)) {
+            return '#ffffff';
+        }
+
+        if (considerBlack(hex, threshold.black)) {
+            return '#000000';
+        }
+
+        return hex;
+    };
+
+    const determinationThresholds = { white: 235, black: 10 };
+
+    const normalizedBorderColorPalettes = borderColorPalettes.map((borderPalette) => {
+        const borderPaletteColorsByHexValue = groupBy(
+            (color) => getNormalizedColor(color?.hex(), determinationThresholds),
+            borderPalette?.filter(Boolean),
+        );
+
+        return Object.values(
+            mapValues((colors) => {
+                const proportionSum = sumBy((color) => color!.proportion, colors);
+                const populationSum = sumBy((color) => color!.population, colors);
+
+                const fillsWholeBorder = proportionSum >= 0.97;
+                const multiplier = fillsWholeBorder ? borderColorPalettes.length : 1;
+
+                const [color] = colors;
+                const { r, g, b } = color.rgb();
+
+                return ColorThief.createColor(r, g, b, populationSum, proportionSum * multiplier, color.gamut);
+            }, borderPaletteColorsByHexValue),
+        );
+    });
+    const colorsByHexValue = groupBy(
+        (color) => getNormalizedColor(color?.hex(), determinationThresholds),
+        normalizedBorderColorPalettes.flat().filter(Boolean),
+    );
+    const proportionByHexValue = mapValues((colors) => sumBy((color) => color!.proportion, colors), colorsByHexValue);
+    const [hex] = maxBy(([_hex, proportion]) => proportion, Object.entries(proportionByHexValue))!;
+
+    return getNormalizedColor(hex, { white: 235, black: 30 });
+};
+
+const updatePageBackgroundColor = async (
+    index: number,
+    url: string,
+    img: HTMLImageElement,
+    setPageBackgroundColors: ReaderStatePages['setPageBackgroundColor'],
+    readingMode: ReadingMode,
+): Promise<void> => {
+    const canvas = new OffscreenCanvas(img.width, img.height);
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
+    ctx.drawImage(img, 0, 0);
+
+    const yOffset = 5;
+    const xOffset = Math.trunc(img.width * 0.0275);
+    const borderSampleSize = 1;
+
+    const options = { ignoreWhite: false };
+
+    const borderColorPalettes = await (async () => {
+        try {
+            return await Promise.all([
+                ColorThief.getPalette(ctx.getImageData(0, yOffset, img.width, borderSampleSize), options),
+                ColorThief.getPalette(ctx.getImageData(img.width - xOffset, 0, borderSampleSize, img.height), options),
+                ColorThief.getPalette(ctx.getImageData(0, img.height - yOffset, img.width, borderSampleSize), options),
+                ColorThief.getPalette(ctx.getImageData(xOffset, 0, borderSampleSize, img.height), options),
+            ]);
+        } catch (e) {
+            return null;
+        }
+    })();
+
+    if (!borderColorPalettes) {
+        return;
+    }
+
+    setPageBackgroundColors((prevState) => {
+        const pageBackgroundColor = prevState[index];
+
+        if (isPageOfOutdatedPageLoadStates(url, pageBackgroundColor)) {
+            return prevState;
+        }
+
+        if (pageBackgroundColor.color) {
+            return prevState;
+        }
+
+        const color = getPageBackgroundColor(borderColorPalettes, readingMode);
+
+        return prevState.toSpliced(index, 1, { url, color });
+    });
+};
+
 export const createUpdateReaderPageLoadState =
     (
         actualPages: ReaderStatePages['pages'],
         setPagesToSpreadState: React.Dispatch<React.SetStateAction<ReaderPageSpreadState[]>>,
         setPageLoadStates: ReaderStatePages['setPageLoadStates'],
+        setPageBackgroundColors: ReaderStatePages['setPageBackgroundColor'],
         readingMode: ReadingMode,
     ) =>
     (pagesIndex: number, url: string, isPrimary: boolean = true) => {
@@ -140,9 +291,13 @@ export const createUpdateReaderPageLoadState =
         const page = actualPages[pagesIndex];
         const { index } = isPrimary ? page.primary : page.secondary!;
 
-        if (readingMode === ReadingMode.DOUBLE_PAGE) {
-            const img = new Image();
-            img.onload = () => {
+        const img = new Image();
+        img.onload = () => {
+            updatePageBackgroundColor(index, url, img, setPageBackgroundColors, readingMode).catch(
+                defaultPromiseErrorHandler('updatePageBackgroundColor'),
+            );
+
+            if (readingMode === ReadingMode.DOUBLE_PAGE) {
                 const isSpreadPageFlag = isSpreadPage(img);
                 if (!isSpreadPageFlag) {
                     return;
@@ -162,10 +317,10 @@ export const createUpdateReaderPageLoadState =
 
                     return prevState.toSpliced(index, 1, { url, isSpread: isSpreadPageFlag });
                 });
-            };
-            img.crossOrigin = 'anonymous';
-            img.src = url;
-        }
+            }
+        };
+        img.crossOrigin = 'anonymous';
+        img.src = url;
 
         setPageLoadStates((statePageLoadStates) => {
             const pageLoadState = statePageLoadStates[index];

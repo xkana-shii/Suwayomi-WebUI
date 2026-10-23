@@ -6,28 +6,34 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { useCallback, useMemo, useState } from 'react';
 import Chip from '@mui/material/Chip';
 import Collapse from '@mui/material/Collapse';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import Box from '@mui/material/Box';
 import { useLocalStorage } from '@/base/hooks/useStorage.tsx';
 import { useResizeObserver } from '@/base/hooks/useResizeObserver.tsx';
 import type {
     MangaDescriptionInfo,
     MangaGenreInfo,
+    MangaIdInfo,
     MangaLocationState,
+    MangaMetaInfo,
     MangaSourceIdInfo,
 } from '@/features/manga/Manga.types.ts';
 import { SearchLink } from '@/features/manga/components/details/SearchLink.tsx';
+import { MangaNotes } from '@/features/manga/components/details/MangaNotes.tsx';
+import { useGetMangaMetadata } from '@/features/manga/services/MangaMetadata.ts';
+import uniq from 'lodash/fp/uniq';
+import Box from '@mui/material/Box';
 import { MarkdownRenderer } from '@/base/components/MarkdownRenderer.tsx';
-import { useCallback, useMemo, useState } from 'react';
 
 const OPEN_CLOSE_BUTTON_HEIGHT = '35px';
-const DESCRIPTION_COLLAPSED_SIZE = 75;
+const DESCRIPTION_COLLAPSED_SIZE = 100;
 
+// fork: the description is rendered with the fork's markdown renderer (GFM, line breaks, sanitized) after normalizing it
 function normalizeDescription(input?: string | null): string | undefined {
     if (!input) {
         return undefined;
@@ -50,12 +56,17 @@ function normalizeDescription(input?: string | null): string | undefined {
 }
 
 export const DescriptionGenre = ({
-    manga: { description, genre: mangaGenres, sourceId },
+    manga,
     mode,
 }: {
-    manga: MangaDescriptionInfo & MangaGenreInfo & MangaSourceIdInfo;
+    manga: MangaDescriptionInfo & MangaGenreInfo & MangaIdInfo & MangaMetaInfo & MangaSourceIdInfo;
     mode: MangaLocationState['mode'];
 }) => {
+    const { description: rawDescription, genre: mangaGenres, sourceId } = manga;
+    const description = useMemo(() => normalizeDescription(rawDescription), [rawDescription]);
+    const { notes } = useGetMangaMetadata(manga);
+    const hasNotes = notes.trim().length > 0;
+    const hasCollapsibleContent = !!description || hasNotes;
     const [descriptionElement, setDescriptionElement] = useState<HTMLDivElement | null>(null);
     const [descriptionHeight, setDescriptionHeight] = useState<number>();
     useResizeObserver(
@@ -65,44 +76,48 @@ export const DescriptionGenre = ({
 
     const [isCollapsed, setIsCollapsed] = useLocalStorage('isDescriptionGenreCollapsed', true);
 
-    // Normalize the description once per change
-    const normalizedDescription = useMemo(() => normalizeDescription(description), [description]);
-
-    const collapsedSize = normalizedDescription
+    const collapsedSize = hasCollapsibleContent
         ? Math.min(DESCRIPTION_COLLAPSED_SIZE, descriptionHeight ?? DESCRIPTION_COLLAPSED_SIZE)
         : 0;
-    const genres = useMemo(() => ((mangaGenres || []) as string[]).filter(Boolean), [mangaGenres]);
+    const genres = useMemo(() => uniq(((mangaGenres || []) as string[]).filter(Boolean)), [mangaGenres]);
 
     return (
         <>
-            {normalizedDescription && (
+            {hasCollapsibleContent ? (
                 <Stack sx={{ position: 'relative' }}>
                     <Collapse collapsedSize={collapsedSize} in={!isCollapsed}>
-                        <Box
+                        <Stack
                             ref={setDescriptionElement}
                             sx={{
-                                // remove 'pre-line' here because MarkdownRenderer produces proper block elements
-                                // and we don't want raw newline preservation to interact with markdown output
-                                textAlign: 'justify',
-                                textJustify: 'inter-word',
+                                gap: 1,
                                 mb: OPEN_CLOSE_BUTTON_HEIGHT,
-                                // ensure that markdown content's block elements wrap and do not overflow horizontally
-                                '& .manga-description': {
-                                    wordBreak: 'break-word',
-                                },
-                                // make tables responsive inside the description
-                                '& .manga-description table': {
-                                    width: '100%',
-                                    borderCollapse: 'collapse',
-                                },
-                                '& .manga-description th, & .manga-description td': {
-                                    border: (theme) => `1px solid ${theme.palette.divider}`,
-                                    padding: 1,
-                                },
                             }}
                         >
-                            <MarkdownRenderer source={normalizedDescription} className="manga-description" />
-                        </Box>
+                            <MangaNotes manga={manga} showDivider={!!description} />
+                            {description && (
+                                <Box
+                                    sx={{
+                                        textAlign: 'justify',
+                                        textJustify: 'inter-word',
+                                        // ensure that markdown content's block elements wrap and do not overflow horizontally
+                                        '& .manga-description': {
+                                            wordBreak: 'break-word',
+                                        },
+                                        // make tables responsive inside the description
+                                        '& .manga-description table': {
+                                            width: '100%',
+                                            borderCollapse: 'collapse',
+                                        },
+                                        '& .manga-description th, & .manga-description td': {
+                                            border: (theme) => `1px solid ${theme.palette.divider}`,
+                                            padding: 1,
+                                        },
+                                    }}
+                                >
+                                    <MarkdownRenderer source={description} className="manga-description" />
+                                </Box>
+                            )}
+                        </Stack>
                     </Collapse>
                     <Stack
                         onClick={() => setIsCollapsed(!isCollapsed)}
@@ -123,6 +138,8 @@ export const DescriptionGenre = ({
                         </IconButton>
                     </Stack>
                 </Stack>
+            ) : (
+                <MangaNotes manga={manga} showDivider={false} />
             )}
             <Stack
                 sx={{

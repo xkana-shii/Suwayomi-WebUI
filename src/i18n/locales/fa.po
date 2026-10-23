@@ -26,17 +26,13 @@ msgstr "{progress}% | در حال به‌روزرسانی…"
 msgid "*: Active setting"
 msgstr "*: تنظیم فعال"
 
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "<0>Suwayomi does not provide any support for 3rd party repositories or extensions!</0><1/>Use with caution as there could be malicious actors making those repositories.<2/>You as the user need to verify the security and that you trust any repository or extension."
-msgstr "<0> برنامه Suwayomi هیچ پشتیبانی‌ ای برای مخزن‌ ها یا افزونه‌های شخص ثالث ارائه نمی‌دهد!</0><1/>با احتیاط استفاده کنید، زیرا ممکن است افراد مخرب این مخزن‌ها را ایجاد کرده باشند.<2/>شما به‌عنوان کاربر مسئول هستید که امنیت و اعتماد خود به هر مخزن یا افزونه را تأیید کنید."
-
 #: src/features/settings/Settings.constants.ts
 msgid "A preview focused web frontend built with svelte"
 msgstr "رابط وب متمرکز بر پیش‌نمایش، ساخته‌شده با Svelte"
 
 #: src/features/library/components/LibraryOptionsPanel.tsx
-msgid "A-Z"
-msgstr "A-Z"
+msgid "A—Z"
+msgstr "A—Z"
 
 #: src/features/navigation-bar/NavigationBar.constants.ts
 #: src/features/settings/screens/About.tsx
@@ -63,14 +59,6 @@ msgstr "اضافه"
 #: src/features/chapter/Chapter.constants.ts
 msgid "Add bookmark"
 msgstr "افزودن نشانک"
-
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Add repositories from which extensions can be installed"
-msgstr "مخزن‌ هایی برای نصب افزونه‌ها اضافه کنید"
-
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Add repository"
-msgstr "افزودن مخزن"
 
 #: src/features/manga/components/details/MangaDetails.tsx
 #: src/features/manga/components/MangaBadges.tsx
@@ -113,11 +101,6 @@ msgstr "همه"
 #: src/features/downloads/screens/DownloadSettings.tsx
 msgid "Allow deleting bookmarked chapters"
 msgstr "اجازه حذف چپتر های نشانک‌ گذاری‌ شده"
-
-#: src/base/components/inputs/LanguageSelect.tsx
-#: src/features/source/components/SourceLanguageSelect.tsx
-msgid "Allowed Languages"
-msgstr "زبان‌ های مجاز"
 
 #: src/features/reader/filters/settings/components/ReaderSettingRGBA.tsx
 msgid "Alpha"
@@ -525,10 +508,6 @@ msgstr "حالت ترکیب فیلتر رنگ"
 msgid "Comfortable grid"
 msgstr "جدول دلباز"
 
-#: src/features/manga/Manga.constants.ts
-msgid "Comic"
-msgstr "کمیک"
-
 #: src/base/components/GridLayouts.tsx
 #: src/features/library/components/LibraryOptionsPanel.tsx
 msgid "Compact grid"
@@ -579,11 +558,6 @@ msgstr ""
 #: src/features/settings/Settings.constants.ts
 msgid "Convert images to different formats"
 msgstr "تبدیل تصاویر به فرمت های مختلف"
-
-#: src/features/manga/components/details/MangaDetails.tsx
-#: src/features/reader/overlay/mobile/ReaderOverlayHeaderMobile.tsx
-msgid "Copied to clipboard"
-msgstr "در کلیپ‌ بورد کپی شد"
 
 #: src/features/manga/components/details/MangaDetails.tsx
 #: src/features/migration/components/MigrationSingleMangaDialog.tsx
@@ -663,10 +637,6 @@ msgstr "حذف همه دانلود ها از صف انجام نشد"
 #: src/features/library/screens/LibrarySettings.tsx
 msgid "Could not remove non library manga from categories"
 msgstr "حذف مانگا های خارج از کتابخانه از دسته‌بندی‌ ها انجام نشد"
-
-#: src/features/downloads/components/DownloadQueueChapterCard.tsx
-msgid "Could not remove the download from the queue."
-msgstr "حذف دانلود از صف انجام نشد."
 
 #: src/features/backup/screens/Backup.tsx
 #: src/features/backup/screens/Backup.tsx
@@ -1117,10 +1087,6 @@ msgstr "خروج به صفحه قبلی"
 msgid "Extension info"
 msgstr "اطلاعات افزونه"
 
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Extension repositories"
-msgstr "مخزن های افزونه"
-
 #: src/features/settings/components/koreaderSync/KoreaderSyncSettings.tsx
 msgid "Failed to connect to KOReader Sync server."
 msgstr "اتصال به سرور همگام‌سازی KOReader ناموفق بود."
@@ -1180,10 +1146,6 @@ msgstr ""
 "\n"
 "پس از تغییر این تنظیم، به صفحه «درباره» بروید و به‌روزرسانی WebUI را بررسی و نصب کنید\n"
 ""
-
-#: src/features/settings/screens/Appearance.tsx
-msgid "Feel free to translate the project on"
-msgstr "با خیال راحت پروژه را ترجمه کنید در"
 
 #: src/features/downloads/components/DeleteChaptersWhileReadingSetting.tsx
 msgid "Fifth to last read chapter"
@@ -1509,10 +1471,6 @@ msgstr "ورودی نامعتبر است"
 msgid "Invalid json"
 msgstr "JSON نامعتبر"
 
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Invalid repository url"
-msgstr "آدرس مخزن نامعتبر است"
-
 #: src/features/reader/filters/settings/components/ReaderSettingInvert.tsx
 msgid "Invert"
 msgstr "معکوس"
@@ -1711,12 +1669,6 @@ msgstr "خروج"
 #: src/features/tracker/components/cards/SettingsTrackerCard.tsx
 msgid "Logged in"
 msgstr "وارد شده"
-
-#: src/features/manga/Manga.constants.ts
-#: src/features/manga/Manga.constants.ts
-#: src/features/manga/Manga.constants.ts
-msgid "Long strip"
-msgstr "نوار بلند"
 
 #: src/features/device/screens/DeviceSetting.tsx
 msgid ""
@@ -2771,17 +2723,6 @@ msgstr "ورود توسط کلاینت مدیریت می‌شود."
 msgid "The login will be handled by the server."
 msgstr "ورود توسط سرور مدیریت می‌شود."
 
-#: src/features/reader/services/ReaderControls.ts
-msgid ""
-"The next chapter has a different scanlator then the current one.\n"
-"Current: {currentScanlator}\n"
-"Next: {nextScanlator}"
-msgstr ""
-"چپتر بعدی ترجمه گر متفاوتی با چپتر فعلی دارد.\n"
-"فعلی: {currentScanlator}\n"
-"بعدی: {nextScanlator}\n"
-""
-
 #: src/features/backup/screens/Backup.tsx
 msgid "The path to the directory on the server where automated backups should get saved in"
 msgstr "مسیر پوشه‌ای روی سرور که نسخه‌های پشتیبان خودکار در آن ذخیره شوند"
@@ -2797,17 +2738,6 @@ msgstr "مسیر پوشه‌ روی سرور که فایل‌های منبع م�
 #: src/features/settings/screens/WebUISettings.tsx
 msgid "The path to the electron installation on the server"
 msgstr "مسیر نصب الکترون روی سرور"
-
-#: src/features/reader/services/ReaderControls.ts
-msgid ""
-"The previous chapter has a different scanlator then the current one.\n"
-"Previous: {nextScanlator}\n"
-"Current: {currentScanlator}"
-msgstr ""
-"چپتر قبلی ترجمه گر متفاوتی با چپتر فعلی دارد.\n"
-"قبلی: {nextScanlator}\n"
-"فعلی: {currentScanlator}\n"
-""
 
 #: src/features/theme/components/CreateThemeDialog.tsx
 msgid "The theme name must be unique and has a limit of 16 characters"
@@ -3131,10 +3061,6 @@ msgstr "VUI"
 msgid "Warning"
 msgstr "اخطار"
 
-#: src/features/settings/screens/Appearance.tsx
-msgid "Weblate"
-msgstr "وب لیت"
-
 #: src/features/manga/Manga.constants.ts
 #: src/features/reader/settings/ReaderSettings.constants.tsx
 msgid "Webtoon"
@@ -3207,10 +3133,6 @@ msgstr "محتوایی با همین نام در کتابخانه شما وجو�
 #: src/features/history/screens/History.tsx
 msgid "You have not read any series yet."
 msgstr "هنوز هیچ مجموعه‌ ای را نخوانده‌ اید."
-
-#: src/features/browse/extensions/Extensions.tsx
-msgid "You have to add a extension repository to be able to install extensions"
-msgstr "برای نصب افزونه‌ ها باید یک مرکز افزونه اضافه کنید"
 
 #: src/features/settings/Settings.constants.ts
 msgid "Your browser will prompt you to enter credentials with a dialog."

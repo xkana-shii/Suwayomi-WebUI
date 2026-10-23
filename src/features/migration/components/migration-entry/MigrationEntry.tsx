@@ -7,9 +7,10 @@
  */
 
 import type { MigrationMatch, TMigrationEntry } from '@/features/migration/Migration.types.ts';
+import { MigrationEntryStatus } from '@/features/migration/Migration.types.ts';
 import { MigrationManager } from '@/features/migration/MigrationManager.ts';
 import Paper from '@mui/material/Paper';
-import { memo, useMemo } from 'react';
+import { memo, useLayoutEffect, useMemo, useState } from 'react';
 import { MediaQuery } from '@/base/utils/MediaQuery.tsx';
 import { applyStyles } from '@/base/utils/ApplyStyles.ts';
 import { MigrationSourceEntry } from '@/features/migration/components/migration-entry/MigrationSourceEntry.tsx';
@@ -100,6 +101,7 @@ const MigrationEntryMobile = memo(
                     isExcluded={isExcluded}
                     mangaId={mangaId}
                     mangaTitle={mangaTitle}
+                    isAborted={entry.status === MigrationEntryStatus.SEARCH_ABORTED}
                     isAbortable={!isAborted && MigrationEntries.isAbortable(entry)}
                     isMigrating={isMigrating}
                 />
@@ -164,6 +166,7 @@ export const MigrationEntryDesktop = memo(
                             isExcluded={entry.isExcluded}
                             mangaId={entry.mangaId}
                             mangaTitle={entry.mangaTitle}
+                            isAborted={entry.status === MigrationEntryStatus.SEARCH_ABORTED}
                             isAbortable={!isAborted && MigrationEntries.isAbortable(entry)}
                             isMigrating={isMigrating}
                         />
@@ -206,7 +209,11 @@ export const MigrationEntry = memo(
     }) => {
         const isTabletWidth = MediaQuery.useIsTabletWidth();
 
-        const entry = useMemo(() => MigrationManager.getUpToDateMigrationEntry(propEntry), [propEntry]);
+        const [entry, setEntry] = useState(propEntry);
+
+        useLayoutEffect(() => {
+            setEntry(MigrationManager.getUpToDateMigrationEntry(propEntry));
+        }, [propEntry]);
 
         const destinationEntry = useMemo(() => {
             const match = entry.searchMatches.find((matchEntry) => matchEntry.id === entry.selectedMatchMangaId);
@@ -216,7 +223,7 @@ export const MigrationEntry = memo(
         }, [entry.searchMatches, entry.selectedMatchMangaId]);
         const otherMatches = useMemo(
             () =>
-                entry.searchMatches
+                [...entry.searchMatches, ...entry.manualMatches]
                     .filter((searchMatch) => searchMatch.id !== entry.selectedMatchMangaId)
                     .sort((a, b) => {
                         const sortByLatestChapter = (b.latestChapterNumber ?? 0) - (a.latestChapterNumber ?? 0);

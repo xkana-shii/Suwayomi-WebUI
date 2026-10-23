@@ -109,6 +109,12 @@ export const AppRoutes = {
             browse: {
                 match: 'browse',
                 path: '/settings/browse',
+                children: {
+                    extensionStores: {
+                        match: 'extension-stores',
+                        path: '/settings/browse/extension-stores',
+                    },
+                },
             },
             device: {
                 match: 'device',
@@ -207,14 +213,6 @@ export const AppRoutes = {
         match: 'migrate/*',
         path: '/migrate',
         children: {
-            singleMangaSearch: {
-                match: 'source/:sourceId/manga/:mangaId/search',
-                path: (sourceId: SourceIdInfo['id'], mangaId: MangaIdInfo['id'], query?: string | null | undefined) =>
-                    UrlUtil.addQueryParam(`/migrate/source/${sourceId}/manga/${mangaId}/search`, query),
-                state: (state: RouteStateSourcesSearchAll) => ({
-                    ...state,
-                }),
-            },
             manualSearch: {
                 match: 'manual-search/:mangaId',
                 path: (mangaId: MangaIdInfo['id'], query?: string | null | undefined) =>

@@ -25,6 +25,7 @@ import { LibraryToolbarMenu } from '@/features/library/components/LibraryToolbar
 import { LibraryMangaGrid } from '@/features/library/components/LibraryMangaGrid.tsx';
 import { AppbarSearch } from '@/base/components/AppbarSearch.tsx';
 import { UpdateChecker } from '@/features/updates/components/UpdateChecker.tsx';
+import { SyncButton } from '@/features/sync/components/SyncButton.tsx';
 import { useSelectableCollection } from '@/base/collection/hooks/useSelectableCollection.ts';
 import { SelectableCollectionSelectMode } from '@/base/collection/components/SelectableCollectionSelectMode.tsx';
 import { useGetVisibleLibraryMangas } from '@/features/library/hooks/useGetVisibleLibraryMangas.ts';
@@ -36,21 +37,23 @@ import { defaultPromiseErrorHandler } from '@/lib/DefaultPromiseErrorHandler.ts'
 import type {
     GetCategoriesLibraryQuery,
     GetCategoriesLibraryQueryVariables,
-    GetLibraryMangaCountQuery,
-    GetLibraryMangaCountQueryVariables,
+    GetMangasCountQuery,
+    GetMangasCountQueryVariables,
     MangaChapterStatFieldsFragment,
 } from '@/lib/graphql/generated/graphql.ts';
 import { GET_CATEGORIES_LIBRARY } from '@/lib/graphql/category/CategoryQuery.ts';
 import { Mangas } from '@/features/manga/services/Mangas.ts';
 import { MANGA_CHAPTER_STAT_FIELDS } from '@/lib/graphql/manga/MangaFragments.ts';
 import { useMetadataServerSettings } from '@/features/settings/services/ServerSettingsMetadata.ts';
-import { GET_LIBRARY_MANGA_COUNT } from '@/lib/graphql/manga/MangaQuery.ts';
+import { GET_MANGAS_COUNT } from '@/lib/graphql/manga/MangaQuery.ts';
 import { useAppTitle } from '@/features/navigation-bar/hooks/useAppTitle.ts';
 import { useAppAction } from '@/features/navigation-bar/hooks/useAppAction.ts';
 import { AppRoutes } from '@/base/AppRoute.constants.ts';
 import { SearchParam } from '@/base/Base.types.ts';
 import { STABLE_EMPTY_ARRAY } from '@/base/Base.constants.ts';
 import type { MangaIdInfo } from '@/features/manga/Manga.types.ts';
+import { OffsetComponent } from '@/base/OffsetComponent.tsx';
+import { MUIUtil } from '@/lib/mui/MUI.util.ts';
 
 const TitleWithSizeTag = styled('span')({
     display: 'flex',
@@ -58,7 +61,7 @@ const TitleWithSizeTag = styled('span')({
 });
 
 const TitleSizeTag = ({ sx, ...props }: ChipProps) => (
-    <Chip {...props} size="small" sx={{ ...sx, marginLeft: '5px' }} />
+    <Chip {...props} size="small" sx={MUIUtil.mergeSx(sx, { marginLeft: '5px' })} />
 );
 
 export function Library() {
@@ -82,10 +85,10 @@ export function Library() {
     );
     const tabs = tabsData ?? STABLE_EMPTY_ARRAY;
 
-    const librarySizeResponse = requestManager.useGetMangas<
-        GetLibraryMangaCountQuery,
-        GetLibraryMangaCountQueryVariables
-    >(GET_LIBRARY_MANGA_COUNT, {});
+    const librarySizeResponse = requestManager.useGetMangas<GetMangasCountQuery, GetMangasCountQueryVariables>(
+        GET_MANGAS_COUNT,
+        { condition: { inLibrary: true } },
+    );
 
     const librarySize = librarySizeResponse.data?.mangas.totalCount ?? 0;
 
@@ -99,13 +102,23 @@ export function Library() {
         error: mangaError,
         loading: mangaLoading,
         refetch: refetchCategoryMangas,
-    } = requestManager.useGetCategoryMangas(activeTab?.id, { skip: !activeTab });
+    } = requestManager.useGetCategoryMangas(activeTab?.id, activeTab?.isDefaultCategory, { skip: !activeTab });
     const categoryMangas = categoryMangaResponse?.mangas.nodes ?? STABLE_EMPTY_ARRAY;
     const {
         visibleMangas: mangas,
+        searchSuggestions,
         showFilteredOutMessage,
         filterKey,
     } = useGetVisibleLibraryMangas(categoryMangas, activeTab);
+
+    const getTabCount = (tab: (typeof tabs)[number]) => {
+        if (mangaLoading || tab !== activeTab || mangas.length === tab.mangas.totalCount) {
+            return tab.mangas.totalCount;
+        }
+
+        // fork: always show the filtered count for the active tab
+        return mangas.length;
+    };
 
     const retryFetchCategoryMangas = useCallback(
         () => refetchCategoryMangas().catch(defaultPromiseErrorHandler('Library::refetchCategoryMangas')),
@@ -113,6 +126,7 @@ export function Library() {
     );
 
     const mangaIds = useMemo(() => mangas.map((manga) => manga.id), [mangas]);
+    const mangaTitles = useMemo(() => searchSuggestions.map((manga) => manga.title), [searchSuggestions]);
 
     const [isSelectModeActive, setIsSelectModeActive] = useState(false);
     const {
@@ -194,20 +208,21 @@ export function Library() {
             {t`Library`}
             {showTabSize && (
                 <TitleSizeTag
-                    sx={{ ...theme.applyStyles('light', { backgroundColor: 'background.paper' }) }}
+                    sx={theme.applyStyles('light', { backgroundColor: 'background.paper' })}
                     label={librarySize}
                 />
             )}
         </TitleWithSizeTag>,
         t`Library`,
-        [t, showTabSize, librarySize],
+        [t, showTabSize, librarySize, theme],
     );
     useAppAction(
         <>
             {!isSelectModeActive && activeTab && (
                 <>
-                    <AppbarSearch />
-                    <LibraryToolbarMenu category={activeTab} />
+                    <AppbarSearch searchHistoryKey="library" suggestions={mangaTitles} />
+                    <LibraryToolbarMenu category={activeTab} mangas={mangas} />
+                    <SyncButton />
                     <UpdateChecker categoryId={activeTab?.id} />
                 </>
             )}
@@ -231,7 +246,7 @@ export function Library() {
                 />
             )}
         </>,
-        [isSelectModeActive, areNoItemsSelected, areAllItemsSelected, activeTab, mangas.length],
+        [isSelectModeActive, areNoItemsSelected, areAllItemsSelected, activeTab, mangas, mangaTitles],
     );
 
     const handleTabChange = (newTab: number) => {
@@ -288,35 +303,26 @@ export function Library() {
 
     return (
         <TabsWrapper>
-            <TabsMenu value={activeTab.id} onChange={(e, newTab) => handleTabChange(newTab)}>
-                {tabs.map((tab) => {
-                    const isActive = activeTab && activeTab.id === tab.id;
-                    return (
+            <OffsetComponent>
+                <TabsMenu value={activeTab.id} onChange={(e, newTab) => handleTabChange(newTab)}>
+                    {tabs.map((tab) => (
                         <Tab
                             sx={{ flexGrow: 1, maxWidth: 'unset' }}
                             key={tab.id}
                             label={
                                 <TitleWithSizeTag>
                                     {tab.name}
-                                    {showTabSize ? (
-                                        <TitleSizeTag
-                                            label={
-                                                isActive
-                                                    ? mangas.length // always use filtered mangas for active tab
-                                                    : tab.mangas.totalCount
-                                            }
-                                        />
-                                    ) : null}
+                                    {showTabSize ? <TitleSizeTag label={getTabCount(tab)} /> : null}
                                 </TitleWithSizeTag>
                             }
                             value={tab.id}
                         />
-                    );
-                })}
-            </TabsMenu>
+                    ))}
+                </TabsMenu>
+            </OffsetComponent>
             {triggerGlobalSearchButton}
             {tabs.map((tab) => (
-                <TabPanel key={tab.order} index={tab.order} currentIndex={activeTab.order}>
+                <TabPanel key={tab.id} index={tab.order} currentIndex={activeTab.order}>
                     {tab === activeTab && (
                         <LibraryMangaGrid
                             // the key needs to include filters and query to force a re-render of the virtuoso grid to prevent https://github.com/petyosi/react-virtuoso/issues/1242

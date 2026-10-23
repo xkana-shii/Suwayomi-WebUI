@@ -39,7 +39,6 @@ import { defaultPromiseErrorHandler } from '@/lib/DefaultPromiseErrorHandler.ts'
 import { LoadingPlaceholder } from '@/base/components/feedback/LoadingPlaceholder.tsx';
 import { GET_CHAPTERS_MANGA } from '@/lib/graphql/chapter/ChapterQuery.ts';
 import { useNavBarContext } from '@/features/navigation-bar/NavbarContext.tsx';
-import { useResizeObserver } from '@/base/hooks/useResizeObserver.tsx';
 import { MediaQuery } from '@/base/utils/MediaQuery.tsx';
 import { shouldForwardProp } from '@/base/utils/ShouldForwardProp.ts';
 import { getErrorMessage } from '@/lib/HelperFunctions.ts';
@@ -47,6 +46,8 @@ import { makeToast } from '@/base/utils/Toast.ts';
 import { ChapterListCard } from '@/features/chapter/components/cards/ChapterListCard.tsx';
 import { VirtuosoPersisted } from '@/lib/virtuoso/Component/VirtuosoPersisted.tsx';
 import { STABLE_EMPTY_ARRAY } from '@/base/Base.constants.ts';
+import { useElementSize } from '@mantine/hooks';
+import { VirtuosoUtil } from '@/lib/virtuoso/Virtuoso.util.tsx';
 
 type ChapterListHeaderProps = {
     scrollbarWidth: number;
@@ -115,17 +116,13 @@ export const ChapterList = ({
 }) => {
     const { t } = useLingui();
     const { appBarHeight } = useNavBarContext();
+    const [virtuosoScrollElement, setVirtuosoScrollElement] = useState<HTMLElement | null | Window>(null);
 
     const isMobileWidth = MediaQuery.useIsBelowWidth('md');
 
-    const [chapterListHeaderHeight, setChapterListHeaderHeight] = useState(50);
-    const [chapterListHeaderRef, setChapterListHeaderRef] = useState<HTMLDivElement | null>(null);
-    useResizeObserver(
-        chapterListHeaderRef,
-        useCallback(() => setChapterListHeaderHeight(chapterListHeaderRef?.offsetHeight ?? 0), [chapterListHeaderRef]),
-    );
+    const { ref: chapterListHeaderRef, height: chapterListHeaderHeight } = useElementSize();
 
-    const scrollbarWidth = MediaQuery.useGetScrollbarSize('width');
+    const scrollbarYSize = MediaQuery.useGetScrollbarSize('Y', VirtuosoUtil.getScrollElement(virtuosoScrollElement));
 
     const options = useChapterListOptions(manga);
     const updateOption = updateChapterListOptions(manga, (e) =>
@@ -187,13 +184,13 @@ export const ChapterList = ({
         <>
             <Stack direction="column" sx={{ position: 'relative', flexBasis: '60%' }}>
                 <ChapterListHeader
-                    ref={setChapterListHeaderRef}
+                    ref={chapterListHeaderRef}
                     sx={{
                         flexDirection: 'row',
                         alignItems: 'center',
                         justifyContent: 'space-between',
                     }}
-                    scrollbarWidth={scrollbarWidth}
+                    scrollbarWidth={scrollbarYSize}
                 >
                     <Stack>
                         <Typography variant="h5" component="h3">
@@ -237,6 +234,7 @@ export const ChapterList = ({
                 {noChaptersMatchingFilter && <EmptyViewAbsoluteCentered message={t`No chapters matching filter`} />}
 
                 <StyledVirtuoso
+                    scrollerRef={setVirtuosoScrollElement}
                     persistKey={`manga-${manga.id}-chapter-list`}
                     topOffset={appBarHeight + chapterListHeaderHeight}
                     style={{

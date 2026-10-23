@@ -9,7 +9,7 @@
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import ListSubheader from '@mui/material/ListSubheader';
+import { ListSubheader } from '@/base/components/lists/ListSubheader.tsx';
 import Divider from '@mui/material/Divider';
 import ListItemButton from '@mui/material/ListItemButton';
 import Dialog from '@mui/material/Dialog';
@@ -29,9 +29,11 @@ import { VersionInfo } from '@/features/app-updates/components/VersionInfo.tsx';
 import { getErrorMessage } from '@/lib/HelperFunctions.ts';
 import { epochToDate } from '@/base/utils/DateHelper.ts';
 import { useAppTitle } from '@/features/navigation-bar/hooks/useAppTitle.ts';
+import { DebugInformation } from '@/features/settings/components/DebugInformation.tsx';
+import Stack from '@mui/material/Stack';
+import { useState } from 'react';
 import { SHUTDOWN_SERVER } from '@/lib/graphql/server/ServerInfoMutation.ts';
 import { makeToast } from '@/base/utils/Toast.ts';
-import { useState } from 'react';
 
 export function About() {
     const { t } = useLingui();
@@ -208,6 +210,18 @@ export function About() {
                     <ListItemLink to={aboutServer.discord} target="_blank" rel="noreferrer">
                         <ListItemText primary={t`Discord`} secondary={aboutServer.discord} />
                     </ListItemLink>
+                </List>
+                <Divider />
+                <List
+                    subheader={
+                        <ListSubheader component="div" id="about-debug-info">
+                            {t`Debug information`}
+                        </ListSubheader>
+                    }
+                >
+                    <Stack sx={{ px: 2, py: 1 }}>
+                        <DebugInformation />
+                    </Stack>
                 </List>
             </List>
 

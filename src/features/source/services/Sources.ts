@@ -6,7 +6,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import type {
     SourceDisplayNameInfo,
@@ -14,7 +14,7 @@ import type {
     SourceLanguageInfo,
     SourceNsfwInfo,
     SourceMetaInfo,
-    SourceRepoInfo,
+    SourceStoreInfo,
 } from '@/features/source/Source.types.ts';
 import {
     DefaultLanguage,
@@ -34,6 +34,9 @@ import type { SourceBaseFieldsFragment } from '@/lib/graphql/generated/graphql.t
 import { requestManager } from '@/lib/requests/RequestManager.ts';
 import type { DocumentNode, Unmasked } from '@apollo/client';
 import { SOURCE_BASE_FIELDS } from '@/lib/graphql/source/SourceFragments.ts';
+import { isNsfw as isNsfwFnc } from '@/features/extension/Extensions.utils.ts';
+import { SortBy, SortOrder, type SortSettings, type TMigratableSource } from '@/features/migration/Migration.types.ts';
+import { STABLE_EMPTY_ARRAY } from '@/base/Base.constants.ts';
 
 export class Sources {
     static readonly LOCAL_SOURCE_ID = '0';
@@ -134,7 +137,7 @@ export class Sources {
         const normalizedLanguages = toComparableLanguages(toUniqueLanguageCodes(languages ?? []));
 
         const filters: [Condition: any, CheckKeepLocalSource: boolean, Filter: (source: Source) => boolean][] = [
-            [isNsfw, true, (source: Source) => source.isNsfw === isNsfw],
+            [isNsfw, true, (source: Source) => isNsfwFnc(source.contentWarning) === isNsfw],
             [
                 languages,
                 true,
@@ -157,14 +160,14 @@ export class Sources {
         }, sources);
     }
 
-    static areFromMultipleRepos<Source extends SourceIdInfo & SourceRepoInfo>(sources: Source[]): boolean {
-        const repo = sources.find((source) => !!source.extension.repo)?.extension.repo;
+    static areFromMultipleStores<Source extends SourceIdInfo & SourceStoreInfo>(sources: Source[]): boolean {
+        const store = sources.find((source) => !!source.extension.storeIndexUrl)?.extension.storeIndexUrl;
 
-        if (!repo || !sources.length) {
+        if (!store || !sources.length) {
             return false;
         }
 
-        return sources.some((source) => source.extension.repo !== repo && !Sources.isLocalSource(source));
+        return sources.some((source) => source.extension.storeIndexUrl !== store && !Sources.isLocalSource(source));
     }
 
     static getLastUsedSource<Source extends SourceIdInfo & SourceMetaInfo>(
@@ -172,6 +175,23 @@ export class Sources {
         sources: Source[],
     ): Source | undefined {
         return sources.find((source) => source.id === lastUsedSourceId);
+    }
+
+    static isLanguageEnabled<Source extends SourceMetaInfo & SourceLanguageInfo>(
+        source: Source,
+        browseLanguage: string[],
+    ): boolean {
+        return toComparableLanguages(toUniqueLanguageCodes(browseLanguage)).includes(source.lang);
+    }
+
+    static isEnabled<Source extends SourceIdInfo & SourceMetaInfo & SourceLanguageInfo>(
+        source: Source,
+        browseLanguages: string[],
+    ): boolean {
+        const isLanguageEnabled = Sources.isLanguageEnabled(source, browseLanguages);
+        const { isEnabled } = getSourceMetadata(source);
+
+        return isEnabled && isLanguageEnabled;
     }
 
     static useLanguages(): {
@@ -192,5 +212,54 @@ export class Sources {
             languages: browseLanguages,
             setLanguages,
         };
+    }
+
+    static useGetMigratableSources(
+        { sortBy, sortOrder }: SortSettings = { sortBy: SortBy.SOURCE_NAME, sortOrder: SortOrder.ASC },
+    ): {
+        sources: TMigratableSource[];
+        request: ReturnType<typeof requestManager.useGetMigratableSources>;
+    } {
+        const migratableSourcesRequest = requestManager.useGetMigratableSources();
+        const mangas = migratableSourcesRequest.data?.mangas.nodes ?? STABLE_EMPTY_ARRAY;
+
+        if (!mangas) {
+            return { sources: STABLE_EMPTY_ARRAY, request: migratableSourcesRequest };
+        }
+
+        const sourcesSortedBy = useMemo(() => {
+            const sourceBySourceId: Record<string, TMigratableSource> = {};
+
+            mangas.forEach(({ sourceId, source }) => {
+                const uniqueSource = sourceBySourceId[sourceId] ?? {
+                    ...{ id: sourceId, name: sourceId, lang: 'unknown', iconUrl: null, mangaCount: 0, ...source },
+                };
+
+                sourceBySourceId[sourceId] = {
+                    ...uniqueSource,
+                    mangaCount: uniqueSource.mangaCount + 1,
+                };
+            });
+
+            return Object.values(sourceBySourceId).toSorted((a, b) => {
+                switch (sortBy) {
+                    case SortBy.SOURCE_NAME:
+                        return a.name.localeCompare(b.name);
+                    case SortBy.MANGA_COUNT:
+                        return a.mangaCount - b.mangaCount;
+                    default:
+                        throw new Error(`Unexpected "sortBy" "${sortBy}"`);
+                }
+            });
+        }, [mangas, sortBy, sortOrder]);
+
+        switch (sortOrder) {
+            case SortOrder.ASC:
+                return { sources: sourcesSortedBy, request: migratableSourcesRequest };
+            case SortOrder.DESC:
+                return { sources: sourcesSortedBy.toReversed(), request: migratableSourcesRequest };
+            default:
+                throw new Error(`Unexpected "sortOrder" "${sortOrder}"`);
+        }
     }
 }

@@ -10,11 +10,11 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import MenuItem from '@mui/material/MenuItem';
-import ListSubheader from '@mui/material/ListSubheader';
+import { ListSubheader } from '@/base/components/lists/ListSubheader.tsx';
 import Switch from '@mui/material/Switch';
 import Link from '@mui/material/Link';
 import { useColorScheme } from '@mui/material/styles';
-import { useLingui } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { useAppThemeContext } from '@/features/theme/AppThemeContext.tsx';
 import { Select } from '@/base/components/inputs/Select.tsx';
 import { MediaQuery } from '@/base/utils/MediaQuery.tsx';
@@ -37,6 +37,8 @@ import { AppStorage } from '@/lib/storage/AppStorage.ts';
 import { useAppTitle } from '@/features/navigation-bar/hooks/useAppTitle.ts';
 import { MANGA_GRID_WIDTH, SERVER_SETTINGS_METADATA_DEFAULT } from '@/features/settings/Settings.constants.ts';
 import { MUI_THEME_MODE_KEY } from '@/lib/mui/MUI.constants.ts';
+import { getISOLanguage } from '@/lib/ISOLanguageUtil.ts';
+import Typography from '@mui/material/Typography';
 
 export const Appearance = () => {
     const { t } = useLingui();
@@ -71,47 +73,49 @@ export const Appearance = () => {
     }
 
     return (
-        <List
-            subheader={
-                <ListSubheader component="div" id="appearance-theme">
-                    {t`Theme`}
-                </ListSubheader>
-            }
-        >
-            <ListItem>
-                <ListItemText primary={t`Theme mode`} />
-                <Select<ThemeMode>
-                    value={actualThemeMode}
-                    onChange={(e) => {
-                        const newMode = e.target.value as 'system' | 'light' | 'dark';
-
-                        setThemeMode(newMode as ThemeMode);
-                        setMode(newMode);
-                        // in case a non "colorSchemes" mui theme is active, "setMode" does not update the mode ("mui-mode") value
-                        AppStorage.local.setItem(MUI_THEME_MODE_KEY, newMode, true);
-                    }}
-                >
-                    <MenuItem key={ThemeMode.SYSTEM} value={ThemeMode.SYSTEM}>
-                        {t`System`}
-                    </MenuItem>
-                    <MenuItem key={ThemeMode.DARK} value={ThemeMode.DARK}>
-                        {t`Dark`}
-                    </MenuItem>
-                    <MenuItem key={ThemeMode.LIGHT} value={ThemeMode.LIGHT}>
-                        {t`Light`}
-                    </MenuItem>
-                </Select>
-            </ListItem>
-            <ThemeList />
-            {isDarkMode && (
+        <List>
+            <List
+                subheader={
+                    <ListSubheader component="div" id="appearance-theme" customOffsetProps={{ sx: { zIndex: 2 } }}>
+                        {t`Theme`}
+                    </ListSubheader>
+                }
+            >
                 <ListItem>
-                    <ListItemText primary={t`Pure black dark mode`} />
-                    <Switch
-                        checked={shouldUsePureBlackMode}
-                        onChange={(_, enabled) => setShouldUsePureBlackMode(enabled)}
-                    />
+                    <ListItemText primary={t`Theme mode`} />
+                    <Select<ThemeMode>
+                        value={actualThemeMode}
+                        onChange={(e) => {
+                            const newMode = e.target.value as 'system' | 'light' | 'dark';
+
+                            setThemeMode(newMode as ThemeMode);
+                            setMode(newMode);
+                            // in case a non "colorSchemes" mui theme is active, "setMode" does not update the mode ("mui-mode") value
+                            AppStorage.local.setItem(MUI_THEME_MODE_KEY, newMode, true);
+                        }}
+                    >
+                        <MenuItem key={ThemeMode.SYSTEM} value={ThemeMode.SYSTEM}>
+                            {t`System`}
+                        </MenuItem>
+                        <MenuItem key={ThemeMode.DARK} value={ThemeMode.DARK}>
+                            {t`Dark`}
+                        </MenuItem>
+                        <MenuItem key={ThemeMode.LIGHT} value={ThemeMode.LIGHT}>
+                            {t`Light`}
+                        </MenuItem>
+                    </Select>
                 </ListItem>
-            )}
+                <ThemeList />
+                {isDarkMode && (
+                    <ListItem>
+                        <ListItemText primary={t`Pure black dark mode`} />
+                        <Switch
+                            checked={shouldUsePureBlackMode}
+                            onChange={(_, enabled) => setShouldUsePureBlackMode(enabled)}
+                        />
+                    </ListItem>
+                )}
+            </List>
             <List
                 subheader={
                     <ListSubheader component="div" id="appearance-theme">
@@ -123,16 +127,25 @@ export const Appearance = () => {
                     <ListItemText
                         primary={t`Language`}
                         secondary={
-                            <>
-                                <span>{t`Feel free to translate the project on`} </span>
+                            <Trans>
+                                Feel free to translate the project on Weblate (
                                 <Link
                                     href="https://hosted.weblate.org/projects/suwayomi/suwayomi-webui"
                                     target="_blank"
                                     rel="noreferrer"
                                 >
-                                    {t`Weblate`}
+                                    WebUI
+                                </Link>{' '}
+                                and{' '}
+                                <Link
+                                    href="https://hosted.weblate.org/projects/suwayomi/suwayomi-server"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                >
+                                    Server
                                 </Link>
-                            </>
+                                )
+                            </Trans>
                         }
                     />
                     <Select
@@ -145,10 +158,23 @@ export const Appearance = () => {
                                 makeToast(t`Could not load language`, 'error', getErrorMessage(e));
                             });
                         }}
+                        renderValue={(selected) => {
+                            const selectedLanguage =
+                                i18nResources.find((language) => language === selected) ?? selected;
+
+                            return languageCodeToName(selectedLanguage);
+                        }}
                     >
                         {i18nResources.map((language) => (
-                            <MenuItem key={language} value={language}>
+                            <MenuItem
+                                key={language}
+                                value={language}
+                                sx={{ flexDirection: 'column', alignItems: 'flex-start' }}
+                            >
                                 {languageCodeToName(language)}
+                                <Typography color="textSecondary" variant="body2">
+                                    {getISOLanguage(language)?.name}
+                                </Typography>
                             </MenuItem>
                         ))}
                     </Select>

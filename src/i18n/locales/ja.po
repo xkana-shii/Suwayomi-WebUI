@@ -27,17 +27,13 @@ msgstr "{progress}% | アップデート中…"
 msgid "*: Active setting"
 msgstr "*:アクティブ設定"
 
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "<0>Suwayomi does not provide any support for 3rd party repositories or extensions!</0><1/>Use with caution as there could be malicious actors making those repositories.<2/>You as the user need to verify the security and that you trust any repository or extension."
-msgstr "<0>Suwayomi はサードパーティのリポジトリや拡張機能のサポートを提供しません!</0><1/>悪意のある攻撃者がこれらのリポジトリを作成している可能性があるため、使用には注意してください。<2/>ユーザーは、セキュリティを確認し、リポジトリまたは拡張機能を信頼していることを確認する必要があります。"
-
 #: src/features/settings/Settings.constants.ts
 msgid "A preview focused web frontend built with svelte"
 msgstr "svelte で構築されたプレビュー重視の Web フロントエンド"
 
 #: src/features/library/components/LibraryOptionsPanel.tsx
-msgid "A-Z"
-msgstr "A-Z"
+msgid "A—Z"
+msgstr "A—Z"
 
 #: src/features/navigation-bar/NavigationBar.constants.ts
 #: src/features/settings/screens/About.tsx
@@ -64,14 +60,6 @@ msgstr "追加"
 #: src/features/chapter/Chapter.constants.ts
 msgid "Add bookmark"
 msgstr "ブックマークを追加"
-
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Add repositories from which extensions can be installed"
-msgstr "拡張機能をインストールできるリポジトリを追加する"
-
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Add repository"
-msgstr "リポジトリの追加"
 
 #: src/features/manga/components/details/MangaDetails.tsx
 #: src/features/manga/components/MangaBadges.tsx
@@ -114,11 +102,6 @@ msgstr "全て"
 #: src/features/downloads/screens/DownloadSettings.tsx
 msgid "Allow deleting bookmarked chapters"
 msgstr "ブックマークされた章を削除できるようにする"
-
-#: src/base/components/inputs/LanguageSelect.tsx
-#: src/features/source/components/SourceLanguageSelect.tsx
-msgid "Allowed Languages"
-msgstr "許可された言語"
 
 #: src/features/reader/filters/settings/components/ReaderSettingRGBA.tsx
 msgid "Alpha"
@@ -491,10 +474,6 @@ msgstr "カラーフィルターの合成モード"
 msgid "Comfortable grid"
 msgstr "快適グリッド"
 
-#: src/features/manga/Manga.constants.ts
-msgid "Comic"
-msgstr "アメコミ"
-
 #: src/base/components/GridLayouts.tsx
 #: src/features/library/components/LibraryOptionsPanel.tsx
 msgid "Compact grid"
@@ -519,11 +498,6 @@ msgstr "連続水平スクロール"
 #: src/features/reader/settings/ReaderSettings.constants.tsx
 msgid "Continuous vertical"
 msgstr "垂直に連続"
-
-#: src/features/manga/components/details/MangaDetails.tsx
-#: src/features/reader/overlay/mobile/ReaderOverlayHeaderMobile.tsx
-msgid "Copied to clipboard"
-msgstr "クリップボードにコピーしました"
 
 #: src/features/manga/components/details/MangaDetails.tsx
 #: src/features/migration/components/MigrationSingleMangaDialog.tsx
@@ -598,10 +572,6 @@ msgstr "全てのダウンロードをキューから削除できませんでし
 #: src/features/library/screens/LibrarySettings.tsx
 msgid "Could not remove non library manga from categories"
 msgstr "カテゴリーから非ライブラリのマンガを削除できません"
-
-#: src/features/downloads/components/DownloadQueueChapterCard.tsx
-msgid "Could not remove the download from the queue."
-msgstr "キューからダウンロードを削除できませんでした。"
 
 #: src/features/backup/screens/Backup.tsx
 #: src/features/backup/screens/Backup.tsx
@@ -1021,10 +991,6 @@ msgstr "前のページに戻る"
 msgid "Extension info"
 msgstr "拡張機能の情報"
 
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Extension repositories"
-msgstr "拡張機能リポジトリ"
-
 #: src/features/backup/screens/Backup.tsx
 #: src/features/backup/screens/Backup.tsx
 #: src/features/browse/extensions/Extensions.tsx
@@ -1076,10 +1042,6 @@ msgstr ""
 "\n"
 "この設定を変更した後、\"About\"ページに移動し、WebUI のアップデートを確認してインストールします\n"
 ""
-
-#: src/features/settings/screens/Appearance.tsx
-msgid "Feel free to translate the project on"
-msgstr "プロジェクトの翻訳はお気軽にこちらから"
 
 #: src/features/downloads/components/DeleteChaptersWhileReadingSetting.tsx
 msgid "Fifth to last read chapter"
@@ -1355,10 +1317,6 @@ msgstr "無効な入力"
 msgid "Invalid json"
 msgstr "無効的なjson"
 
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Invalid repository url"
-msgstr "無効なリポジトリURL"
-
 #: src/features/reader/filters/settings/components/ReaderSettingInvert.tsx
 msgid "Invert"
 msgstr "反転"
@@ -1516,12 +1474,6 @@ msgstr "ログアウト"
 #: src/features/tracker/components/cards/SettingsTrackerCard.tsx
 msgid "Logged in"
 msgstr "ログイン済"
-
-#: src/features/manga/Manga.constants.ts
-#: src/features/manga/Manga.constants.ts
-#: src/features/manga/Manga.constants.ts
-msgid "Long strip"
-msgstr "縦読み漫画"
 
 #: src/features/device/screens/DeviceSetting.tsx
 msgid ""
@@ -2505,17 +2457,6 @@ msgstr "以下のソースはインストールされていません :"
 msgid "The following trackers are not logged in:"
 msgstr "以下のトラッカーにログインしていません :"
 
-#: src/features/reader/services/ReaderControls.ts
-msgid ""
-"The next chapter has a different scanlator then the current one.\n"
-"Current: {currentScanlator}\n"
-"Next: {nextScanlator}"
-msgstr ""
-"次の章のスキャンチームは現在の章と異なります\n"
-"現在の章：{currentScanlator}\n"
-"次の章：{nextScanlator}\n"
-""
-
 #: src/features/backup/screens/Backup.tsx
 msgid "The path to the directory on the server where automated backups should get saved in"
 msgstr "自動バックアップが保存されるサーバーのディレクトリへのパス"
@@ -2531,17 +2472,6 @@ msgstr "ローカルソースファイルが保存されるサーバーのディ
 #: src/features/settings/screens/WebUISettings.tsx
 msgid "The path to the electron installation on the server"
 msgstr "サーバ上のElectronのインストールパス"
-
-#: src/features/reader/services/ReaderControls.ts
-msgid ""
-"The previous chapter has a different scanlator then the current one.\n"
-"Previous: {nextScanlator}\n"
-"Current: {currentScanlator}"
-msgstr ""
-"前の章のスキャンチームは現在の章と異なります\n"
-"前の章：{nextScanlator}\n"
-"現在の章：{currentScanlator}\n"
-""
 
 #: src/features/theme/components/CreateThemeDialog.tsx
 msgid "The theme name must be unique and has a limit of 16 characters"
@@ -2840,10 +2770,6 @@ msgstr "VUI"
 msgid "Warning"
 msgstr "警告"
 
-#: src/features/settings/screens/Appearance.tsx
-msgid "Weblate"
-msgstr "Weblate"
-
 #: src/features/manga/Manga.constants.ts
 #: src/features/reader/settings/ReaderSettings.constants.tsx
 msgid "Webtoon"
@@ -2912,10 +2838,6 @@ msgstr "同じ名前のエントリーがあなたのライブラリにありま
 #: src/features/history/screens/History.tsx
 msgid "You have not read any series yet."
 msgstr "まだ何も読んでいません。"
-
-#: src/features/browse/extensions/Extensions.tsx
-msgid "You have to add a extension repository to be able to install extensions"
-msgstr "拡張機能をインストールできるように、拡張機能リポジトリを追加する必要があります"
 
 #: src/features/settings/Settings.constants.ts
 msgid "Your browser will prompt you to enter credentials with a dialog."

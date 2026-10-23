@@ -20,7 +20,6 @@ import { memo } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { CustomTooltip } from '@/base/components/CustomTooltip.tsx';
 import { TypographyMaxLines } from '@/base/components/texts/TypographyMaxLines.tsx';
-import { makeToast } from '@/base/utils/Toast.ts';
 import type { MobileHeaderProps } from '@/features/reader/overlay/ReaderOverlay.types.ts';
 import { LoadingPlaceholder } from '@/base/components/feedback/LoadingPlaceholder.tsx';
 import { AppRoutes } from '@/base/AppRoute.constants.ts';
@@ -36,6 +35,8 @@ import {
     useReaderScrollbarStore,
     useReaderStore,
 } from '@/features/reader/stores/ReaderStore.ts';
+import { defaultPromiseErrorHandler } from '@/lib/DefaultPromiseErrorHandler.ts';
+import { ShareGuard } from '@/base/components/guard/ShareGuard.tsx';
 
 const DEFAULT_MANGA = { ...FALLBACK_MANGA, title: '' };
 
@@ -115,15 +116,38 @@ const BaseReaderOverlayHeaderMobile = ({ isVisible, ref }: MobileHeaderProps & {
                     >
                         {t`Open in WebView`}
                     </MenuItem>
-                    <MenuItem
-                        disabled={!realUrl}
-                        onClick={async () => {
-                            await navigator.clipboard.writeText(title);
-                            makeToast(t`Copied to clipboard`, 'info');
-                        }}
-                    >
-                        {t`Share`}
-                    </MenuItem>
+                    <ShareGuard>
+                        <MenuItem
+                            disabled={!realUrl}
+                            onClick={() => {
+                                navigator
+                                    .share({
+                                        title: `${title} — ${name}`,
+                                        text: name,
+                                        url: realUrl ?? undefined,
+                                    })
+                                    .catch(defaultPromiseErrorHandler('ReaderOverlayHeaderMobile::share'));
+                            }}
+                        >
+                            {t`Share`}
+                        </MenuItem>
+                    </ShareGuard>
+                    <ShareGuard>
+                        <MenuItem
+                            disabled={!realUrl}
+                            onClick={() => {
+                                navigator
+                                    .share({
+                                        title: `${title} — ${name}`,
+                                        text: name,
+                                        url: realUrl ?? undefined,
+                                    })
+                                    .catch(defaultPromiseErrorHandler('ReaderOverlayHeaderMobile::share'));
+                            }}
+                        >
+                            {t`Share`}
+                        </MenuItem>
+                    </ShareGuard>
                 </Menu>
             </Stack>
         </Slide>

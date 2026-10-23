@@ -25,6 +25,10 @@ import { requestManager } from '@/lib/requests/RequestManager.ts';
 import { makeToast } from '@/base/utils/Toast.ts';
 import { getErrorMessage } from '@/lib/HelperFunctions.ts';
 import { i18n } from '@/i18n';
+import { t } from '@lingui/core/macro';
+import { ContentWarning } from '@/lib/graphql/generated/graphql-base.types.ts';
+
+export const isNsfw = (contentWarning: ContentWarning): boolean => contentWarning !== ContentWarning.Safe;
 
 export const getInstalledState = (
     isInstalled: boolean,
@@ -59,7 +63,7 @@ export const isExtensionStateOrLanguage = (languageCode: string): boolean =>
 
 export const translateExtensionLanguage = (languageCode: string): string =>
     isExtensionStateOrLanguage(languageCode)
-        ? i18n._(extensionLanguageToTranslation[languageCode as ExtensionGroupState | DefaultLanguage])
+        ? t(extensionLanguageToTranslation[languageCode as ExtensionGroupState | DefaultLanguage])
         : languageCodeToName(languageCode);
 
 export function groupExtensionsByLanguage(extensions: TExtension[]): GroupedExtensionsResult {
@@ -130,7 +134,7 @@ export const filterExtensions = (
                 normalizedSelectedLanguages.includes(toComparableLanguage(extension.lang)) ||
                 extension.isInstalled,
         )
-        .filter((extension) => showNsfw === undefined || showNsfw || !extension.isNsfw)
+        .filter((extension) => showNsfw === undefined || showNsfw || !isNsfw(extension.contentWarning))
         .filter((extension) => query == null || enhancedCleanup(extension.name).includes(enhancedCleanup(query)));
 };
 

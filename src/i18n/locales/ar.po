@@ -21,13 +21,9 @@ msgstr ""
 msgid "{progress}% | Updating…"
 msgstr "{progress}% | جارٍ التحديث…"
 
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "<0>Suwayomi does not provide any support for 3rd party repositories or extensions!</0><1/>Use with caution as there could be malicious actors making those repositories.<2/>You as the user need to verify the security and that you trust any repository or extension."
-msgstr "<0>لا يقدم Suwayomi أي دعم لمستودعات أو ملحقات الطرف الثالث!</0><1/>استخدمه بحذر حيث قد يكون هناك جهات فاعلة ضارة تقوم بإنشاء تلك المستودعات.<2/>أنت كمستخدم بحاجة إلى التحقق من الأمان وأنك تثق في أي مستودع أو امتداد."
-
 #: src/features/library/components/LibraryOptionsPanel.tsx
-msgid "A-Z"
-msgstr "أ–ي"
+msgid "A—Z"
+msgstr "أ—ي"
 
 #: src/features/navigation-bar/NavigationBar.constants.ts
 #: src/features/settings/screens/About.tsx
@@ -50,14 +46,6 @@ msgstr "إضافة"
 #: src/features/chapter/Chapter.constants.ts
 msgid "Add bookmark"
 msgstr "إضافة إشارة مرجعية"
-
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Add repositories from which extensions can be installed"
-msgstr "إضافة مستودعات يمكن تثبيت الإضافات منها"
-
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Add repository"
-msgstr "إضافة مستودع"
 
 #: src/features/manga/components/details/MangaDetails.tsx
 #: src/features/manga/components/MangaBadges.tsx
@@ -88,11 +76,6 @@ msgstr "الجميع"
 #: src/features/downloads/screens/DownloadSettings.tsx
 msgid "Allow deleting bookmarked chapters"
 msgstr "السماح بحذف الفصول ذات الإشارة المرجعية"
-
-#: src/base/components/inputs/LanguageSelect.tsx
-#: src/features/source/components/SourceLanguageSelect.tsx
-msgid "Allowed Languages"
-msgstr "اللغات المسموح بها"
 
 #: src/features/chapter/services/Chapters.ts
 #: src/features/manga/hooks/useManageMangaLibraryState.tsx
@@ -414,11 +397,6 @@ msgid "Continuous vertical"
 msgstr "تمرير عمودي مستمر"
 
 #: src/features/manga/components/details/MangaDetails.tsx
-#: src/features/reader/overlay/mobile/ReaderOverlayHeaderMobile.tsx
-msgid "Copied to clipboard"
-msgstr "تم النسخ إلى الحافظة"
-
-#: src/features/manga/components/details/MangaDetails.tsx
 #: src/features/migration/components/MigrationSingleMangaDialog.tsx
 msgid "Copy"
 msgstr "نسخ"
@@ -474,10 +452,6 @@ msgstr "تعذر إزالة جميع التنزيلات من قائمة الان
 #: src/features/library/screens/LibrarySettings.tsx
 msgid "Could not remove non library manga from categories"
 msgstr "تعذر إزالة المانجا غير الموجودة في المكتبة من الفئات"
-
-#: src/features/downloads/components/DownloadQueueChapterCard.tsx
-msgid "Could not remove the download from the queue."
-msgstr "تعذر إزالة التنزيل من قائمة الانتظار."
 
 #: src/features/backup/screens/Backup.tsx
 #: src/features/backup/screens/Backup.tsx
@@ -735,10 +709,6 @@ msgstr "استبعاد: {excludedCategoriesText}"
 msgid "Exit reader"
 msgstr "الخروج من القارئ"
 
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Extension repositories"
-msgstr "مستودعات التمديد"
-
 #: src/features/backup/screens/Backup.tsx
 #: src/features/backup/screens/Backup.tsx
 #: src/features/browse/extensions/Extensions.tsx
@@ -793,10 +763,6 @@ msgstr ""
 "\n"
 "بعد تغيير هذا الإعداد، انتقل إلى صفحة \"حول\" (About) للتحقق من وجود تحديث "
 "لواجهة الويب (WebUI) وتثبيته"
-
-#: src/features/settings/screens/Appearance.tsx
-msgid "Feel free to translate the project on"
-msgstr "لا تتردد في المساهمة في ترجمة المشروع عبر"
 
 #: src/features/downloads/components/DeleteChaptersWhileReadingSetting.tsx
 msgid "Fifth to last read chapter"
@@ -994,10 +960,6 @@ msgstr "نوع الملف غير صالح"
 #: src/features/settings/components/images/Processing.tsx
 msgid "Invalid input"
 msgstr "إدخال غير صالح"
-
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Invalid repository url"
-msgstr "رابط المستودع غير صالح"
 
 #: src/features/settings/screens/ServerSettings.tsx
 msgid "IP"
@@ -1705,16 +1667,6 @@ msgstr "الفئة فارغة"
 msgid "The following sources are not installed:"
 msgstr "المصادر التالية غير مثبتة:"
 
-#: src/features/reader/services/ReaderControls.ts
-msgid ""
-"The next chapter has a different scanlator then the current one.\n"
-"Current: {currentScanlator}\n"
-"Next: {nextScanlator}"
-msgstr ""
-"الفصل التالي من فريق ترجمة مختلف عن الفصل الحالي.\n"
-"الحالي: {currentScanlator}\n"
-"التالي: {nextScanlator}"
-
 #: src/features/backup/screens/Backup.tsx
 msgid "The path to the directory on the server where automated backups should get saved in"
 msgstr "المسار على الخادم حيث يجب حفظ النسخ الاحتياطية التلقائية"
@@ -1730,16 +1682,6 @@ msgstr "المسار على الخادم حيث يتم حفظ ملفات الم�
 #: src/features/settings/screens/WebUISettings.tsx
 msgid "The path to the electron installation on the server"
 msgstr "مسار تثبيت Electron على الخادم"
-
-#: src/features/reader/services/ReaderControls.ts
-msgid ""
-"The previous chapter has a different scanlator then the current one.\n"
-"Previous: {nextScanlator}\n"
-"Current: {currentScanlator}"
-msgstr ""
-"الفصل السابق من فريق ترجمة مختلف عن الفصل الحالي.\n"
-"السابق: {nextScanlator}\n"
-"الحالي: {currentScanlator}"
 
 #: src/features/downloads/components/DeleteChaptersWhileReadingSetting.tsx
 msgid "Third to last read chapter"
@@ -1949,10 +1891,6 @@ msgstr "عمودي"
 msgid "Warning"
 msgstr "تحذير"
 
-#: src/features/settings/screens/Appearance.tsx
-msgid "Weblate"
-msgstr "ويبلايت (Weblate)"
-
 #: src/features/reader/settings/ReaderSettings.constants.tsx
 msgid "Webtoon"
 msgstr "ويب تون (Webtoon)"
@@ -2013,10 +1951,6 @@ msgstr "لا توجد أي تحديثات بعد."
 #: src/features/manga/hooks/useManageMangaLibraryState.tsx
 msgid "You have an entry in your library with the same name."
 msgstr "لديك إدخال في مكتبتك يحمل نفس الاسم."
-
-#: src/features/browse/extensions/Extensions.tsx
-msgid "You have to add a extension repository to be able to install extensions"
-msgstr "يجب عليك إضافة مستودع للإضافات لتتمكن من تثبيتها"
 
 #: src/features/library/screens/Library.tsx
 #: src/features/library/screens/Library.tsx
@@ -2892,10 +2826,6 @@ msgstr "بيانات المستخدم"
 msgid "Color filter blend mode"
 msgstr "وضع دمج فلتر الألوان"
 
-#: src/features/manga/Manga.constants.ts
-msgid "Comic"
-msgstr "قصص مصورة"
-
 #: src/features/settings/screens/ServerSettings.tsx
 msgid "Compatible"
 msgstr "متوافق"
@@ -3444,12 +3374,6 @@ msgstr "تسجيل الخروج من {0}"
 #: src/features/tracker/screens/TrackerOAuthLogin.tsx
 msgid "Logging in to {trackerName}…"
 msgstr "جاري تسجيل الدخول إلى {trackerName}…"
-
-#: src/features/manga/Manga.constants.ts
-#: src/features/manga/Manga.constants.ts
-#: src/features/manga/Manga.constants.ts
-msgid "Long strip"
-msgstr "شريط طولي"
 
 #: src/features/device/screens/DeviceSetting.tsx
 msgid ""

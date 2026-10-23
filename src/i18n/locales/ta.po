@@ -26,17 +26,13 @@ msgstr "{progress}% | புதுப்பித்தல்…"
 msgid "*: Active setting"
 msgstr "*: -செயலில் அமைப்பு"
 
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "<0>Suwayomi does not provide any support for 3rd party repositories or extensions!</0><1/>Use with caution as there could be malicious actors making those repositories.<2/>You as the user need to verify the security and that you trust any repository or extension."
-msgstr "<0> 3 வது தரப்பு களஞ்சியங்கள் அல்லது நீட்டிப்புகளுக்கு சுவாவோமி எந்த ஆதரவையும் வழங்கவில்லை! </0> <2/> அந்தக் களஞ்சியங்களை உருவாக்கும் தீங்கிழைக்கும் நடிகர்கள் இருப்பதால் எச்சரிக்கையுடன் பயன்படுத்தவும்.<2/>பயனராக நீங்கள் பாதுகாப்பை சரிபார்க்க வேண்டும் மற்றும் எந்தக் களஞ்சியத்தையும் நீட்டிப்பையும் நம்புகிறீர்கள்."
-
 #: src/features/settings/Settings.constants.ts
 msgid "A preview focused web frontend built with svelte"
 msgstr "ச்வெல்டேவுடன் கட்டப்பட்ட ஒரு முன்னோட்டம் கவனம் செலுத்திய வலை முன்புறம்"
 
 #: src/features/library/components/LibraryOptionsPanel.tsx
-msgid "A-Z"
-msgstr "A-z"
+msgid "A—Z"
+msgstr "A—Z"
 
 #: src/features/navigation-bar/NavigationBar.constants.ts
 #: src/features/settings/screens/About.tsx
@@ -63,14 +59,6 @@ msgstr "கூட்டு"
 #: src/features/chapter/Chapter.constants.ts
 msgid "Add bookmark"
 msgstr "புக்மார்க்கைச் சேர்க்கவும்"
-
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Add repositories from which extensions can be installed"
-msgstr "நீட்டிப்புகளை நிறுவக்கூடிய களஞ்சியங்களைச் சேர்க்கவும்"
-
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Add repository"
-msgstr "களஞ்சியத்தைச் சேர்க்கவும்"
 
 #: src/features/manga/components/details/MangaDetails.tsx
 #: src/features/manga/components/MangaBadges.tsx
@@ -113,11 +101,6 @@ msgstr "அனைத்தும்"
 #: src/features/downloads/screens/DownloadSettings.tsx
 msgid "Allow deleting bookmarked chapters"
 msgstr "புக்மார்க்கு செய்யப்பட்ட அத்தியாயங்களை நீக்க அனுமதிக்கவும்"
-
-#: src/base/components/inputs/LanguageSelect.tsx
-#: src/features/source/components/SourceLanguageSelect.tsx
-msgid "Allowed Languages"
-msgstr "அனுமதிக்கப்பட்ட மொழிகள்"
 
 #: src/features/reader/filters/settings/components/ReaderSettingRGBA.tsx
 msgid "Alpha"
@@ -490,10 +473,6 @@ msgstr "வண்ண வடிகட்டி கலப்பு முறை"
 msgid "Comfortable grid"
 msgstr "வசதியான கட்டம்"
 
-#: src/features/manga/Manga.constants.ts
-msgid "Comic"
-msgstr "காமிக்"
-
 #: src/base/components/GridLayouts.tsx
 #: src/features/library/components/LibraryOptionsPanel.tsx
 msgid "Compact grid"
@@ -518,11 +497,6 @@ msgstr "தொடர்ச்சியான கிடைமட்ட"
 #: src/features/reader/settings/ReaderSettings.constants.tsx
 msgid "Continuous vertical"
 msgstr "தொடர்ச்சியான செங்குத்து"
-
-#: src/features/manga/components/details/MangaDetails.tsx
-#: src/features/reader/overlay/mobile/ReaderOverlayHeaderMobile.tsx
-msgid "Copied to clipboard"
-msgstr "இடைநிலைப்பலகைக்கு நகலெடுக்கப்பட்டது"
 
 #: src/features/manga/components/details/MangaDetails.tsx
 #: src/features/migration/components/MigrationSingleMangaDialog.tsx
@@ -597,10 +571,6 @@ msgstr "வரிசையில் இருந்து அனைத்து 
 #: src/features/library/screens/LibrarySettings.tsx
 msgid "Could not remove non library manga from categories"
 msgstr "வகைகளிலிருந்து நூலகமற்ற மங்காவை அகற்ற முடியவில்லை"
-
-#: src/features/downloads/components/DownloadQueueChapterCard.tsx
-msgid "Could not remove the download from the queue."
-msgstr "வரிசையில் இருந்து பதிவிறக்கத்தை அகற்ற முடியவில்லை."
 
 #: src/features/backup/screens/Backup.tsx
 #: src/features/backup/screens/Backup.tsx
@@ -1020,10 +990,6 @@ msgstr "முந்தைய பக்கத்திற்கு வெளி�
 msgid "Extension info"
 msgstr "நீட்டிப்பு செய்தி"
 
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Extension repositories"
-msgstr "நீட்டிப்பு களஞ்சியங்கள்"
-
 #: src/features/backup/screens/Backup.tsx
 #: src/features/backup/screens/Backup.tsx
 #: src/features/browse/extensions/Extensions.tsx
@@ -1075,10 +1041,6 @@ msgstr ""
 "\n"
 "இந்த அமைப்பை மாற்றிய பின் \"பற்றி\" பக்கத்திற்குச் சென்று ஒரு WebUI புதுப்பிப்பைச் சரிபார்த்து நிறுவவும்\n"
 ""
-
-#: src/features/settings/screens/Appearance.tsx
-msgid "Feel free to translate the project on"
-msgstr "திட்டத்தை மொழிபெயர்க்க தயங்க"
 
 #: src/features/downloads/components/DeleteChaptersWhileReadingSetting.tsx
 msgid "Fifth to last read chapter"
@@ -1354,10 +1316,6 @@ msgstr "தவறான உள்ளீடு"
 msgid "Invalid json"
 msgstr "தவறான சாதொபொகு"
 
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Invalid repository url"
-msgstr "தவறான களஞ்சிய முகவரி"
-
 #: src/features/reader/filters/settings/components/ReaderSettingInvert.tsx
 msgid "Invert"
 msgstr "தலைகீழ்"
@@ -1515,12 +1473,6 @@ msgstr "விடுபதிகை"
 #: src/features/tracker/components/cards/SettingsTrackerCard.tsx
 msgid "Logged in"
 msgstr "உள்நுழைந்தது"
-
-#: src/features/manga/Manga.constants.ts
-#: src/features/manga/Manga.constants.ts
-#: src/features/manga/Manga.constants.ts
-msgid "Long strip"
-msgstr "நீண்ட துண்டு"
 
 #: src/features/device/screens/DeviceSetting.tsx
 msgid ""
@@ -2504,17 +2456,6 @@ msgstr "பின்வரும் ஆதாரங்கள் நிறுவ�
 msgid "The following trackers are not logged in:"
 msgstr "பின்வரும் டிராக்கர்கள் உள்நுழையவில்லை:"
 
-#: src/features/reader/services/ReaderControls.ts
-msgid ""
-"The next chapter has a different scanlator then the current one.\n"
-"Current: {currentScanlator}\n"
-"Next: {nextScanlator}"
-msgstr ""
-"அடுத்த அத்தியாயத்தில் வேறுபட்ட ச்கேன்லேட்டர் உள்ளது.\n"
-" நடப்பு: {currentScanlator}}\n"
-" அடுத்து: {nextScanlator}}\n"
-""
-
 #: src/features/backup/screens/Backup.tsx
 msgid "The path to the directory on the server where automated backups should get saved in"
 msgstr "தானியங்கி காப்புப்பிரதிகள் சேமிக்கப்பட வேண்டிய சேவையகத்தில் கோப்பகத்திற்கான பாதை"
@@ -2530,17 +2471,6 @@ msgstr "உள்ளக மூல கோப்புகள் சேமிக்
 #: src/features/settings/screens/WebUISettings.tsx
 msgid "The path to the electron installation on the server"
 msgstr "சேவையகத்தில் எலக்ட்ரான் நிறுவலுக்கான பாதை"
-
-#: src/features/reader/services/ReaderControls.ts
-msgid ""
-"The previous chapter has a different scanlator then the current one.\n"
-"Previous: {nextScanlator}\n"
-"Current: {currentScanlator}"
-msgstr ""
-"முந்தைய அத்தியாயத்தில் வேறுபட்ட ச்கேன்லேட்டர் உள்ளது.\n"
-" முந்தைய: {nextScanlator}}\n"
-" நடப்பு: {currentScanlator}}\n"
-""
 
 #: src/features/theme/components/CreateThemeDialog.tsx
 msgid "The theme name must be unique and has a limit of 16 characters"
@@ -2839,10 +2769,6 @@ msgstr "வேடிக்கை"
 msgid "Warning"
 msgstr "எச்சரிக்கை"
 
-#: src/features/settings/screens/Appearance.tsx
-msgid "Weblate"
-msgstr "வலைபெயர்ப்பு"
-
 #: src/features/manga/Manga.constants.ts
 #: src/features/reader/settings/ReaderSettings.constants.tsx
 msgid "Webtoon"
@@ -2911,10 +2837,6 @@ msgstr "அதே பெயருடன் உங்கள் நூலகத்
 #: src/features/history/screens/History.tsx
 msgid "You have not read any series yet."
 msgstr "நீங்கள் இதுவரை எந்த தொடரும் படிக்கவில்லை."
-
-#: src/features/browse/extensions/Extensions.tsx
-msgid "You have to add a extension repository to be able to install extensions"
-msgstr "நீட்டிப்புகளை நிறுவ நீங்கள் ஒரு நீட்டிப்பு களஞ்சியத்தை சேர்க்க வேண்டும்"
 
 #: src/features/settings/Settings.constants.ts
 msgid "Your browser will prompt you to enter credentials with a dialog."

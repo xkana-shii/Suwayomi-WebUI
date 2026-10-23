@@ -58,8 +58,10 @@ import {
     type UpdateMangaCategoriesPatchInput,
 } from '@/lib/graphql/generated/graphql-base.types.ts';
 import { GET_MANGAS_CHAPTER_IDS_WITH_STATE } from '@/lib/graphql/chapter/ChapterQuery.ts';
-import { getMangaMetadata } from '@/features/manga/services/MangaMetadata.ts';
 import { filterChapters } from '@/features/chapter/utils/ChapterList.util.tsx';
+import mapValues from 'lodash/fp/mapValues';
+import { getMangaMetadata } from '@/features/manga/services/MangaMetadata.ts';
+import { SubpathUtil } from '@/lib/utils/SubpathUtil.ts';
 
 const I18N_PLURAL = 9999;
 
@@ -119,8 +121,8 @@ export class Mangas {
         });
     }
 
-    static isNotDownloaded({ downloadCount }: MangaDownloadInfo): boolean {
-        return downloadCount === 0;
+    static isNotDownloaded({ downloadCount, chapters: { totalCount } }: MangaDownloadInfo): boolean {
+        return totalCount > 0 && downloadCount === 0;
     }
 
     static getNotDownloaded<Mangas extends MangaDownloadInfo>(mangas: Mangas[]): Mangas[] {
@@ -128,7 +130,7 @@ export class Mangas {
     }
 
     static isFullyDownloaded({ downloadCount, chapters: { totalCount } }: MangaDownloadInfo): boolean {
-        return downloadCount === totalCount;
+        return totalCount > 0 && downloadCount === totalCount;
     }
 
     static getFullyDownloaded<Mangas extends MangaDownloadInfo>(mangas: Mangas[]): Mangas[] {
@@ -136,7 +138,11 @@ export class Mangas {
     }
 
     static isPartiallyDownloaded(manga: MangaDownloadInfo): boolean {
-        return !Mangas.isNotDownloaded(manga) && !Mangas.isFullyDownloaded(manga);
+        const {
+            chapters: { totalCount },
+        } = manga;
+
+        return totalCount > 0 && !Mangas.isNotDownloaded(manga) && !Mangas.isFullyDownloaded(manga);
     }
 
     static getPartiallyDownloaded<Mangas extends MangaDownloadInfo>(mangas: Mangas[]): Mangas[] {
@@ -144,15 +150,15 @@ export class Mangas {
     }
 
     static isUnread({ unreadCount, chapters: { totalCount } }: MangaUnreadInfo): boolean {
-        return unreadCount === totalCount;
+        return totalCount > 0 && unreadCount === totalCount;
     }
 
     static getUnread<Mangas extends MangaUnreadInfo>(mangas: Mangas[]): Mangas[] {
         return mangas.filter(Mangas.isUnread);
     }
 
-    static isFullyRead({ unreadCount }: MangaUnreadInfo): boolean {
-        return unreadCount === 0;
+    static isFullyRead({ unreadCount, chapters: { totalCount } }: MangaUnreadInfo): boolean {
+        return totalCount > 0 && unreadCount === 0;
     }
 
     static getFullyRead<Mangas extends MangaUnreadInfo>(mangas: Mangas[]): Mangas[] {
@@ -160,7 +166,11 @@ export class Mangas {
     }
 
     static isPartiallyRead(manga: MangaUnreadInfo): boolean {
-        return !Mangas.isUnread(manga) && !Mangas.isFullyRead(manga);
+        const {
+            chapters: { totalCount },
+        } = manga;
+
+        return totalCount > 0 && !Mangas.isUnread(manga) && !Mangas.isFullyRead(manga);
     }
 
     static getPartiallyRead<Mangas extends MangaUnreadInfo>(mangas: Mangas[]): Mangas[] {
@@ -197,11 +207,17 @@ export class Mangas {
         const { data } = await requestManager.getChapters<
             GetMangasChapterIdsWithStateQuery,
             GetMangasChapterIdsWithStateQueryVariables
-        >(GET_MANGAS_CHAPTER_IDS_WITH_STATE, {
-            filter: { mangaId: { in: mangaIds }, scanlator: { notIncludesInsensitiveAny: excludedScanlators } },
-            condition: { ...state },
-            order: [{ by: ChapterOrderBy.SourceOrder }],
-        }).response;
+        >(
+            GET_MANGAS_CHAPTER_IDS_WITH_STATE,
+            {
+                filter: { mangaId: { in: mangaIds }, scanlator: { notIncludesInsensitiveAny: excludedScanlators } },
+                condition: { ...state },
+                order: [{ by: ChapterOrderBy.SourceOrder }],
+            },
+            {
+                fetchPolicy: 'network-only',
+            },
+        ).response;
 
         return data?.chapters.nodes ?? [];
     }
@@ -215,14 +231,14 @@ export class Mangas {
             'download',
             I18N_PLURAL,
             async () => {
-                const isSingleManga = mangaIds.length === 1;
-
                 // This should be cached by the time this function gets called, so it shouldn't trigger an actual request
-                const mangaResponse = await (isSingleManga
-                    ? requestManager.getManga<GetMangaMetaQuery>(GET_MANGA_META, mangaIds[0]).response
-                    : Promise.resolve(null));
-
-                const meta = mangaResponse?.data?.manga ? getMangaMetadata(mangaResponse.data.manga) : null;
+                const mangaResponses = await Promise.all(
+                    mangaIds.map((id) => requestManager.getManga<GetMangaMetaQuery>(GET_MANGA_META, id).response),
+                );
+                const mangaByMangaId = Object.groupBy(
+                    mangaResponses.map((response) => response.data?.manga).filter((manga) => manga !== undefined),
+                    (manga) => manga.id,
+                );
 
                 const [chaptersToConsider, unReadDownloadedChapters] = await Promise.all([
                     Mangas.getChapterIdsWithState(mangaIds, {
@@ -237,11 +253,24 @@ export class Mangas {
                         : [],
                 ]);
 
-                // TODO - Filter for scanlators directly in getChapterIdsWithState once fixed on the server
-                const filteredChaptersToConsider = meta ? filterChapters(chaptersToConsider, meta) : chaptersToConsider;
-                const filteredUnReadDownloadedChapters = meta
-                    ? filterChapters(unReadDownloadedChapters, meta)
-                    : unReadDownloadedChapters;
+                const chaptersToConsiderByMangaId = Object.groupBy(chaptersToConsider, (chapter) => chapter.mangaId);
+                const unReadDownloadedChaptersByMangaId = Object.groupBy(
+                    unReadDownloadedChapters,
+                    (chapter) => chapter.mangaId,
+                );
+
+                const filteredChaptersToConsiderByMangaId = mapValues((chapters) => {
+                    const { mangaId } = chapters![0]!;
+                    const manga = mangaByMangaId[mangaId]![0]!;
+
+                    return filterChapters(chapters!, getMangaMetadata(manga));
+                }, chaptersToConsiderByMangaId);
+                const filteredUnReadDownloadedChaptersByMangaId = mapValues((chapters) => {
+                    const { mangaId } = chapters![0]!;
+                    const manga = mangaByMangaId[mangaId]![0]!;
+
+                    return filterChapters(chapters!, getMangaMetadata(manga));
+                }, unReadDownloadedChaptersByMangaId);
 
                 type MangaIdToDownloadSize = [MangaId: string, DownloadSize: number | undefined];
 
@@ -250,16 +279,7 @@ export class Mangas {
                     size,
                 ]) satisfies MangaIdToDownloadSize[];
 
-                const mangaIdToChaptersToConsider = Object.groupBy(
-                    filteredChaptersToConsider,
-                    ({ mangaId }) => mangaId,
-                );
-                const mangaIdToUnReadDownloadedChapters = Object.groupBy(
-                    filteredUnReadDownloadedChapters,
-                    ({ mangaId }) => mangaId,
-                );
-
-                const mangaIdToDownloadSize = Object.entries(mangaIdToUnReadDownloadedChapters).map(
+                const mangaIdToDownloadSize = Object.entries(filteredUnReadDownloadedChaptersByMangaId).map(
                     ([mangaId, downloadedChapters = []]) => {
                         const downloadAheadSize = Math.max(
                             0,
@@ -277,7 +297,7 @@ export class Mangas {
 
                 const chaptersToDownload = mangaIdToActualDownloadSize
                     .flatMap(([mangaId, actualSize]) => {
-                        const mangaChapters = mangaIdToChaptersToConsider[Number(mangaId)] ?? [];
+                        const mangaChapters = filteredChaptersToConsiderByMangaId[Number(mangaId)] ?? [];
 
                         if (!mangaChapters.length) {
                             return [];
@@ -415,12 +435,13 @@ export class Mangas {
         const sourceIds = uniq(mangas.map((manga) => manga.sourceId));
 
         MigrationManager.selectSources(sourceIds);
-        MigrationManager.selectMangas(mangas);
+        MigrationManager.selectMangas(mangas, {
+            pathname: SubpathUtil.getPathname(),
+            search: document.location.search,
+            hash: document.location.hash,
+        });
 
-        const isBulkMigration = mangas.length > 1;
-        if (isBulkMigration) {
-            ReactRouter.navigate(AppRoutes.migrate.path);
-        }
+        ReactRouter.navigate(AppRoutes.migrate.path);
     }
 
     private static async executeAction(

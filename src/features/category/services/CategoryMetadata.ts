@@ -8,11 +8,12 @@
 
 import { useEffect, useMemo } from 'react';
 import {
-    requestCategoryMetadataUpdate,
     requestBatchCategoryMetadataUpdate,
+    requestCategoryMetadataUpdate,
 } from '@/features/metadata/services/MetadataUpdater.ts';
 import { defaultPromiseErrorHandler } from '@/lib/DefaultPromiseErrorHandler.ts';
 import type { LibraryOptions } from '@/features/library/Library.types.ts';
+import { FilterMode } from '@/features/library/Library.types.ts';
 import type { CategoryIdInfo, CategoryMetadataKeys, ICategoryMetadata } from '@/features/category/Category.types.ts';
 import { convertFromGqlMeta } from '@/features/metadata/services/MetadataConverter.ts';
 import { getMetadataFrom } from '@/features/metadata/services/MetadataReader.ts';
@@ -20,6 +21,7 @@ import type {
     AllowedMetadataValueTypes,
     GqlMetaHolder,
     Metadata,
+    MetadataBulkParams,
     MetadataHolder,
 } from '@/features/metadata/Metadata.types.ts';
 
@@ -35,8 +37,12 @@ export const DEFAULT_CATEGORY_METADATA: ICategoryMetadata = {
     hasUnreadChapters: undefined,
     hasReadChapters: undefined,
     hasDuplicateChapters: undefined,
-    hasTrackerBinding: {},
+    hasTrackerBinding: {
+        filters: {},
+        mode: FilterMode.OR,
+    },
     hasStatus: {} as LibraryOptions['hasStatus'],
+    hasSource: {},
 };
 
 const convertAppMetadataToGqlMetadata = (
@@ -45,6 +51,7 @@ const convertAppMetadataToGqlMetadata = (
     ...metadata,
     hasTrackerBinding: metadata.hasTrackerBinding ? JSON.stringify(metadata.hasTrackerBinding) : undefined,
     hasStatus: metadata.hasStatus ? JSON.stringify(metadata.hasStatus) : undefined,
+    hasSource: metadata.hasSource ? JSON.stringify(metadata.hasSource) : undefined,
 });
 
 const getCategoryMetadataWithDefaultValueFallback = (
@@ -77,10 +84,7 @@ export const useGetCategoryMetadata = (
     return useMemo(() => metadata, [metaHolder, defaultMetadata]);
 };
 
-export const updateCategoryMetadata = async <
-    MetadataKeys extends CategoryMetadataKeys = CategoryMetadataKeys,
-    MetadataKey extends MetadataKeys = MetadataKeys,
->(
+export const updateCategoryMetadata = async <MetadataKey extends CategoryMetadataKeys = CategoryMetadataKeys>(
     category: CategoryIdInfo & GqlMetaHolder,
     metadataKey: MetadataKey,
     value: ICategoryMetadata[MetadataKey],
@@ -89,23 +93,15 @@ export const updateCategoryMetadata = async <
         update: [[metadataKey, convertAppMetadataToGqlMetadata({ [metadataKey]: value })[metadataKey]]],
     });
 
-export const batchUpdateCategoryMetadata = async <
-    MetadataKeys extends CategoryMetadataKeys = CategoryMetadataKeys,
-    MetadataKey extends MetadataKeys = MetadataKeys,
->(
-    updates: Array<{
-        categories: (CategoryIdInfo & GqlMetaHolder)[];
-        entries: Array<{ metadataKey: MetadataKey; value: ICategoryMetadata[MetadataKey] }>;
-    }>,
+export const batchUpdateCategoryMetadata = async (
+    updates: MetadataBulkParams<'categories', CategoryIdInfo, ICategoryMetadata>[],
 ): Promise<void> =>
     requestBatchCategoryMetadataUpdate(
-        updates.map(({ categories, entries }) => ({
+        updates.map(({ categories, update, delete: keysToDelete }) => ({
             categories,
             options: {
-                update: entries.map(({ metadataKey, value }) => [
-                    metadataKey,
-                    convertAppMetadataToGqlMetadata({ [metadataKey]: value })[metadataKey],
-                ]),
+                update: update?.map(({ key, value }) => [key, convertAppMetadataToGqlMetadata({ [key]: value })[key]]),
+                delete: keysToDelete,
             },
         })),
     );

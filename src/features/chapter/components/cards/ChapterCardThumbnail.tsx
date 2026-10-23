@@ -11,21 +11,59 @@ import { AppRoutes } from '@/base/AppRoute.constants.ts';
 import { Mangas } from '@/features/manga/services/Mangas.ts';
 import type { MangaIdInfo, MangaThumbnailInfo, MangaTitleInfo } from '@/features/manga/Manga.types.ts';
 import { ListCardAvatar } from '@/base/components/lists/cards/ListCardAvatar.tsx';
+import type { ComponentProps } from 'react';
+import merge from 'lodash/fp/merge';
 
 export const ChapterCardThumbnail = ({
     mangaId,
     mangaTitle,
     thumbnailUrl,
     thumbnailUrlLastFetched,
+    isGroup,
+    slots,
 }: MangaThumbnailInfo & {
     mangaId: MangaIdInfo['id'];
     mangaTitle: MangaTitleInfo['title'];
+    isGroup?: boolean;
+    slots?: {
+        listCardAvatar?: Omit<ComponentProps<typeof ListCardAvatar>, 'alt' | 'iconUrl'>;
+    };
 }) => (
-    <Link to={AppRoutes.manga.path(mangaId)} style={{ textDecoration: 'none' }}>
+    <Link
+        to={AppRoutes.manga.path(mangaId)}
+        style={{ textDecoration: 'none' }}
+        onClick={(e) => {
+            e.stopPropagation();
+        }}
+    >
         <ListCardAvatar
             iconUrl={Mangas.getThumbnailUrl({ thumbnailUrl, thumbnailUrlLastFetched })}
             alt={mangaTitle}
-            slots={{ spinnerImageProps: { imgStyle: { imageRendering: 'pixelated' } } }}
+            slots={merge(
+                {
+                    spinnerImageProps: { imgStyle: { imageRendering: 'pixelated' } },
+                    ...(isGroup
+                        ? {
+                              spinnerImageProps: {
+                                  spinnerStyle: {
+                                      height: 74,
+                                      aspectRatio: '3 / 4',
+                                  },
+                                  imgStyle: {
+                                      height: 74,
+                                      aspectRatio: '3 / 4',
+                                  },
+                              },
+                              avatarProps: {
+                                  sx: {
+                                      height: 74,
+                                  },
+                              },
+                          }
+                        : {}),
+                },
+                slots?.listCardAvatar?.slots,
+            )}
         />
     </Link>
 );

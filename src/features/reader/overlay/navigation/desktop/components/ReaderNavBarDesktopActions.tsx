@@ -15,7 +15,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useLingui } from '@lingui/react/macro';
 import { CustomTooltip } from '@/base/components/CustomTooltip.tsx';
 import { Chapters } from '@/features/chapter/services/Chapters.ts';
-import { DownloadStateIndicator } from '@/base/components/downloads/DownloadStateIndicator.tsx';
+import { DownloadStateIndicatorCircular } from '@/base/components/downloads/DownloadStateIndicatorCircular.tsx';
 import { ReaderLibraryButton } from '@/features/reader/overlay/navigation/components/ReaderLibraryButton.tsx';
 import { ReaderBookmarkButton } from '@/features/reader/overlay/navigation/components/ReaderBookmarkButton.tsx';
 import { ReaderFillermarkButton } from '@/features/reader/overlay/navigation/components/ReaderFillermarkButton.tsx';
@@ -27,8 +27,12 @@ import {
     getReaderPagesStore,
     useReaderChaptersStore,
     useReaderPagesStore,
+    useReaderStore,
 } from '@/features/reader/stores/ReaderStore.ts';
 import type { ChapterDownloadInfo, ChapterIdInfo } from '@/features/chapter/Chapter.types.ts';
+import { defaultPromiseErrorHandler } from '@/lib/DefaultPromiseErrorHandler.ts';
+import ShareIcon from '@mui/icons-material/Share';
+import { ShareGuard } from '@/base/components/guard/ShareGuard.tsx';
 
 const DownloadButton = ({ id = -1, isDownloaded }: ChapterIdInfo & ChapterDownloadInfo) => {
     const { t } = useLingui();
@@ -48,7 +52,7 @@ const DownloadButton = ({ id = -1, isDownloaded }: ChapterIdInfo & ChapterDownlo
     }
 
     if (downloadStatus) {
-        return <DownloadStateIndicator chapterId={downloadStatus.chapter.id} />;
+        return <DownloadStateIndicatorCircular chapterId={downloadStatus.chapter.id} />;
     }
 
     return (
@@ -65,8 +69,10 @@ const DownloadButton = ({ id = -1, isDownloaded }: ChapterIdInfo & ChapterDownlo
 };
 
 export const ReaderNavBarDesktopActions = memo(() => {
-    const { id, isDownloaded, isBookmarked, isFillermarked, realUrl } = useReaderChaptersStore((state) => ({
+    const mangaTitle = useReaderStore((state) => state.manga?.title);
+    const { id, name, isDownloaded, isBookmarked, isFillermarked, realUrl } = useReaderChaptersStore((state) => ({
         id: state.currentChapter?.id ?? FALLBACK_CHAPTER.id,
+        name: state.currentChapter?.name ?? FALLBACK_CHAPTER.name,
         isDownloaded: state.currentChapter?.isDownloaded ?? FALLBACK_CHAPTER.isDownloaded,
         isBookmarked: state.currentChapter?.isBookmarked ?? FALLBACK_CHAPTER.isBookmarked,
         isFillermarked: state.currentChapter?.isFillermarked ?? FALLBACK_CHAPTER.isFillermarked,
@@ -123,6 +129,24 @@ export const ReaderNavBarDesktopActions = memo(() => {
                     <IconWebView />
                 </IconButton>
             </CustomTooltip>
+            <ShareGuard>
+                <CustomTooltip title={t`Share`} disabled={!realUrl}>
+                    <IconButton
+                        color="inherit"
+                        disabled={!realUrl}
+                        onClick={() =>
+                            navigator
+                                .share({
+                                    title: `${mangaTitle} — ${name}`,
+                                    url: realUrl ?? undefined,
+                                })
+                                .catch(defaultPromiseErrorHandler('MangaToolbarMenu::share'))
+                        }
+                    >
+                        <ShareIcon />
+                    </IconButton>
+                </CustomTooltip>
+            </ShareGuard>
         </Stack>
     );
 });

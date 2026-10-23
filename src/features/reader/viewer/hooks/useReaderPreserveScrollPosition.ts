@@ -12,9 +12,9 @@ import type {
     IReaderSettingsManga,
     ReaderPageScaleMode,
     ReaderStateChapters,
-    ReadingDirection,
     ReadingMode,
 } from '@/features/reader/Reader.types.ts';
+import { ReadingDirection } from '@/features/reader/Reader.types.ts';
 import {
     isContinuousReadingMode,
     isContinuousVerticalReadingMode,
@@ -164,10 +164,14 @@ const useScrollPreservationData = (
                 updateObservation(entry.removedNodes, (element) => intersectionObserver.unobserve(element));
             }
         });
+
         mutationObserver.observe(scrollElement, {
             childList: true,
             subtree: true,
         });
+
+        updateObservation(scrollElement.childNodes, (element) => intersectionObserver.observe(element));
+
         return () => {
             mutationObserver.disconnect();
             intersectionObserver.disconnect();
@@ -177,7 +181,11 @@ const useScrollPreservationData = (
     return dataRef;
 };
 
-const usePreserveOnLeadingPageRender = (scrollElementRef: RefObject<HTMLElement | null>, readingMode: ReadingMode) => {
+const usePreserveOnLeadingPageRender = (
+    scrollElementRef: RefObject<HTMLElement | null>,
+    readingMode: ReadingMode,
+    readingDirection: ReadingDirection,
+) => {
     const preservationDataRef = useScrollPreservationData(scrollElementRef);
 
     const isContinuousReadingModeActive = isContinuousReadingMode(readingMode);
@@ -186,7 +194,7 @@ const usePreserveOnLeadingPageRender = (scrollElementRef: RefObject<HTMLElement 
     useEffect(() => {
         const scrollElement = scrollElementRef.current;
 
-        if (!scrollElement || !isContinuousReadingModeActive) {
+        if (!scrollElement || !isContinuousReadingModeActive || isContinuousVerticalReadingModeActive) {
             return () => {};
         }
 
@@ -212,7 +220,9 @@ const usePreserveOnLeadingPageRender = (scrollElementRef: RefObject<HTMLElement 
                     return entry.target.offsetTop < top;
                 }
 
-                return entry.target.offsetLeft < left;
+                return readingDirection === ReadingDirection.LTR
+                    ? entry.target.offsetLeft < left
+                    : entry.target.offsetLeft > left;
             });
 
             const includesElementsBeforeScrollPosition = !!entriesBeforeScrollPosition.length;
@@ -247,11 +257,13 @@ const usePreserveOnLeadingPageRender = (scrollElementRef: RefObject<HTMLElement 
             subtree: true,
         });
 
+        updateObservation(scrollElement.childNodes, (element) => resizeObserver.observe(element));
+
         return () => {
             mutationObserver.disconnect();
             resizeObserver.disconnect();
         };
-    }, [isContinuousReadingModeActive, isContinuousVerticalReadingModeActive]);
+    }, [isContinuousReadingModeActive, isContinuousVerticalReadingModeActive, readingDirection]);
 };
 
 const usePreserveOnInfiniteScrollPreviousChapterInitialRender = (
@@ -341,6 +353,8 @@ const usePreserveOnInfiniteScrollPreviousChapterInitialRender = (
             subtree: true,
         });
 
+        updateObservation(scrollElement.childNodes, (element) => resizeObserver.observe(element));
+
         return () => {
             mutationObserver.disconnect();
             resizeObserver.disconnect();
@@ -374,7 +388,7 @@ export const useReaderPreserveScrollPosition = (
         visibleChapters,
         isContinuousReadingMode(readingMode),
     );
-    usePreserveOnLeadingPageRender(scrollElementRef, readingMode);
+    usePreserveOnLeadingPageRender(scrollElementRef, readingMode, readingDirection);
     usePreserveOnWindowResize(readingMode, pageScaleMode, currentPageIndex);
     usePreserveOnValueChange(readingDirection, currentPageIndex);
     usePreserveOnValueChange(readingMode, currentPageIndex);

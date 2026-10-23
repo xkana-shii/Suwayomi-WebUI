@@ -12,11 +12,11 @@ import { ReaderSettingProgressBarType } from '@/features/reader/overlay/progress
 import { ReaderSettingProgressBarSize } from '@/features/reader/overlay/progress-bar/settings/components/ReaderSettingProgressBarSize.tsx';
 import { ReaderSettingProgressBarPosition } from '@/features/reader/overlay/progress-bar/settings/components/ReaderSettingProgressBarPosition.tsx';
 import type { IReaderSettings, ReaderSettingsTypeProps } from '@/features/reader/Reader.types.ts';
-import { ProgressBarType, ReaderOverlayMode } from '@/features/reader/Reader.types.ts';
 import { ReaderSettingOverlayMode } from '@/features/reader/overlay/settings/ReaderSettingOverlayMode.tsx';
 import { CheckboxInput } from '@/base/components/inputs/CheckboxInput.tsx';
 import { ReaderSettingBackgroundColor } from '@/features/reader/settings/general/components/ReaderSettingBackgroundColor.tsx';
 import { ReaderSettingSafeAreaInset } from '@/features/reader/settings/general/components/ReaderSettingSafeAreaInset.tsx';
+import { ReaderService } from '@/features/reader/services/ReaderService.ts';
 
 export const ReaderGeneralSettings = ({
     overlayMode,
@@ -34,7 +34,8 @@ export const ReaderGeneralSettings = ({
             />
             <ReaderSettingBackgroundColor
                 backgroundColor={settings.backgroundColor}
-                updateSetting={(value) => updateSetting('backgroundColor', value)}
+                useAutoBackgroundColorContinuousMode={settings.useAutoBackgroundColorContinuousMode}
+                updateSetting={(...args) => updateSetting(...args)}
             />
             <ReaderSettingProgressBarType
                 overlayMode={overlayMode}
@@ -53,13 +54,28 @@ export const ReaderGeneralSettings = ({
                 progressBarPositionAutoVertical={settings.progressBarPositionAutoVertical}
                 updateSetting={updateSetting}
             />
-            {(settings.progressBarType === ProgressBarType.HIDDEN || overlayMode === ReaderOverlayMode.MOBILE) && (
-                <CheckboxInput
-                    label={t`Show page number`}
-                    checked={settings.shouldShowPageNumber}
-                    onChange={(_, checked) => updateSetting('shouldShowPageNumber', checked)}
-                />
-            )}
+            <CheckboxInput
+                label={t`Show page number`}
+                checked={settings.shouldShowPageNumber}
+                onChange={(_, checked) => updateSetting('shouldShowPageNumber', checked)}
+            />
+            <CheckboxInput
+                label={t`Fullscreen`}
+                checked={settings.shouldEnterFullscreen}
+                onChange={(_, checked) => {
+                    updateSetting('shouldEnterFullscreen', checked);
+
+                    if (!onDefault) {
+                        return;
+                    }
+
+                    if (checked) {
+                        ReaderService.enterFullscreen();
+                    } else {
+                        ReaderService.exitFullscreen(undefined, true);
+                    }
+                }}
+            />
             <ReaderSettingSafeAreaInset
                 safeAreaInset={settings.safeAreaInset}
                 updateSetting={(value) => updateSetting('safeAreaInset', value)}

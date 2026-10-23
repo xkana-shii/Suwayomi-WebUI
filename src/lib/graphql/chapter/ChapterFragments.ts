@@ -7,7 +7,7 @@
  */
 
 import gql from 'graphql-tag';
-import { MANGA_BASE_FIELDS } from '@/lib/graphql/manga/MangaFragments.ts';
+import { MANGA_BASE_FIELDS, MANGA_CHAPTER_STAT_FIELDS } from '@/lib/graphql/manga/MangaFragments.ts';
 
 export const CHAPTER_META_FIELDS = gql`
     fragment CHAPTER_META_FIELDS on ChapterMetaType {
@@ -72,12 +72,14 @@ export const CHAPTER_LIST_FIELDS = gql`
 export const CHAPTER_UPDATE_LIST_FIELDS = gql`
     ${CHAPTER_LIST_FIELDS}
     ${MANGA_BASE_FIELDS}
+    ${MANGA_CHAPTER_STAT_FIELDS}
 
     fragment CHAPTER_UPDATE_LIST_FIELDS on ChapterType {
         ...CHAPTER_LIST_FIELDS
 
         manga {
             ...MANGA_BASE_FIELDS
+            ...MANGA_CHAPTER_STAT_FIELDS
         }
     }
 `;
@@ -85,12 +87,14 @@ export const CHAPTER_UPDATE_LIST_FIELDS = gql`
 export const CHAPTER_HISTORY_LIST_FIELDS = gql`
     ${CHAPTER_LIST_FIELDS}
     ${MANGA_BASE_FIELDS}
+    ${MANGA_CHAPTER_STAT_FIELDS}
 
     fragment CHAPTER_HISTORY_LIST_FIELDS on ChapterType {
         ...CHAPTER_LIST_FIELDS
 
         manga {
             ...MANGA_BASE_FIELDS
+            ...MANGA_CHAPTER_STAT_FIELDS
         }
     }
 `;

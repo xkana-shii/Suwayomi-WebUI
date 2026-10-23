@@ -34,6 +34,7 @@ export type TChapterReader = ChapterReaderFieldsFragment;
 
 export type ChapterAction =
     | 'download'
+    | 'download_cancel'
     | 'delete'
     | 'bookmark'
     | 'unbookmark'

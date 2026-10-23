@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-01-12T20:43:50.871Z\n"
-"PO-Revision-Date: 2026-05-18 11:57+0000\n"
-"Last-Translator: asqwas <zerory3@gmail.com>\n"
+"PO-Revision-Date: 2026-07-15 02:01+0000\n"
+"Last-Translator: jsyoon <f0gg0m@gmail.com>\n"
 "Language-Team: Korean <https://hosted.weblate.org/projects/suwayomi/suwayomi-"
 "webui/ko/>\n"
 "Language: ko\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 2026.6.dev0\n"
+"X-Generator: Weblate 2026.8.dev0\n"
 "X-Message-Format: ICU\n"
 
 #: src/features/navigation-bar/NavigationBar.constants.ts
@@ -27,17 +27,13 @@ msgstr "{progress}% | 업데이트중…"
 msgid "*: Active setting"
 msgstr "*: 활성 설정"
 
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "<0>Suwayomi does not provide any support for 3rd party repositories or extensions!</0><1/>Use with caution as there could be malicious actors making those repositories.<2/>You as the user need to verify the security and that you trust any repository or extension."
-msgstr "<0>Suwayomi는 서드파티 저장소나 확장 기능에 대해 어떠한 지원도 제공하지 않습니다!</0><1/>해당 저장소는 악의적인 제작자가 만들었을 수도 있으므로 주의해서 사용하세요.<2/>사용자인 여러분이 해당 저장소나 확장 기능의 보안과 신뢰성을 직접 확인해야 합니다."
-
 #: src/features/settings/Settings.constants.ts
 msgid "A preview focused web frontend built with svelte"
 msgstr "스벨트로 구축된 미리보기 중심 웹 프론트엔드"
 
 #: src/features/library/components/LibraryOptionsPanel.tsx
-msgid "A-Z"
-msgstr "A-Z"
+msgid "A—Z"
+msgstr "A—Z"
 
 #: src/features/navigation-bar/NavigationBar.constants.ts
 #: src/features/settings/screens/About.tsx
@@ -64,14 +60,6 @@ msgstr "추가"
 #: src/features/chapter/Chapter.constants.ts
 msgid "Add bookmark"
 msgstr "북마크 추가"
-
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Add repositories from which extensions can be installed"
-msgstr "확장 기능을 설치할 저장소를 추가합니다"
-
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Add repository"
-msgstr "저장소 추가"
 
 #: src/features/manga/components/details/MangaDetails.tsx
 #: src/features/manga/components/MangaBadges.tsx
@@ -114,11 +102,6 @@ msgstr "모두 다운로드"
 #: src/features/downloads/screens/DownloadSettings.tsx
 msgid "Allow deleting bookmarked chapters"
 msgstr "북마크된 챕터 삭제 허용"
-
-#: src/base/components/inputs/LanguageSelect.tsx
-#: src/features/source/components/SourceLanguageSelect.tsx
-msgid "Allowed Languages"
-msgstr "허용된 언어"
 
 #: src/features/reader/filters/settings/components/ReaderSettingRGBA.tsx
 msgid "Alpha"
@@ -268,7 +251,7 @@ msgstr "동작"
 
 #: src/features/settings/Settings.constants.ts
 msgid "Binary"
-msgstr "Binary"
+msgstr "바이너리"
 
 #: src/features/settings/screens/ServerSettings.tsx
 msgid "Binary file size"
@@ -526,10 +509,6 @@ msgstr "색상 필터 혼합 모드"
 msgid "Comfortable grid"
 msgstr "편안한 그리드"
 
-#: src/features/manga/Manga.constants.ts
-msgid "Comic"
-msgstr "만화"
-
 #: src/base/components/GridLayouts.tsx
 #: src/features/library/components/LibraryOptionsPanel.tsx
 msgid "Compact grid"
@@ -537,7 +516,7 @@ msgstr "작은 그리드"
 
 #: src/features/settings/screens/ServerSettings.tsx
 msgid "Compatible"
-msgstr "Compatible"
+msgstr "호환됨"
 
 #: src/features/manga/Manga.constants.ts
 msgid "Completed"
@@ -572,19 +551,16 @@ msgid ""
 "Controls the MimeType that Suwayomi sends in OPDS entries for CBZ archives. Also affects global CBZ download.\n"
 "Modern follows recent IANA standard (2017), while LEGACY (deprecated mimetype for .cbz) and COMPATIBLE (deprecated mimetype for all comic archives) might be more compatible with older clients."
 msgstr ""
-"Suwayomi가 CBZ 아카이브용 OPDS 항목에 전송하는 MimeType을 제어합니다. 또한 전체 CBZ 다운로드에도 영향을 미칩니다.\n"
-"Modern은 최근 IANA 표준(2017)을 따르는 반면, LEGACY(.cbz에 사용되는 더 이상 사용되지 않는 MIME 유형) 및 COMPATIBLE(모든 만화 아카이브에 사용되는 더 이상 사용되지 않는 MIME 유형)은 이전 클라이언트와의 호환성이 더 높을 수 있습니다.\n"
-""
+"Suwayomi가 CBZ 아카이브용 OPDS 항목에 전송하는 MimeType을 제어합니다. 또한 "
+"전체 CBZ 다운로드에도 영향을 미칩니다.\n"
+"Modern은 최근 IANA 표준(2017)을 따르는 반면, LEGACY(.cbz에 사용되는 더 이상 "
+"사용되지 않는 MIME 유형) 및 COMPATIBLE(모든 만화 아카이브에 사용되는 더 이상 "
+"사용되지 않는 MIME 유형)은 이전 클라이언트와의 호환성이 더 높을 수 있습니다."
 
 #: src/features/settings/Settings.constants.ts
 #: src/features/settings/Settings.constants.ts
 msgid "Convert images to different formats"
 msgstr "이미지를 다른 형식으로 변환합니다"
-
-#: src/features/manga/components/details/MangaDetails.tsx
-#: src/features/reader/overlay/mobile/ReaderOverlayHeaderMobile.tsx
-msgid "Copied to clipboard"
-msgstr "클립보드에 복사됨"
 
 #: src/features/manga/components/details/MangaDetails.tsx
 #: src/features/migration/components/MigrationSingleMangaDialog.tsx
@@ -664,10 +640,6 @@ msgstr "다운로드 대기열에서 모든 항목을 제거할 수 없습니다
 #: src/features/library/screens/LibrarySettings.tsx
 msgid "Could not remove non library manga from categories"
 msgstr "라이브러리에 없는 만화를 카테고리에서 제거할 수 없습니다"
-
-#: src/features/downloads/components/DownloadQueueChapterCard.tsx
-msgid "Could not remove the download from the queue."
-msgstr "대기열에서 다운로드를 제거할 수 없습니다."
 
 #: src/features/backup/screens/Backup.tsx
 #: src/features/backup/screens/Backup.tsx
@@ -1118,10 +1090,6 @@ msgstr "이전 페이지로 나가기"
 msgid "Extension info"
 msgstr "확장 정보"
 
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Extension repositories"
-msgstr "확장 저장소"
-
 #: src/features/settings/components/koreaderSync/KoreaderSyncSettings.tsx
 msgid "Failed to connect to KOReader Sync server."
 msgstr "KOReader 동기화 서버에 연결하지 못했습니다."
@@ -1176,15 +1144,12 @@ msgid ""
 "\n"
 "After changing this setting go to the \"About\" page and check for a webUI update and install it"
 msgstr ""
-"이 버전의 기능 및 변경 사항은 아직 완전히 준비되지 않았으며 버그가 발생할 수 있습니다.\n"
+"이 버전의 기능 및 변경 사항은 아직 완전히 준비되지 않았으며 버그가 발생할 수 "
+"있습니다.\n"
 "라이브러리 손실을 방지하려면 자동 백업을 활성화하세요!\n"
 "\n"
-"이 설정을 변경한 후 \"정보\" 페이지로 이동하여 webUI 업데이트를 확인하고 설치하세요\n"
-""
-
-#: src/features/settings/screens/Appearance.tsx
-msgid "Feel free to translate the project on"
-msgstr "프로젝트 번역에 참여하세요"
+"이 설정을 변경한 후 \"정보\" 페이지로 이동하여 webUI 업데이트를 확인하고 "
+"설치하세요"
 
 #: src/features/downloads/components/DeleteChaptersWhileReadingSetting.tsx
 msgid "Fifth to last read chapter"
@@ -1429,8 +1394,7 @@ msgid ""
 "Set the target mode to disabled to prevent processing for a MIME-Type"
 msgstr ""
 "MIME 유형이 지정되지 않으면 \"기본\" 설정으로 처리됩니다.\n"
-"특정 MIME 유형을 처리하고 싶지 않다면 대상 모드를 \"비활성\"으로 설정하십시오.\n"
-""
+"특정 MIME 유형을 처리하고 싶지 않다면 대상 모드를 \"비활성\"으로 설정하십시오"
 
 #: src/features/manga/components/details/MangaDetails.tsx
 #: src/features/manga/components/MangaBadges.tsx
@@ -1509,10 +1473,6 @@ msgstr "잘못된 입력"
 #: src/features/theme/components/CreateThemeDialog.tsx
 msgid "Invalid json"
 msgstr "잘못된 JSON"
-
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Invalid repository url"
-msgstr "잘못된 저장소 URL"
 
 #: src/features/reader/filters/settings/components/ReaderSettingInvert.tsx
 msgid "Invert"
@@ -1713,12 +1673,6 @@ msgstr "로그아웃"
 msgid "Logged in"
 msgstr "로그인됨"
 
-#: src/features/manga/Manga.constants.ts
-#: src/features/manga/Manga.constants.ts
-#: src/features/manga/Manga.constants.ts
-msgid "Long strip"
-msgstr "긴 스트립"
-
 #: src/features/device/screens/DeviceSetting.tsx
 msgid ""
 "Manage your existing devices.\n"
@@ -1727,8 +1681,7 @@ msgid ""
 msgstr ""
 "기존 기기를 관리하세요. \n"
 "서버에 저장된 UI별 설정은 기기별로 적용됩니다\n"
-"이를 통해 데스크톱과 스마트폰에서 다른 설정을 가질 수 있습니다\n"
-""
+"이를 통해 데스크톱과 스마트폰에서 다른 설정을 가질 수 있습니다"
 
 #: src/features/manga/Manga.constants.ts
 #: src/features/manga/screens/Manga.tsx
@@ -2154,7 +2107,7 @@ msgstr "진행률 표시줄 스타일"
 
 #: src/features/settings/Settings.constants.ts
 msgid "Prompt"
-msgstr "Prompt"
+msgstr "프롬프트"
 
 #: src/features/manga/Manga.constants.ts
 msgid "Publishing finished"
@@ -2403,8 +2356,7 @@ msgid ""
 "Limit search to your lists via \"my:<Title>\" (e.g. \"my:One Piece\")"
 msgstr ""
 "\"id:<ID>\"로 ID를 검색하세요(예: \"id:13\")\n"
-"\"my:<Title>\"로 검색 범위를 제한하세요(예: \"my:One Piece\")\n"
-""
+"\"my:<Title>\"로 검색 범위를 제한하세요(예: \"my:One Piece\")"
 
 #: src/features/library/screens/LibrarySettings.tsx
 msgid "Search results will include manga that do not match the current filters"
@@ -2421,13 +2373,12 @@ msgstr "설정 방법에 대한 자세한 내용은 <0>FlareSolverr</0>를 참�
 #: src/features/theme/components/CreateThemeDialog.tsx
 msgid "See the official <0>MUI documentation</0> for how to customize the theme.<1/>The palette API is not supported, you have to use the new <2>color schemes API</2>.<3/><4/>You can use theme creators like <5>MUI Theme Creator</5>, however, you have to adjust the created object according to the new color schemes API.<6/><7/>In case no background is defined, a background will be calculated based on the primary color."
 msgstr ""
-"테마를 사용자 지정하는 방법은 공식 <0>MUI 문서</0>를 참조하세요.\n"
-"팔레트 API는 지원되지 않으며, 새로운 <1>색상 스키마 API</1>를 사용해야 합니다.\n"
-"\n"
-"<2>MUI Theme Creator</2>와 같은 테마 생성기를 사용할 수 있지만, 생성된 객체를 새로운 색상 스키마 API에 맞게 조정해야 합니다.\n"
-"\n"
-"배경이 정의되지 않은 경우, 기본 색상을 기반으로 배경이 계산됩니다\n"
-""
+"테마를 사용자 지정하는 방법은 공식 <0>MUI 문서</0>를 참조하십시오.<1/>"
+"palette API는 지원되지 않으므로 새로운 <2>color schemes API</2>를 사용해야 "
+"합니다.<3/><4/><5>MUI Theme Creator</5>와 같은 테마 생성 도구를 사용할 수 "
+"있지만, 생성된 객체를 새로운 color schemes API에 맞게 조정해야 합니다.<6/>"
+"<7/>배경이 정의되지 않은 경우, 기본 색상(primary color)을 기반으로 배경이 "
+"자동 계산됩니다."
 
 #: src/features/chapter/components/actions/ChapterActionMenuItems.tsx
 #: src/features/chapter/components/cards/ChapterCard.tsx
@@ -2638,8 +2589,7 @@ msgid ""
 "An error occurred that we cannot recover from"
 msgstr ""
 "문제가 발생했습니다\n"
-"복구할 수 없는 오류가 발생했습니다\n"
-""
+"복구할 수 없는 오류가 발생했습니다"
 
 #: src/features/chapter/components/ChapterOptions.tsx
 #: src/features/library/components/LibraryOptionsPanel.tsx
@@ -2778,17 +2728,6 @@ msgstr "로그인은 클라이언트 측에서 처리합니다."
 msgid "The login will be handled by the server."
 msgstr "로그인은 서버에서 처리됩니다."
 
-#: src/features/reader/services/ReaderControls.ts
-msgid ""
-"The next chapter has a different scanlator then the current one.\n"
-"Current: {currentScanlator}\n"
-"Next: {nextScanlator}"
-msgstr ""
-"다음 챕터의 스캔 번역자가 현재 챕터와 다릅니다.\n"
-"현재: {currentScanlator} \n"
-"다음: {nextScanlator}\n"
-""
-
 #: src/features/backup/screens/Backup.tsx
 msgid "The path to the directory on the server where automated backups should get saved in"
 msgstr "자동 백업이 저장될 서버의 디렉터리 경로"
@@ -2804,17 +2743,6 @@ msgstr "서버에서 로컬 소스 파일이 저장되는 디렉터리의 경로
 #: src/features/settings/screens/WebUISettings.tsx
 msgid "The path to the electron installation on the server"
 msgstr "서버의 Electron 설치 경로"
-
-#: src/features/reader/services/ReaderControls.ts
-msgid ""
-"The previous chapter has a different scanlator then the current one.\n"
-"Previous: {nextScanlator}\n"
-"Current: {currentScanlator}"
-msgstr ""
-"이전 챕터의 스캔 번역자가 현재 챕터와 다릅니다.\n"
-"이전: {nextScanlator}\n"
-"현재: {currentScanlator}\n"
-""
 
 #: src/features/theme/components/CreateThemeDialog.tsx
 msgid "The theme name must be unique and has a limit of 16 characters"
@@ -3080,8 +3008,8 @@ msgid ""
 "To use a custom WebUI replace the content of the \"webUI\" directory in the root directory on the server with the files of the custom WebUI"
 msgstr ""
 "사용자 지정 웹 UI를 사용하세요.\n"
-"사용자 지정 웹 UI를 사용하려면 서버의 루트 디렉터리에 있는 \"webUI\" 디렉터리의 내용을 사용자 지정 웹 UI의 파일로 교체하세요\n"
-""
+"사용자 지정 웹 UI를 사용하려면 서버의 루트 디렉터리에 있는 \"webUI\" "
+"디렉터리의 내용을 사용자 지정 웹 UI의 파일로 교체하세요"
 
 #: src/features/settings/screens/ServerSettings.tsx
 msgid "Use SOCKS proxy"
@@ -3137,10 +3065,6 @@ msgstr "VUI"
 #: src/base/components/feedback/SnackbarWithDescription.tsx
 msgid "Warning"
 msgstr "경고"
-
-#: src/features/settings/screens/Appearance.tsx
-msgid "Weblate"
-msgstr "Weblate"
 
 #: src/features/manga/Manga.constants.ts
 #: src/features/reader/settings/ReaderSettings.constants.tsx
@@ -3215,10 +3139,6 @@ msgstr "라이브러리에 동일한 이름의 항목이 있습니다."
 msgid "You have not read any series yet."
 msgstr "아직 읽은 시리즈가 없습니다."
 
-#: src/features/browse/extensions/Extensions.tsx
-msgid "You have to add a extension repository to be able to install extensions"
-msgstr "확장 기능을 설치하려면 확장 저장소를 추가해야 합니다"
-
 #: src/features/settings/Settings.constants.ts
 msgid "Your browser will prompt you to enter credentials with a dialog."
 msgstr "브라우저에 자격 증명 입력 대화 상자가 나타납니다."
@@ -3247,3 +3167,1165 @@ msgstr "콘텐츠가 기기의 컷아웃 및 화면 가장자리와 겹치는 �
 #: src/features/reader/settings/ReaderSettings.constants.tsx
 msgid "Keybinds"
 msgstr "키설정"
+
+#. placeholder {0}: t(SYNC_STATE_TRANSLATION[syncState])
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "— State: {0}"
+msgstr "— 상태: {0}"
+
+#. placeholder {0}: selectedChapters.length
+#. placeholder {0}: visibleChapters.length
+#: src/features/chapter/components/ChapterList.tsx
+msgid "{0, plural, one {# chapter} other {# chapters}}"
+msgstr "{0, plural, one {# 챕터} other {# 챕터}}"
+
+#. placeholder {0}: downloadSettings.autoDownloadNewChaptersLimit
+#: src/features/downloads/screens/DownloadSettings.tsx
+msgid "{0, plural, one {# Chapter} other {# Chapters}}"
+msgstr "{0, plural, one {# 챕터} other {# 챕터}}"
+
+#. placeholder {0}: backupSettings.backupInterval
+#: src/features/backup/screens/Backup.tsx
+msgid "{0, plural, one {# day} other {# days}}"
+msgstr "{0, plural, one {# 일} other {# 일}}"
+
+#. placeholder {0}: selectedItemIds.length
+#: src/features/library/screens/Library.tsx
+msgid "{0, plural, one {# manga} other {# manga}}"
+msgstr "{0, plural, one {# 만화} other {# 만화}}"
+
+#. placeholder {0}: serverSettings.flareSolverrSessionTtl
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "{0, plural, one {# minute} other {# minutes}}"
+msgstr "{0, plural, one {# 분} other {# 분}}"
+
+#. placeholder {0}: autoScroll.value
+#. placeholder {0}: serverSettings.flareSolverrTimeout
+#: src/features/reader/auto-scroll/settings/ReaderSettingAutoScroll.tsx
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "{0, plural, one {# second} other {# seconds}}"
+msgstr "{0, plural, one {# 초} other {# 초}}"
+
+#. placeholder {0}: serverSettings.maxSourcesInParallel
+#: src/features/browse/screens/BrowseSettings.tsx
+msgid "{0, plural, one {# Source} other {# Sources}}"
+msgstr "{0, plural, one {# 소스} other {# 소스}}"
+
+#. placeholder {0}: trackersInUse.length
+#: src/features/manga/components/TrackMangaButton.tsx
+msgid "{0, plural, one {# Tracker} other {# Tracker}}"
+msgstr "{0, plural, one {# 트래커} other {# 트래커}}"
+
+#. placeholder {0}: abortedEntries.length
+#: src/features/migration/screens/MigrationExecute.tsx
+#: src/features/migration/screens/MigrationSearch.tsx
+msgid "{0, plural, one {1 aborted entry} other {# aborted entries}}"
+msgstr "{0, plural, one {1 개 중단된 항목} other {# 개 중단된 항목}}"
+
+#. placeholder {0}: noMatchEntries.length
+#: src/features/migration/screens/MigrationExecute.tsx
+#: src/features/migration/screens/MigrationSearch.tsx
+msgid "{0, plural, one {1 entry with no match} other {# entries with no match}}"
+msgstr "{0, plural, one {1 개 일치하지 않는 항목} other {# 개 일치하지 않는 항목}}"
+
+#. placeholder {0}: outdatedEntries.length
+#: src/features/migration/screens/MigrationExecute.tsx
+#: src/features/migration/screens/MigrationSearch.tsx
+msgid "{0, plural, one {1 entry with only outdated matches} other {# entries with only outdated matches}}"
+msgstr ""
+"{0, plural, one {1 개 만료된 일치 항목만 있는 항목} other {# 개 만료된 일치 "
+"항목만 있는 항목}}"
+
+#. placeholder {0}: excludedEntries.length
+#: src/features/migration/screens/MigrationExecute.tsx
+msgid "{0, plural, one {1 excluded entry} other {# excluded entries}}"
+msgstr "{0, plural, one {1 개 제외된 항목} other {# 개 제외된 항목}}"
+
+#. placeholder {0}: failedEntries.length
+#: src/features/migration/screens/MigrationExecute.tsx
+#: src/features/migration/screens/MigrationSearch.tsx
+msgid "{0, plural, one {1 failed entry} other {# failed entries}}"
+msgstr "{0, plural, one {1 개 실패한 항목} other {# 개 실패한 항목}}"
+
+#. placeholder {0}: matchedEntries.length
+#: src/features/migration/screens/MigrationSearch.tsx
+msgid "{0, plural, one {1 matched entry} other {# matched entries}}"
+msgstr "{0, plural, one {일치 항목 1개} other {일치 항목 #개}}"
+
+#. placeholder {0}: migratedEntries.length
+#: src/features/migration/screens/MigrationExecute.tsx
+msgid "{0, plural, one {1 migrated entry} other {# migrated entries}}"
+msgstr "{0, plural, one {마이그레이션된 항목 1개} other {마이그레이션된 항목 #개}}"
+
+#. placeholder {0}: migratingEntries.length
+#: src/features/migration/screens/MigrationExecute.tsx
+msgid "{0, plural, one {1 migrating entry} other {# migrating entries}}"
+msgstr ""
+"{0, plural, one {마이그레이션 중인 항목 1개} other {마이그레이션 중인 항목 "
+"#개}}"
+
+#. placeholder {0}: searchingEntries.length
+#: src/features/migration/screens/MigrationSearch.tsx
+msgid "{0, plural, one {1 searching} other {# searching}}"
+msgstr "{0, plural, one {검색 중 1개} other {검색 중 #개}}"
+
+#. placeholder {0}: autoScroll.value
+#: src/features/reader/auto-scroll/settings/quick-setting/ReaderNavBarDesktopAutoScroll.tsx
+msgid "{0, plural, one {Second} other {Seconds}}"
+msgstr "{0, plural, one {초} other {초}}"
+
+#. placeholder {0}: searchProgress.completed
+#. placeholder {1}: searchProgress.total
+#: src/features/migration/screens/MigrationSearch.tsx
+msgid "{0} / {1}"
+msgstr "{0} / {1}"
+
+#. placeholder {0}: progress.completed
+#. placeholder {1}: progress.total
+#. placeholder {2}: progress.failed > 0 ? ` (${progress.failed} failed)` : ''
+#: src/features/migration/screens/MigrationExecute.tsx
+msgid "{0} / {1}{2}"
+msgstr "{0} / {1}{2}"
+
+#. placeholder {0}: updateStatus.progress
+#: src/features/app-updates/components/WebUIUpdateChecker.tsx
+msgid "{0}% | Updating…"
+msgstr "{0}% | 업데이트중…"
+
+#: src/features/navigation-bar/NavigationBar.constants.ts
+msgid "{availableUpdates, plural, one {# update available} other {# updates available}}"
+msgstr ""
+"{availableUpdates, plural, one {업데이트 #개 사용 가능} other {업데이트 #개 "
+"사용 가능}}"
+
+#: src/features/library/screens/LibrarySettings.tsx
+msgid "{categoryCount, plural, one {# category} other {# categories}}"
+msgstr "{categoryCount, plural, one {카테고리 #개} other {카테고리 #개}}"
+
+#: src/features/manga/Manga.constants.ts
+msgid "{count, plural, one {Changed categories of manga} other {Changed categories of # manga}}"
+msgstr ""
+"{count, plural, one {만화의 카테고리를 변경했습니다} other {만화 #개의 "
+"카테고리를 변경했습니다}}"
+
+#: src/features/chapter/Chapter.constants.ts
+msgid "{count, plural, one {Chapter bookmark removed} other {# chapter bookmarks removed}}"
+msgstr ""
+"{count, plural, one {챕터 북마크를 제거했습니다} other {챕터 북마크 #개를 "
+"제거했습니다}}"
+
+#: src/features/chapter/Chapter.constants.ts
+msgid "{count, plural, one {Chapter bookmarked} other {# chapters bookmarked}}"
+msgstr ""
+"{count, plural, one {챕터를 북마크했습니다} other {챕터 #개를 "
+"북마크했습니다}}"
+
+#: src/features/chapter/Chapter.constants.ts
+msgid "{count, plural, one {Chapter deleted} other {# chapters deleted}}"
+msgstr "{count, plural, one {챕터를 삭제했습니다} other {챕터 #개를 삭제했습니다}}"
+
+#: src/features/chapter/Chapter.constants.ts
+msgid "{count, plural, one {Chapter marked as read} other {# chapters marked as read}}"
+msgstr ""
+"{count, plural, one {챕터를 읽음으로 표시했습니다} other {챕터 #개를 "
+"읽음으로 표시했습니다}}"
+
+#: src/features/chapter/Chapter.constants.ts
+msgid "{count, plural, one {Chapter marked as unread} other {# chapters marked as unread}}"
+msgstr ""
+"{count, plural, one {챕터를 읽지 않음으로 표시했습니다} other {챕터 #개를 "
+"읽지 않음으로 표시했습니다}}"
+
+#: src/features/chapter/Chapter.constants.ts
+msgid "{count, plural, one {Could not add the download} other {Could not add downloads}}"
+msgstr ""
+"{count, plural, one {다운로드를 추가할 수 없습니다} other {다운로드를 추가할 "
+"수 없습니다}}"
+
+#: src/features/chapter/Chapter.constants.ts
+msgid "{count, plural, one {Could not bookmark the chapter} other {Could not bookmark chapters}}"
+msgstr ""
+"{count, plural, one {챕터를 북마크할 수 없습니다} other {챕터를 북마크할 수 "
+"없습니다}}"
+
+#: src/features/manga/Manga.constants.ts
+msgid "{count, plural, one {Could not change the categories of the manga} other {Could not change the categories of the manga}}"
+msgstr ""
+"{count, plural, one {만화의 카테고리를 변경할 수 없습니다} other {만화의 "
+"카테고리를 변경할 수 없습니다}}"
+
+#: src/features/chapter/Chapter.constants.ts
+msgid "{count, plural, one {Could not delete the chapter} other {Could not delete chapters}}"
+msgstr ""
+"{count, plural, one {챕터를 삭제할 수 없습니다} other {챕터를 삭제할 수 "
+"없습니다}}"
+
+#: src/features/extension/Extensions.constants.ts
+msgid "{count, plural, one {Could not install the extension} other {Could not install the extensions}}"
+msgstr ""
+"{count, plural, one {확장 기능을 설치할 수 없습니다} other {확장 기능을 "
+"설치할 수 없습니다}}"
+
+#: src/features/chapter/Chapter.constants.ts
+msgid "{count, plural, one {Could not mark the chapter as read} other {Could not mark chapters as read}}"
+msgstr ""
+"{count, plural, one {챕터를 읽음으로 표시할 수 없습니다} other {챕터를 "
+"읽음으로 표시할 수 없습니다}}"
+
+#: src/features/chapter/Chapter.constants.ts
+msgid "{count, plural, one {Could not mark the chapter as unread} other {Could not mark chapters as unread}}"
+msgstr ""
+"{count, plural, one {챕터를 읽지 않음으로 표시할 수 없습니다} other {챕터를 "
+"읽지 않음으로 표시할 수 없습니다}}"
+
+#: src/features/manga/Manga.constants.ts
+msgid "{count, plural, one {Could not remove manga from the library} other {Could not remove manga from the library}}"
+msgstr ""
+"{count, plural, one {라이브러리에서 만화를 제거할 수 없습니다} other "
+"{라이브러리에서 만화를 제거할 수 없습니다}}"
+
+#: src/features/chapter/Chapter.constants.ts
+msgid "{count, plural, one {Could not remove the bookmark} other {Could not remove the bookmarks}}"
+msgstr ""
+"{count, plural, one {북마크를 제거할 수 없습니다} other {북마크를 제거할 수 "
+"없습니다}}"
+
+#: src/features/extension/Extensions.constants.ts
+msgid "{count, plural, one {Could not uninstall the extension} other {Could not uninstall the extensions}}"
+msgstr ""
+"{count, plural, one {확장 기능을 삭제할 수 없습니다} other {확장 기능을 "
+"삭제할 수 없습니다}}"
+
+#: src/features/extension/Extensions.constants.ts
+msgid "{count, plural, one {Could not update the extension} other {Could not update the extensions}}"
+msgstr ""
+"{count, plural, one {확장 기능을 업데이트할 수 없습니다} other {확장 기능을 "
+"업데이트할 수 없습니다}}"
+
+#: src/features/chapter/Chapter.constants.ts
+msgid "{count, plural, one {Download added} other {# downloads added}}"
+msgstr ""
+"{count, plural, one {다운로드를 추가했습니다} other {다운로드 #개를 "
+"추가했습니다}}"
+
+#: src/features/chapter/components/actions/ChaptersDownloadActionMenuItems.tsx
+msgid "{count, plural, one {Next chapter} other {Next # chapters}}"
+msgstr "{count, plural, one {다음 챕터} other {다음 챕터 #개}}"
+
+#: src/features/manga/Manga.constants.ts
+msgid "{count, plural, one {Removed manga from the library} other {Removed # manga from the library}}"
+msgstr ""
+"{count, plural, one {라이브러리에서 만화를 제거했습니다} other "
+"{라이브러리에서 만화 #개를 제거했습니다}}"
+
+#: src/features/reader/services/ReaderControls.ts
+msgid ""
+"{count, plural, one {There is # missing chapter.\n"
+"Current: {currentChapter}\n"
+"Next: {nextChapter}} other {There are # missing chapters.\n"
+"Current: {currentChapter}\n"
+"Next: {nextChapter}}}"
+msgstr ""
+"{count, plural, one {누락된 챕터가 #개 있습니다.\n"
+"현재: {currentChapter}\n"
+"다음: {nextChapter}} other {누락된 챕터가 #개 있습니다.\n"
+"현재: {currentChapter}\n"
+"다음: {nextChapter}}}"
+
+#: src/features/reader/services/ReaderControls.ts
+msgid ""
+"{count, plural, one {There is # missing chapter.\n"
+"Previous: {nextChapter}\n"
+"Current: {currentChapter}} other {There are # missing chapters.\n"
+"Previous: {nextChapter}\n"
+"Current: {currentChapter}}}"
+msgstr ""
+"{count, plural, one {누락된 챕터가 #개 있습니다.\n"
+"이전: {nextChapter}\n"
+"현재: {currentChapter}} other {누락된 챕터가 #개 있습니다.\n"
+"이전: {nextChapter}\n"
+"현재: {currentChapter}}}"
+
+#: src/features/manga/Manga.constants.ts
+msgid "{count, plural, one {You are about to change the category of one entry} other {You are about to change the category of # entries}}"
+msgstr ""
+"{count, plural, one {항목 1개의 카테고리를 변경하려고 합니다} other {항목 "
+"#개의 카테고리를 변경하려고 합니다}}"
+
+#: src/features/chapter/Chapter.constants.ts
+msgid "{count, plural, one {You are about to delete one download} other {You are about to delete # downloads}}"
+msgstr ""
+"{count, plural, one {다운로드 1개를 삭제하려고 합니다} other {다운로드 #개를 "
+"삭제하려고 합니다}}"
+
+#: src/features/chapter/Chapter.constants.ts
+msgid ""
+"{count, plural, one {You are about to download one chapter} other {You are about to download # chapters.\n"
+"Suwayomi is not a mass downloader and too many downloads can get you banned from sources and/or cause performance issues.}}"
+msgstr ""
+"{count, plural, one {챕터 1개를 다운로드하려고 합니다} other {챕터 #개를 "
+"다운로드하려고 합니다.\n"
+"Suwayomi는 대량 다운로더가 아니며, 다운로드가 너무 많으면 소스에서 "
+"차단되거나 성능 문제가 발생할 수 있습니다.}}"
+
+#: src/features/chapter/Chapter.constants.ts
+msgid "{count, plural, one {You are about to mark one chapter as read} other {You are about to mark # chapters as read}}"
+msgstr ""
+"{count, plural, one {챕터 1개를 읽음으로 표시하려고 합니다} other {챕터 "
+"#개를 읽음으로 표시하려고 합니다}}"
+
+#: src/features/chapter/Chapter.constants.ts
+msgid "{count, plural, one {You are about to mark one chapter as unread} other {You are about to mark # chapters as unread}}"
+msgstr ""
+"{count, plural, one {챕터 1개를 읽지 않음으로 표시하려고 합니다} other {챕터 "
+"#개를 읽지 않음으로 표시하려고 합니다}}"
+
+#: src/features/chapter/Chapter.constants.ts
+msgid "{count, plural, one {You are about to remove one bookmark} other {You are about to remove # bookmarks}}"
+msgstr ""
+"{count, plural, one {북마크 1개를 제거하려고 합니다} other {북마크 #개를 "
+"제거하려고 합니다}}"
+
+#: src/features/manga/Manga.constants.ts
+msgid "{count, plural, one {You are about to remove one entry from your library} other {You are about to remove # entries from your library}}"
+msgstr ""
+"{count, plural, one {라이브러리에서 항목 1개를 제거하려고 합니다} other "
+"{라이브러리에서 항목 #개를 제거하려고 합니다}}"
+
+#: src/features/settings/components/globalUpdate/GlobalUpdateSettingsInterval.tsx
+msgid "{currentAutoUpdateIntervalHours}h"
+msgstr "{currentAutoUpdateIntervalHours}시간"
+
+#: src/features/downloads/components/DownloadAheadSetting.tsx
+msgid "{currentDownloadAheadLimit, plural, one {# Chapter} other {# Chapters}}"
+msgstr "{currentDownloadAheadLimit, plural, one {챕터 #개} other {챕터 #개}}"
+
+#: src/features/extension/store/screens/ExtensionStores.tsx
+msgid "{extensionCount, plural, one {# extension} other {# extensions}}"
+msgstr "{extensionCount, plural, one {확장 기능 #개} other {확장 기능 #개}}"
+
+#: src/features/browse/screens/BrowseSettings.tsx
+msgid "{extensionStoreCount, plural, one {# extension store} other {# extension stores}}"
+msgstr "{extensionStoreCount, plural, one {확장 저장소 #개} other {확장 저장소 #개}}"
+
+#: src/features/extension/store/screens/ExtensionStores.tsx
+msgid "{installedExtensionCount, plural, one {# installed} other {# installed}}"
+msgstr "{installedExtensionCount, plural, one {#개 설치됨} other {#개 설치됨}}"
+
+#: src/features/chapter/components/ChapterList.tsx
+#: src/features/chapter/components/MissingChaptersInfoSeparator.tsx
+msgid "{missingChapterCount, plural, one {Missing # chapter} other {Missing # chapters}}"
+msgstr "{missingChapterCount, plural, one {누락된 챕터 #개} other {누락된 챕터 #개}}"
+
+#: src/features/migration/components/migration-entry/MigrationDestinationEntry.tsx
+#: src/features/migration/components/migration-entry/MigrationEntrySearchExcludeActions.tsx
+msgid "{otherResultsCount, plural, one {# more match} other {# more matches}}"
+msgstr "{otherResultsCount, plural, one {일치 항목 #개 더} other {일치 항목 #개 더}}"
+
+#: src/features/backup/Backup.utils.ts
+msgid "{ttl, plural, one {Delete backups that are older than # day} other {Delete backups that are older than # days}}"
+msgstr ""
+"{ttl, plural, one {#일보다 오래된 백업 삭제} other {#일보다 오래된 백업 "
+"삭제}}"
+
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "{ttl, plural, one {Delete log files that are older than # day} other {Delete log files that are older than # days}}"
+msgstr ""
+"{ttl, plural, one {#일보다 오래된 로그 파일 삭제} other {#일보다 오래된 로그 "
+"파일 삭제}}"
+
+#: src/features/manga/services/Mangas.ts
+msgid "A migration is already in progress"
+msgstr "이미 마이그레이션이 진행 중입니다"
+
+#: src/features/migration/components/migration-entry/MigrationEntrySearchExcludeActions.tsx
+#: src/features/migration/screens/MigrationExecute.tsx
+#: src/features/migration/screens/MigrationSearch.tsx
+msgid "Abort"
+msgstr "중단"
+
+#: src/features/migration/MigrationManager.ts
+msgid "Abort migration"
+msgstr "마이그레이션 중단"
+
+#: src/features/migration/Migration.constants.ts
+#: src/features/migration/screens/MigrationExecute.tsx
+msgid "Aborted"
+msgstr "중단됨"
+
+#: src/base/components/buttons/SelectButton.tsx
+msgid "Active setting ({title})"
+msgstr "활성 설정 ({title})"
+
+#: src/features/browse/extensions/Extensions.tsx
+#: src/features/extension/store/screens/ExtensionStores.tsx
+msgid "Add extension store"
+msgstr "확장 저장소 추가"
+
+#. placeholder {0}: tracker.name
+#: src/features/tracker/components/cards/TrackerActiveCard.tsx
+msgid "Also remove from {0}"
+msgstr "{0}에서도 제거"
+
+#: src/features/migration/MigrationManager.ts
+msgid "Are you sure you want to abort the migration?"
+msgstr "마이그레이션을 중단하시겠습니까?"
+
+#: src/features/backup/screens/Backup.tsx
+msgid "Automated backup"
+msgstr "자동 백업"
+
+#: src/features/migration/components/MigrationBulkSearchOptionsDialog.tsx
+msgid "Automatically select matches if they have additional chapters"
+msgstr "추가 챕터가 있는 경우 일치 항목 자동 선택"
+
+#: src/features/migration/components/MigrationBulkSearchOptionsDialog.tsx
+msgid "Automatically select matches if they have at least the same latest chapter"
+msgstr "최소한 동일한 최신 챕터가 있는 경우 일치 항목 자동 선택"
+
+#: src/features/migration/components/MigrationBulkSearchOptionsDialog.tsx
+msgid "Automatically select matches if they have no missing chapters"
+msgstr "누락된 챕터가 없는 경우 일치 항목 자동 선택"
+
+#: src/features/migration/components/MigrationDestinationSourceList.tsx
+msgid "Available"
+msgstr "사용 가능"
+
+#: src/features/migration/components/MigrationBulkSearchOptionsDialog.tsx
+msgid "Breaks down the title into keywords for a wider search"
+msgstr "제목을 키워드로 분해하여 더 넓게 검색합니다"
+
+#: src/features/manga/components/cards/MangaCard.tsx
+msgid "Bulk migration manual search"
+msgstr "대량 마이그레이션 수동 검색"
+
+#: src/features/migration/MangaMigration.ts
+msgid "Can't migrate an entry to itself"
+msgstr "항목을 자기 자신으로 마이그레이션할 수 없습니다"
+
+#: src/features/category/components/CategoriesInclusionSetting.tsx
+#: src/features/migration/components/MigrationOptionsDialog.tsx
+msgid "Category"
+msgstr "카테고리"
+
+#: src/features/chapter/components/cards/ChapterCard.tsx
+#: src/features/downloads/components/DownloadAheadSetting.tsx
+#: src/features/downloads/screens/DownloadSettings.tsx
+#: src/features/migration/components/MigrationOptionsDialog.tsx
+#: src/features/reader/overlay/navigation/desktop/components/ReaderNavBarDesktopChapterNavigation.tsx
+#: src/features/tracker/components/cards/TrackerActiveCard.tsx
+#: src/features/tracker/components/cards/TrackerMangaCard.tsx
+msgid "Chapter"
+msgstr "챕터"
+
+#. Used to detect the type of an entry by using it to check if the genre/tags of an entry includes this string. This is NOT shown to any user. Do NOT include any unnecessary text or characters, this will break the type detection (e.g. "MangaInMyLanguage (Manga)")
+#. js-lingui-explicit-id
+#: src/features/manga/Manga.constants.ts
+msgid "entry-type-detection-comic"
+msgstr "코믹"
+
+#: src/features/settings/components/koreaderSync/KoreaderSyncSettings.tsx
+msgid "Connected as {currentUsername} to {currentServerAddress}"
+msgstr "{currentServerAddress}에 {currentUsername}(으)로 연결됨"
+
+#: src/features/settings/components/koreaderSync/KoreaderSyncSettings.tsx
+msgid "Connected as {initialUsername} to {initialServerAddress}"
+msgstr "{initialServerAddress}에 {initialUsername}(으)로 연결됨"
+
+#: src/features/migration/components/MigrationContinueButton.tsx
+msgid "Continue"
+msgstr "계속"
+
+#: src/features/manga/components/ContinueReadingTooltip.tsx
+msgid ""
+"Continue reading\n"
+"#{chapterNumber} — {name}\n"
+"{scanlator}"
+msgstr ""
+"계속 읽기\n"
+"#{chapterNumber} — {name}\n"
+"{scanlator}"
+
+#: src/features/extension/store/screens/ExtensionStores.tsx
+msgid "Copy index url"
+msgstr "인덱스 URL 복사"
+
+#: src/features/extension/store/screens/ExtensionStores.tsx
+msgid "Could not add extension store"
+msgstr "확장 저장소를 추가할 수 없습니다"
+
+#: src/features/manga/hooks/useManageMangaLibraryState.tsx
+msgid ""
+"Could not check for duplicated manga in your library.\n"
+"\n"
+"Error: {errorMessage}"
+msgstr ""
+"라이브러리에서 중복된 만화를 확인할 수 없습니다.\n"
+"\n"
+"오류: {errorMessage}"
+
+#: src/features/category/components/CategorySettingsCard.tsx
+msgid "Could not delete category"
+msgstr "카테고리를 삭제할 수 없습니다"
+
+#. placeholder {0}: theme.getName()
+#: src/features/theme/components/ThemeList.tsx
+msgid "Could not delete theme \"{0}\""
+msgstr "테마 \"{0}\"을(를) 삭제할 수 없습니다"
+
+#: src/features/browse/extensions/Extensions.tsx
+msgid "Could not install the extension"
+msgstr "확장 기능을 설치할 수 없습니다"
+
+#. placeholder {0}: tracker.name
+#: src/features/tracker/components/cards/SettingsTrackerCard.tsx
+msgid "Could not log in to {0}"
+msgstr "{0}에 로그인할 수 없습니다"
+
+#: src/features/tracker/screens/TrackerOAuthLogin.tsx
+msgid "Could not log in to {trackerName}"
+msgstr "{trackerName}에 로그인할 수 없습니다"
+
+#: src/features/authentication/screens/LoginPage.tsx
+msgid "Could not log in to Suwayomi"
+msgstr "Suwayomi에 로그인할 수 없습니다"
+
+#. placeholder {0}: tracker.name
+#: src/features/tracker/components/cards/SettingsTrackerCard.tsx
+msgid "Could not log out from {0}"
+msgstr "{0}에서 로그아웃할 수 없습니다"
+
+#: src/features/settings/components/koreaderSync/KoreaderSyncSettings.tsx
+msgid "Could not log out from KOReader Sync"
+msgstr "KOReader 동기화에서 로그아웃할 수 없습니다"
+
+#: src/features/extension/store/screens/ExtensionStores.tsx
+msgid "Could not remove extension store \"{name}\""
+msgstr "확장 저장소 \"{name}\"을(를) 제거할 수 없습니다"
+
+#: src/features/migration/components/migration-entry/MigrationDestinationEntry.tsx
+msgid "Could not retry \"{title}\""
+msgstr "\"{title}\"을(를) 다시 시도할 수 없습니다"
+
+#: src/features/settings/screens/Appearance.tsx
+msgid "Could not save changes"
+msgstr "변경사항을 저장할 수 없습니다"
+
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "Could not start sync"
+msgstr "동기화를 시작할 수 없습니다"
+
+#: src/features/settings/Settings.constants.ts
+msgid "Creating backup"
+msgstr "백업 생성 중"
+
+#: src/features/migration/components/MigrationDestinationSourceList.tsx
+msgid "Current source"
+msgstr "현재 소스"
+
+#: src/features/settings/Settings.constants.ts
+msgid "Daily"
+msgstr "매일"
+
+#: src/features/backup/screens/Backup.tsx
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "Day"
+msgstr "일"
+
+#. placeholder {0}: theme.getName()
+#: src/features/theme/components/ThemeList.tsx
+msgid "Deleted theme \"{0}\""
+msgstr "테마 \"{0}\"을(를) 삭제했습니다"
+
+#. placeholder {0}: theme.getName()
+#: src/features/theme/components/ThemeList.tsx
+msgid "Deleting theme \"{0}\"…"
+msgstr "테마 \"{0}\" 삭제 중…"
+
+#. placeholder {0}: entry.sourceTitle
+#: src/features/migration/components/migration-entry/MigrationDestinationEntry.tsx
+msgid "Destination — {0}"
+msgstr "대상 — {0}"
+
+#: src/features/migration/screens/MigrationExecute.tsx
+msgid "Done"
+msgstr "완료"
+
+#: src/features/migration/components/MigrationDestinationSourceList.tsx
+msgid "Drag to prioritize"
+msgstr "드래그하여 우선순위 지정"
+
+#: src/features/category/screens/CategorySettings.tsx
+#: src/features/library/screens/LibrarySettings.tsx
+msgid "Edit categories"
+msgstr "카테고리 편집"
+
+#: src/features/category/components/CreateOrEditCategoryDialog.tsx
+msgid "Edit category"
+msgstr "카테고리 편집"
+
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "Enable the WebView via CEF (Chromium)"
+msgstr "CEF(Chromium)를 통해 WebView 활성화"
+
+#. placeholder {0}: entry.mangaTitle
+#. placeholder {1}: entry.mangaId
+#. placeholder {2}: entry.sourceId
+#. placeholder {3}: entry.status
+#: src/features/migration/MigrationManager.ts
+msgid "Entry \"{0} ({1}; {sourceTitle} ({2}))\" in invalid state \"{3}\""
+msgstr "\"{0} ({1}; {sourceTitle} ({2}))\" 항목이 잘못된 상태 \"{3}\"입니다"
+
+#: src/features/migration/MigrationManager.ts
+msgid "Entry \"{id}\" not found"
+msgstr "\"{id}\" 항목을 찾을 수 없습니다"
+
+#: src/features/settings/Settings.constants.ts
+msgid "Every 12 hours"
+msgstr "12시간마다"
+
+#: src/features/settings/Settings.constants.ts
+msgid "Every 3 hours"
+msgstr "3시간마다"
+
+#: src/features/settings/Settings.constants.ts
+msgid "Every 30 minutes"
+msgstr "30분마다"
+
+#: src/features/settings/Settings.constants.ts
+msgid "Every 6 hours"
+msgstr "6시간마다"
+
+#: src/features/settings/Settings.constants.ts
+msgid "Every hour"
+msgstr "1시간마다"
+
+#: src/features/migration/components/migration-entry/MigrationEntrySearchExcludeActions.tsx
+msgid "Exclude"
+msgstr "제외"
+
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "Exclude: {excludedSyncDataText}"
+msgstr "제외: {excludedSyncDataText}"
+
+#: src/features/migration/Migration.constants.ts
+msgid "Excluded"
+msgstr "제외됨"
+
+#: src/features/browse/screens/Browse.tsx
+msgid "Extension"
+msgstr "확장 기능"
+
+#: src/features/browse/extensions/Extensions.tsx
+msgid "Extension installed"
+msgstr "확장 기능이 설치되었습니다"
+
+#: src/features/browse/screens/BrowseSettings.tsx
+#: src/features/extension/store/screens/ExtensionStores.tsx
+msgid "Extension stores"
+msgstr "확장 저장소"
+
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "Flaresolverr is a <0><1>separate</1></0>, Suwayomi <2><3>unrelated</3></2> program that needs to be manually <4><5>installed</5></4> and <6><7>run</7></6>.<8/>See <9>FlareSolverr</9> for information on how to set it up<10/><11/>If it is <12><13>not</13></12> properly set up and running, enabling this setting <14><15>won't</15></14> do anything"
+msgstr ""
+"Flaresolverr는 <0><1>별도</1></0>의, Suwayomi와 <2><3>무관한</3></2> "
+"프로그램으로, 직접 <4><5>설치</5></4>하고 <6><7>실행</7></6>해야 합니다.<8/>"
+"설정 방법은 <9>FlareSolverr</9>를 참고하세요<10/><11/>제대로 설정되어 "
+"실행되고 있지 <12><13>않으면</13></12>, 이 설정을 켜도 <14><15>아무런</15></"
+"14> 효과가 없습니다"
+
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "Flaresolverr setup confirmation"
+msgstr "Flaresolverr 설정 확인"
+
+#. placeholder {0}: headers?.length ?? 0
+#: src/features/settings/components/images/Processing.tsx
+msgid "Headers ({0})"
+msgstr "Headers ({0})"
+
+#: src/features/migration/components/MigrationBulkSearchOptionsDialog.tsx
+msgid ""
+"If enabled, chooses the match furthest ahead.\n"
+"Otherwise, picks the first match by source priority."
+msgstr ""
+"활성화하면 가장 앞선 일치 항목을 선택합니다.\n"
+"그렇지 않으면 소스 우선순위에 따라 첫 번째 일치 항목을 선택합니다."
+
+#: src/features/migration/components/MigrationBulkSearchOptionsDialog.tsx
+msgid "Ignore matches that are behind in chapters"
+msgstr "챕터가 뒤처진 일치 항목 무시"
+
+#: src/features/migration/components/MigrationBulkSearchOptionsDialog.tsx
+msgid "Ignore matches with missing chapters"
+msgstr "누락된 챕터가 있는 일치 항목 무시"
+
+#: src/features/migration/components/MigrationBulkSearchOptionsDialog.tsx
+msgid "Ignore matches without newer chapters"
+msgstr "더 새로운 챕터가 없는 일치 항목 무시"
+
+#: src/features/migration/components/migration-entry/MigrationEntrySearchExcludeActions.tsx
+msgid "Include"
+msgstr "포함"
+
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "Include: {includedSyncDataText}"
+msgstr "포함: {includedSyncDataText}"
+
+#: src/features/settings/screens/WebUISettings.tsx
+msgid "Inform about updated version"
+msgstr "업데이트된 버전 알림"
+
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "Inform about version update"
+msgstr "버전 업데이트 알림"
+
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "item"
+msgstr "개"
+
+#: src/features/migration/components/migration-entry/MigrationEntryMetadataText.tsx
+msgid "Latest: {latestChapterNumber}"
+msgstr "최신: {latestChapterNumber}"
+
+#. placeholder {0}: tracker.name
+#: src/features/tracker/components/cards/SettingsTrackerCard.tsx
+msgid "Log in to {0}"
+msgstr "{0}에 로그인"
+
+#. placeholder {0}: tracker.name
+#: src/features/tracker/components/cards/SettingsTrackerCard.tsx
+msgid "Log out from {0}"
+msgstr "{0}에서 로그아웃"
+
+#: src/features/tracker/screens/TrackerOAuthLogin.tsx
+msgid "Logging in to {trackerName}…"
+msgstr "{trackerName}에 로그인 중…"
+
+#. Used to detect the type of an entry by using it to check if the genre/tags of an entry includes this string. This is NOT shown to any user. Do NOT include any unnecessary text or characters, this will break the type detection (e.g. "MangaInMyLanguage (Manga)")
+#. js-lingui-explicit-id
+#: src/features/manga/Manga.constants.ts
+msgid "entry-type-detection-long-strip"
+msgstr "롱스트립"
+
+#. Used to detect the type of an entry by using it to check if the genre/tags of an entry includes this string. This is NOT shown to any user. Do NOT include any unnecessary text or characters, this will break the type detection (e.g. "MangaInMyLanguage (Manga)")
+#. js-lingui-explicit-id
+#: src/features/manga/Manga.constants.ts
+msgid "entry-type-detection-manga"
+msgstr "만화"
+
+#. Used to detect the type of an entry by using it to check if the genre/tags of an entry includes this string. This is NOT shown to any user. Do NOT include any unnecessary text or characters, this will break the type detection (e.g. "MangaInMyLanguage (Manga)")
+#. js-lingui-explicit-id
+#: src/features/manga/Manga.constants.ts
+msgid "entry-type-detection-manhua"
+msgstr "만화"
+
+#. Used to detect the type of an entry by using it to check if the genre/tags of an entry includes this string. This is NOT shown to any user. Do NOT include any unnecessary text or characters, this will break the type detection (e.g. "MangaInMyLanguage (Manga)")
+#. js-lingui-explicit-id
+#: src/features/manga/Manga.constants.ts
+msgid "entry-type-detection-manhwa"
+msgstr "만화"
+
+#: src/features/migration/MigrationManager.ts
+msgid "Manual migration search for \"{title}\""
+msgstr "\"{title}\" 수동 마이그레이션 검색"
+
+#: src/features/migration/components/migration-entry/MigrationDestinationEntry.tsx
+#: src/features/migration/components/migration-entry/MigrationEntry.tsx
+#: src/features/migration/components/migration-entry/MigrationEntrySearchExcludeActions.tsx
+msgid "Manual search"
+msgstr "수동 검색"
+
+#: src/features/migration/components/MigrationBulkSearchOptionsDialog.tsx
+msgid "Match based on chapter number"
+msgstr "챕터 번호 기준으로 일치"
+
+#: src/features/migration/Migration.constants.ts
+msgid "Match found"
+msgstr "일치 항목 발견"
+
+#: src/features/migration/components/migration-entry/MigrationEntry.tsx
+msgid "Matches"
+msgstr "일치 항목"
+
+#: src/features/settings/Settings.constants.ts
+msgid "Merging"
+msgstr "병합 중"
+
+#. placeholder {0}: manga.title
+#: src/features/manga/components/MangaToolbarMenu.tsx
+#: src/features/migration/MigrationManager.ts
+msgid "Migrate \"{0}\""
+msgstr "\"{0}\" 마이그레이션"
+
+#: src/features/manga/Manga.constants.ts
+msgid "Migrate selected"
+msgstr "선택 항목 마이그레이션"
+
+#: src/features/migration/screens/MigrationExecute.tsx
+msgid "Migrating"
+msgstr "마이그레이션 중"
+
+#: src/features/migration/Migration.constants.ts
+msgid "Migrating…"
+msgstr "마이그레이션 중…"
+
+#: src/features/migration/screens/MigrationExecute.tsx
+msgid "Migration complete"
+msgstr "마이그레이션 완료"
+
+#: src/features/migration/components/migration-entry/MigrationDestinationEntry.tsx
+#: src/features/migration/Migration.constants.ts
+msgid "Migration failed"
+msgstr "마이그레이션 실패"
+
+#: src/features/migration/components/migration-entry/MigrationDestinationEntry.tsx
+msgid "Migration for \"{title}\" failed with error:"
+msgstr "\"{title}\" 마이그레이션이 다음 오류로 실패했습니다:"
+
+#: src/features/migration/MigrationManager.ts
+msgid "Migration information"
+msgstr "마이그레이션 정보"
+
+#: src/features/migration/components/MigrationOptionsDialog.tsx
+msgid "Migration options"
+msgstr "마이그레이션 옵션"
+
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "Minute"
+msgstr "분"
+
+#. placeholder {0}: entry.missingChapters
+#: src/features/migration/components/migration-entry/MigrationEntryMetadataText.tsx
+msgid "Missing: {0}"
+msgstr "누락: {0}"
+
+#: src/base/utils/Languages.ts
+#: src/features/extension/Extensions.constants.ts
+msgid "Multi"
+msgstr "다국어"
+
+#: src/features/migration/Migration.constants.ts
+msgid "No match found"
+msgstr "일치 항목 없음"
+
+#: src/features/migration/components/MigrationDestinationSourceList.tsx
+msgid "No sources available to migrate to"
+msgstr "마이그레이션할 수 있는 소스가 없습니다"
+
+#: src/features/source/components/SourceLanguageSelect.tsx
+msgid "No sources installed"
+msgstr "설치된 소스가 없습니다"
+
+#: src/features/browse/screens/BrowseSettings.tsx
+msgid "NSFW (18+) sources"
+msgstr "NSFW(18+) 소스"
+
+#: src/features/settings/screens/ServerSettings.tsx
+msgid ""
+"Number of items per page in OPDS feeds (e.g., Library History, Manga Chapters).\n"
+"Higher values may affect client performance."
+msgstr ""
+"OPDS 피드(예: 라이브러리 기록, 만화 챕터)의 페이지당 항목 수입니다.\n"
+"값이 높으면 클라이언트 성능에 영향을 줄 수 있습니다."
+
+#: src/features/migration/Migration.constants.ts
+msgid "Only outdated matches found"
+msgstr "오래된 일치 항목만 발견됨"
+
+#: src/features/extension/store/screens/ExtensionStores.tsx
+msgid "Open discord"
+msgstr "디스코드 열기"
+
+#: src/features/extension/store/screens/ExtensionStores.tsx
+msgid "Open website"
+msgstr "웹사이트 열기"
+
+#: src/features/migration/Migration.constants.ts
+msgid "Pending…"
+msgstr "대기 중…"
+
+#: src/features/reader/screens/Reader.tsx
+msgid "Reader — Manga {mangaId} Chapter {chapterSourceOrder}"
+msgstr "리더 — 만화 {mangaId} 챕터 {chapterSourceOrder}"
+
+#. placeholder {0}: tracker.name
+#: src/features/tracker/components/cards/TrackerActiveCard.tsx
+msgid "Remove {0} tracking?"
+msgstr "{0} 추적을 제거하시겠습니까?"
+
+#: src/features/settings/Settings.constants.ts
+msgid "Restoring"
+msgstr "복원 중"
+
+#: src/features/manga/components/MangaToolbarMenu.tsx
+#: src/features/theme/components/CreateThemeDialog.tsx
+msgid "Save dynamic color theme"
+msgstr "동적 색상 테마 저장"
+
+#: src/features/migration/components/migration-entry/MigrationDestinationEntry.tsx
+#: src/features/migration/Migration.constants.ts
+msgid "Search failed"
+msgstr "검색 실패"
+
+#: src/features/migration/components/migration-entry/MigrationDestinationEntry.tsx
+msgid "Search for \"{title}\" failed with error:"
+msgstr "\"{title}\" 검색이 다음 오류로 실패했습니다:"
+
+#: src/features/migration/components/MigrationBulkSearchOptionsDialog.tsx
+msgid "Search options"
+msgstr "검색 옵션"
+
+#: src/features/settings/components/images/Processing.tsx
+msgid "Search parameters"
+msgstr "검색 매개변수"
+
+#. placeholder {0}: searchParams?.length ?? 0
+#: src/features/settings/components/images/Processing.tsx
+msgid "Search parameters ({0})"
+msgstr "검색 매개변수 ({0})"
+
+#: src/features/migration/screens/MigrationSearch.tsx
+msgid "Search results"
+msgstr "검색 결과"
+
+#: src/features/migration/Migration.constants.ts
+msgid "Searching…"
+msgstr "검색 중…"
+
+#: src/features/settings/components/images/Processing.tsx
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "Second"
+msgstr "초"
+
+#: src/features/migration/screens/MigrationSelectDestinationSources.tsx
+msgid "Select destination sources"
+msgstr "대상 소스 선택"
+
+#: src/features/migration/screens/MigrationSelectDestinationSources.tsx
+msgid "Select enabled sources"
+msgstr "활성화된 소스 선택"
+
+#: src/features/migration/screens/MigrationSelectDestinationSources.tsx
+msgid "Select pinned sources"
+msgstr "고정된 소스 선택"
+
+#: src/features/migration/components/MigrationDestinationSourceList.tsx
+msgid "Selected"
+msgstr "선택됨"
+
+#. placeholder {0}: selectedServerChannelInfo.tag
+#. placeholder {1}: selectedServerChannelInfo.channel
+#: src/features/app-updates/components/ServerUpdateChecker.tsx
+msgid "Server version {0} ({1}) available for download"
+msgstr "서버 버전 {0} ({1})을(를) 다운로드할 수 있습니다"
+
+#. placeholder {0}: aboutServer?.buildType
+#: src/features/app-updates/components/ServerUpdateChecker.tsx
+msgid "Server was updated to version {version} ({0})"
+msgstr "서버가 버전 {version} ({0})(으)로 업데이트되었습니다"
+
+#: src/features/theme/components/CreateThemeDialog.tsx
+msgid "Set as active theme"
+msgstr "활성 테마로 설정"
+
+#: src/features/browse/screens/BrowseSettings.tsx
+msgid "Show in sources and extensions lists"
+msgstr "소스 및 확장 기능 목록에 표시"
+
+#: src/features/settings/screens/WebUISettings.tsx
+msgid "Shows a dialog in case the version got updated. This dialog will be shown in case an app refresh is required, regardless of this setting."
+msgstr ""
+"버전이 업데이트된 경우 대화상자를 표시합니다. 앱 새로 고침이 필요한 경우 이 "
+"설정과 관계없이 대화상자가 표시됩니다."
+
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "Shows a dialog in case the version of the server has changed"
+msgstr "서버 버전이 변경된 경우 대화상자를 표시합니다"
+
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "Skip chapter metadata feed"
+msgstr "챕터 메타데이터 피드 건너뛰기"
+
+#: src/features/browse/screens/Browse.tsx
+#: src/features/browse/screens/BrowseSettings.tsx
+#: src/features/manga/components/details/MangaDetails.tsx
+#: src/features/source/browse/screens/SourceMangas.tsx
+msgid "Source"
+msgstr "소스"
+
+#: src/features/migration/components/migration-entry/MigrationSourceEntry.tsx
+msgid "Source entry — {sourceTitle}"
+msgstr "소스 항목 — {sourceTitle}"
+
+#: src/features/browse/screens/BrowseSettings.tsx
+msgid "Sources"
+msgstr "소스"
+
+#: src/features/migration/screens/MigrationSearch.tsx
+msgid "Start migration"
+msgstr "마이그레이션 시작"
+
+#: src/features/manga/components/ContinueReadingTooltip.tsx
+msgid ""
+"Start reading\n"
+"#{chapterNumber} — {name}\n"
+"{scanlator}"
+msgstr ""
+"읽기 시작\n"
+"#{chapterNumber} — {name}\n"
+"{scanlator}"
+
+#: src/features/migration/screens/MigrationSelectDestinationSources.tsx
+msgid "Start Search"
+msgstr "검색 시작"
+
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "Start sync"
+msgstr "동기화 시작"
+
+#: src/features/migration/Migration.constants.ts
+msgid "Successfully migrated"
+msgstr "마이그레이션 성공"
+
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "Sync"
+msgstr "동기화"
+
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "Sync data"
+msgstr "동기화 데이터"
+
+#: src/features/settings/Settings.constants.ts
+msgid "Sync disabled"
+msgstr "동기화 비활성화됨"
+
+#: src/features/settings/Settings.constants.ts
+msgid "Sync in progress"
+msgstr "동기화 진행 중"
+
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "Sync interval"
+msgstr "동기화 간격"
+
+#: src/features/settings/Settings.constants.ts
+msgid "Sync started"
+msgstr "동기화 시작됨"
+
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "SyncYomi"
+msgstr "SyncYomi"
+
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "SyncYomi API key"
+msgstr "SyncYomi API 키"
+
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "SyncYomi enabled"
+msgstr "SyncYomi 활성화"
+
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "SyncYomi host"
+msgstr "SyncYomi 호스트"
+
+#: src/features/migration/MigrationManager.ts
+msgid ""
+"The migration runs on the client on the current device, NOT the server.\n"
+"As long as the client is open, the migration will run in the background.\n"
+"The client can be closed. The migration will be resumed once it gets opened again on the same device it got started on."
+msgstr ""
+"마이그레이션은 서버가 아니라 현재 기기의 클라이언트에서 실행됩니다.\n"
+"클라이언트가 열려 있는 한 마이그레이션은 백그라운드에서 계속 실행됩니다.\n"
+"클라이언트는 닫아도 됩니다. 마이그레이션은 시작한 기기에서 다시 열면 "
+"재개됩니다."
+
+#: src/features/migration/components/MigrationBulkSearchOptionsDialog.tsx
+msgid "These options are slow and dangerous and may lead to restrictions from sources"
+msgstr "이 옵션들은 느리고 위험하며 소스로부터 제한을 받을 수 있습니다"
+
+#: src/features/browse/screens/BrowseSettings.tsx
+msgid "This does not prevent unofficial or potentially incorrectly flagged extensions from surfacing NSFW (18+) content within the app."
+msgstr ""
+"이 설정은 비공식이거나 잘못 분류되었을 수 있는 확장 기능이 앱 내에서 NSFW"
+"(18+) 콘텐츠를 노출하는 것을 막지 못합니다."
+
+#: src/features/source/browse/components/SourceOptions.tsx
+msgid "This will delete the saved search \"{savedSearch}\""
+msgstr "저장된 검색 \"{savedSearch}\"을(를) 삭제합니다"
+
+#: src/features/reader/settings/general/components/ReaderSettingSafeAreaInset.tsx
+msgid "Top"
+msgstr "상단"
+
+#: src/features/extension/store/screens/ExtensionStores.tsx
+msgid "Unable to load extension stores"
+msgstr "확장 저장소를 불러올 수 없습니다"
+
+#: src/features/migration/screens/MigrationSelectDestinationSources.tsx
+msgid "Unable to load sources"
+msgstr "소스를 불러올 수 없습니다"
+
+#: src/features/migration/MigrationManager.ts
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "Understood"
+msgstr "알겠습니다"
+
+#: src/features/migration/MigrationManager.ts
+msgid "Unknown source"
+msgstr "알 수 없는 소스"
+
+#: src/features/settings/Settings.constants.ts
+msgid "Uploading"
+msgstr "업로드 중"
+
+#. Used to detect the type of an entry by using it to check if the genre/tags of an entry includes this string. This is NOT shown to any user. Do NOT include any unnecessary text or characters, this will break the type detection (e.g. "MangaInMyLanguage (Manga)")
+#. js-lingui-explicit-id
+#: src/features/manga/Manga.constants.ts
+msgid "entry-type-detection-webtoon"
+msgstr "웹툰"
+
+#: src/features/migration/MigrationManager.ts
+msgid "WebUI must be kept open. Migration can't be resumed"
+msgstr "웹 UI를 계속 열어 두어야 합니다. 마이그레이션을 재개할 수 없습니다"
+
+#. placeholder {0}: webUIUpdateData?.checkForWebUIUpdate.tag
+#. placeholder {1}: webUIUpdateData?.checkForWebUIUpdate.channel
+#: src/features/app-updates/components/WebUIUpdateChecker.tsx
+msgid "WebUI version {0} ({1}) available for download"
+msgstr "웹 UI 버전 {0} ({1})을(를) 다운로드할 수 있습니다"
+
+#. placeholder {0}: aboutWebUI?.channel
+#: src/features/app-updates/components/WebUIUpdateChecker.tsx
+msgid "WebUI was updated to version {newVersion} ({0})"
+msgstr "웹 UI가 버전 {newVersion} ({0})(으)로 업데이트되었습니다"
+
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "WebView"
+msgstr "WebView"
+
+#: src/features/settings/Settings.constants.ts
+msgid "Weekly"
+msgstr "매주"
+
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "When enabled, download and streaming links are provided directly in the chapter list. KoSync strategies are applied, but PROMPT conflicts are ignored (treating local progress as priority)"
+msgstr ""
+"활성화하면 다운로드 및 스트리밍 링크가 챕터 목록에 직접 제공됩니다. KoSync "
+"전략이 적용되지만 PROMPT 충돌은 무시됩니다(로컬 진행 상황을 우선으로 처리)"
+
+#. placeholder {0}: category.name
+#: src/features/category/components/CategorySettingsCard.tsx
+msgid "You are about to delete category \"{0}\""
+msgstr "카테고리 \"{0}\"을(를) 삭제하려고 합니다"
+
+#. placeholder {0}: manga.title
+#: src/features/manga/hooks/useManageMangaLibraryState.tsx
+msgid "You are about to remove \"{0}\" from your library"
+msgstr "라이브러리에서 \"{0}\"을(를) 제거하려고 합니다"
+
+#: src/features/extension/store/screens/ExtensionStores.tsx
+msgid "You are about to remove \"{name}\" from the extension stores"
+msgstr "확장 저장소에서 \"{name}\"을(를) 제거하려고 합니다"
+
+#: src/features/browse/extensions/Extensions.tsx
+msgid "You have to add a extension store to be able to install extensions"
+msgstr "확장 기능을 설치하려면 확장 저장소를 추가해야 합니다"

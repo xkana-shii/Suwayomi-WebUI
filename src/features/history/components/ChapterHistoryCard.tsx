@@ -10,8 +10,8 @@ import Box from '@mui/material/Box';
 import CardActionArea from '@mui/material/CardActionArea';
 import Card from '@mui/material/Card';
 import { Link } from 'react-router-dom';
-import { memo } from 'react';
-import { DownloadStateIndicator } from '@/base/components/downloads/DownloadStateIndicator.tsx';
+import { memo, useState } from 'react';
+import { DownloadStateIndicatorCircular } from '@/base/components/downloads/DownloadStateIndicatorCircular.tsx';
 import type { ChapterHistoryListFieldsFragment } from '@/lib/graphql/generated/graphql.ts';
 import { AppRoutes } from '@/base/AppRoute.constants.ts';
 import { Chapters } from '@/features/chapter/services/Chapters.ts';
@@ -21,40 +21,85 @@ import { ChapterCardMetadata } from '@/features/chapter/components/cards/Chapter
 import { ChapterDownloadButton } from '@/features/chapter/components/buttons/ChapterDownloadButton.tsx';
 import { ChapterDownloadRetryButton } from '@/features/chapter/components/buttons/ChapterDownloadRetryButton.tsx';
 import { ListCardContent } from '@/base/components/lists/cards/ListCardContent';
+import { ReaderService } from '@/features/reader/services/ReaderService.ts';
+import { STABLE_EMPTY_ARRAY } from '@/base/Base.constants.ts';
+import Collapse from '@mui/material/Collapse';
+import { Virtuoso } from 'react-virtuoso';
+import Stack from '@mui/material/Stack';
+import { ChapterCardExpandButton } from '@/features/chapter/components/buttons/ChapterCardExpandButton.tsx';
 
-export const ChapterHistoryCard = memo(({ chapter }: { chapter: ChapterHistoryListFieldsFragment }) => {
-    const { manga } = chapter;
+export const ChapterHistoryCard = memo(
+    ({
+        chapter,
+        otherChapters = STABLE_EMPTY_ARRAY,
+    }: {
+        chapter: ChapterHistoryListFieldsFragment;
+        otherChapters?: ChapterHistoryListFieldsFragment[];
+    }) => {
+        const { manga } = chapter;
 
-    return (
-        <Card>
-            <CardActionArea
-                component={Link}
-                to={AppRoutes.reader.path(chapter.manga.id, chapter.sourceOrder)}
-                state={Chapters.getReaderOpenChapterLocationState(chapter)}
-                sx={{
-                    color: (theme) => theme.palette.text[chapter.isRead ? 'disabled' : 'primary'],
-                }}
-            >
-                <ListCardContent sx={{ justifyContent: 'space-between' }}>
-                    <Box sx={{ display: 'flex', flexGrow: 1, gap: 1 }}>
-                        <ChapterCardThumbnail
-                            mangaId={manga.id}
-                            sourceId={manga.sourceId}
-                            mangaTitle={manga.title}
-                            thumbnailUrl={manga.thumbnailUrl}
-                            thumbnailUrlLastFetched={manga.thumbnailUrlLastFetched}
+        const [isExpanded, setIsExpanded] = useState(false);
+
+        const isGroup = !!otherChapters.length;
+
+        return (
+            <Card>
+                <CardActionArea
+                    component={Link}
+                    to={AppRoutes.reader.path(chapter.manga.id, chapter.sourceOrder)}
+                    state={Chapters.getReaderOpenChapterLocationState(chapter)}
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        ReaderService.openReader(chapter);
+                    }}
+                    sx={{
+                        color: (theme) => theme.palette.text[chapter.isRead ? 'disabled' : 'primary'],
+                    }}
+                >
+                    <ListCardContent sx={{ justifyContent: 'space-between' }}>
+                        <Box sx={{ display: 'flex', flexGrow: 1, gap: 1, alignItems: 'center' }}>
+                            <ChapterCardThumbnail
+                                mangaId={manga.id}
+                                sourceId={manga.sourceId}
+                                mangaTitle={manga.title}
+                                thumbnailUrl={manga.thumbnailUrl}
+                                thumbnailUrlLastFetched={manga.thumbnailUrlLastFetched}
+                                isGroup={isGroup}
+                            />
+
+                            <Stack>
+                                <ChapterCardMetadata
+                                    title={manga.title}
+                                    secondaryText={chapter.scanlator}
+                                    ternaryText={`${chapter.name} — ${timeFormatter.format(epochToDate(Number(chapter.lastReadAt)).valueOf())}`}
+                                    showUnreadDot={!chapter.isRead}
+                                />
+                                {isGroup && (
+                                    <ChapterCardExpandButton
+                                        count={otherChapters.length}
+                                        expanded={isExpanded}
+                                        setExpanded={setIsExpanded}
+                                    />
+                                )}
+                            </Stack>
+                        </Box>
+                        <DownloadStateIndicatorCircular chapterId={chapter.id} />
+                        <ChapterDownloadRetryButton chapterId={chapter.id} />
+                        <ChapterDownloadButton chapterId={chapter.id} isDownloaded={chapter.isDownloaded} />
+                    </ListCardContent>
+                </CardActionArea>
+                {isGroup && (
+                    <Collapse in={isExpanded}>
+                        <Virtuoso
+                            useWindowScroll
+                            data={otherChapters}
+                            computeItemKey={(index) => otherChapters[index].id}
+                            itemContent={(_index, otherChapter) => <ChapterHistoryCard chapter={otherChapter} />}
                         />
-                        <ChapterCardMetadata
-                            title={manga.title}
-                            secondaryText={`${chapter.name} — ${timeFormatter.format(epochToDate(Number(chapter.lastReadAt)).valueOf())}`}
-                            showUnreadDot={!chapter.isRead}
-                        />
-                    </Box>
-                    <DownloadStateIndicator chapterId={chapter.id} />
-                    <ChapterDownloadRetryButton chapterId={chapter.id} />
-                    <ChapterDownloadButton chapterId={chapter.id} isDownloaded={chapter.isDownloaded} />
-                </ListCardContent>
-            </CardActionArea>
-        </Card>
-    );
-});
+                    </Collapse>
+                )}
+            </Card>
+        );
+    },
+);

@@ -6,7 +6,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import type { LongPressPointerHandlers, LongPressResult } from 'use-long-press';
 import type { PopupState } from 'material-ui-popup-state/hooks';
 import type { JSX } from 'react';
 import type { SelectableCollectionReturnType } from '@/base/collection/hooks/useSelectableCollection.ts';
@@ -17,6 +16,7 @@ import type { GridLayout } from '@/base/Base.types.ts';
 import type {
     ChapterIdInfo,
     ChapterListOptions,
+    ChapterMangaInfo,
     ChapterNameInfo,
     ChapterNumberInfo,
     ChapterReadInfo,
@@ -26,9 +26,11 @@ import type { MigrationMatch } from '@/features/migration/Migration.types.ts';
 import type {
     MangaType as MangaTypeGql,
     Maybe,
+    MetaType,
     SourceType,
     TrackRecordType,
 } from '@/lib/graphql/generated/graphql-base.types.ts';
+import type { UsePressResult } from '@/base/hooks/usePress.ts';
 
 export type MangaCardMode = 'default' | 'source' | 'migrate.select.bulk' | 'migrate.select.single' | 'duplicate';
 
@@ -36,7 +38,12 @@ type MangaCardBaseProps = Pick<MangaTypeGql, 'id' | 'title' | 'sourceId' | 'inLi
     Omit<SingleModeProps['manga'], 'downloadCount' | 'unreadCount' | 'chapters'> &
     Partial<Pick<MangaTypeGql, 'downloadCount' | 'unreadCount'>> & {
         firstUnreadChapter?:
-            | (ChapterIdInfo & ChapterSourceOrderInfo & ChapterReadInfo & ChapterNumberInfo & ChapterNameInfo)
+            | (ChapterIdInfo &
+                  ChapterSourceOrderInfo &
+                  ChapterReadInfo &
+                  ChapterNumberInfo &
+                  ChapterNameInfo &
+                  ChapterMangaInfo)
             | null;
     };
 
@@ -59,6 +66,8 @@ export type MangaAuthorInfo = Pick<MangaTypeGql, 'author'>;
 export type MangaTitleInfo = Pick<MangaTypeGql, 'title'>;
 export type MangaDescriptionInfo = Pick<MangaTypeGql, 'description'>;
 export type MangaStatusInfo = Pick<MangaTypeGql, 'status'>;
+export type MangaUrlInfo = Pick<MangaTypeGql, 'realUrl'>;
+export type MangaMetaInfo = { meta?: Pick<MetaType, 'key' | 'value'>[] };
 
 type MangaCardSpecificProps = MangaCardBaseProps & MangaThumbnailInfo;
 
@@ -75,15 +84,16 @@ export interface MangaCardProps {
 export type SpecificMangaCardProps = Omit<MangaCardProps, 'manga'> &
     Pick<ReturnType<typeof useManageMangaLibraryState>, 'isInLibrary'> & {
         manga: MangaCardSpecificProps;
-        longPressBind: LongPressResult<LongPressPointerHandlers>;
+        longPressBind: UsePressResult;
         popupState: PopupState;
-        handleClick: (event: React.MouseEvent | React.TouchEvent) => void;
         mangaLinkTo: string;
         continueReadingButton: JSX.Element;
         mangaBadges: JSX.Element;
     };
 
-export type MangaMetadata = ChapterListOptions;
+export type MangaMetadata = ChapterListOptions & {
+    notes: string;
+};
 
 export type MangaMetadataKeys = keyof MangaMetadata;
 

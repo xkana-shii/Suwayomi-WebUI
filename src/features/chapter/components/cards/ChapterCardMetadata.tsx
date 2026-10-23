@@ -7,11 +7,51 @@
  */
 
 import Box from '@mui/material/Box';
-import type { ComponentProps, ReactNode } from 'react';
+import type { ComponentProps, ReactElement, ReactNode } from 'react';
 import Stack from '@mui/material/Stack';
+import { useTheme } from '@mui/material/styles';
 import { TypographyMaxLines } from '@/base/components/texts/TypographyMaxLines.tsx';
 import { CustomTooltip } from '@/base/components/CustomTooltip.tsx';
-import { useTheme } from '@mui/material/styles';
+import { MUIUtil } from '@/lib/mui/MUI.util.ts';
+
+const TOOLTIP_PREVENT_OVERFLOW = {
+    slotProps: {
+        popper: {
+            modifiers: [
+                {
+                    name: 'preventOverflow',
+                    options: {
+                        boundary: 'viewport',
+                        padding: 8,
+                        mainAxis: true,
+                        altAxis: true,
+                        tether: false,
+                    },
+                },
+            ],
+        },
+    },
+};
+
+const OptionalTooltip = ({
+    title,
+    disabled,
+    children,
+}: {
+    title: string;
+    disabled?: boolean;
+    children: ReactElement;
+}) => {
+    if (disabled) {
+        return children;
+    }
+
+    return (
+        <CustomTooltip title={title} placement="right" {...TOOLTIP_PREVENT_OVERFLOW}>
+            {children}
+        </CustomTooltip>
+    );
+};
 
 export const ChapterCardMetadata = ({
     title,
@@ -36,6 +76,19 @@ export const ChapterCardMetadata = ({
 }) => {
     const theme = useTheme();
     const unreadDotSize = `calc(${theme.typography.caption.fontSize} * 0.6)`;
+    // the dot is shown in front of the last text line (the chapter name in the updates and history lists)
+    const unreadDotLine = ternaryText ? 'ternary' : 'secondary';
+    const unreadDot = showUnreadDot && (
+        <Box
+            sx={{
+                width: unreadDotSize,
+                height: unreadDotSize,
+                borderRadius: '50%',
+                backgroundColor: 'primary.main',
+                flex: '0 0 auto',
+            }}
+        />
+    );
 
     return (
         <Box
@@ -56,19 +109,12 @@ export const ChapterCardMetadata = ({
                 }}
             >
                 {infoIcons}
-                {disableTooltips ? (
+                <OptionalTooltip title={title} disabled={disableTooltips}>
                     <TypographyMaxLines variant="h6" component="h3" {...slotProps?.title}>
                         {title}
                     </TypographyMaxLines>
-                ) : (
-                    <CustomTooltip title={title}>
-                        <TypographyMaxLines variant="h6" component="h3" {...slotProps?.title}>
-                            {title}
-                        </TypographyMaxLines>
-                    </CustomTooltip>
-                )}
+                </OptionalTooltip>
             </Stack>
-
             {secondaryText && (
                 <Stack
                     sx={{
@@ -78,64 +124,51 @@ export const ChapterCardMetadata = ({
                         minWidth: 0,
                     }}
                 >
-                    {showUnreadDot ? (
-                        <Box
-                            sx={{
-                                width: unreadDotSize,
-                                height: unreadDotSize,
-                                borderRadius: '50%',
-                                backgroundColor: 'primary.main',
-                                flex: '0 0 auto',
-                            }}
-                        />
-                    ) : null}
-
-                    {disableTooltips ? (
+                    {unreadDotLine === 'secondary' && unreadDot}
+                    <OptionalTooltip title={secondaryText} disabled={disableTooltips}>
                         <TypographyMaxLines
                             variant="caption"
                             lines={1}
                             {...slotProps?.secondaryText}
-                            sx={{ maxWidth: 'fit-content', display: 'block', ...slotProps?.secondaryText?.sx }}
+                            sx={MUIUtil.mergeSx(
+                                {
+                                    width: 'fit-content',
+                                },
+                                slotProps?.secondaryText?.sx,
+                            )}
                         >
                             {secondaryText}
                         </TypographyMaxLines>
-                    ) : (
-                        <CustomTooltip title={secondaryText}>
-                            <TypographyMaxLines
-                                variant="caption"
-                                lines={1}
-                                {...slotProps?.secondaryText}
-                                sx={{ maxWidth: 'fit-content', display: 'block', ...slotProps?.secondaryText?.sx }}
-                            >
-                                {secondaryText}
-                            </TypographyMaxLines>
-                        </CustomTooltip>
-                    )}
+                    </OptionalTooltip>
                 </Stack>
             )}
-
-            {ternaryText &&
-                (disableTooltips ? (
-                    <TypographyMaxLines
-                        variant="caption"
-                        lines={1}
-                        {...slotProps?.ternaryText}
-                        sx={{ maxWidth: 'fit-content', display: 'block', ...slotProps?.ternaryText?.sx }}
-                    >
-                        {ternaryText}
-                    </TypographyMaxLines>
-                ) : (
-                    <CustomTooltip title={ternaryText}>
+            {ternaryText && (
+                <Stack
+                    sx={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 0.75,
+                        minWidth: 0,
+                    }}
+                >
+                    {unreadDotLine === 'ternary' && unreadDot}
+                    <OptionalTooltip title={ternaryText} disabled={disableTooltips}>
                         <TypographyMaxLines
                             variant="caption"
                             lines={1}
                             {...slotProps?.ternaryText}
-                            sx={{ maxWidth: 'fit-content', display: 'block', ...slotProps?.ternaryText?.sx }}
+                            sx={MUIUtil.mergeSx(
+                                {
+                                    width: 'fit-content',
+                                },
+                                slotProps?.ternaryText?.sx,
+                            )}
                         >
                             {ternaryText}
                         </TypographyMaxLines>
-                    </CustomTooltip>
-                ))}
+                    </OptionalTooltip>
+                </Stack>
+            )}
         </Box>
     );
 };

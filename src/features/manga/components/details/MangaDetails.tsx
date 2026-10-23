@@ -28,7 +28,6 @@ import { FlexWrapButton } from '@/base/components/buttons/FlexWrapButton.tsx';
 import { TrackMangaButton } from '@/features/manga/components/TrackMangaButton.tsx';
 import { useManageMangaLibraryState } from '@/features/manga/hooks/useManageMangaLibraryState.tsx';
 import { Metadata as BaseMetadata } from '@/base/components/texts/Metadata.tsx';
-import { defaultPromiseErrorHandler } from '@/lib/DefaultPromiseErrorHandler.ts';
 import type { MangaType, SourceType } from '@/lib/graphql/generated/graphql-base.types.ts';
 import { useMetadataServerSettings } from '@/features/settings/services/ServerSettingsMetadata.ts';
 import { MANGA_STATUS_TO_TRANSLATION } from '@/features/manga/Manga.constants.ts';
@@ -40,6 +39,7 @@ import type {
     MangaIdInfo,
     MangaInLibraryInfo,
     MangaLocationState,
+    MangaMetaInfo,
     MangaSourceIdInfo,
     MangaStatusInfo,
     MangaThumbnailInfo,
@@ -58,6 +58,8 @@ import { requestManager } from '@/lib/requests/RequestManager.ts';
 import { IconBrowser } from '@/assets/icons/IconBrowser.tsx';
 import { IconWebView } from '@/assets/icons/IconWebView.tsx';
 import { MediaQuery } from '@/base/utils/MediaQuery.tsx';
+import { copyToClipboard } from '@/lib/HelperFunctions.ts';
+import { ClipBoardGuard } from '@/base/components/guard/ClipBoardGuard.tsx';
 
 const DetailsWrapper = styled('div')(({ theme }) => ({
     display: 'flex',
@@ -223,7 +225,8 @@ export const MangaDetails = ({
         MangaGenreInfo &
         MangaThumbnailInfo &
         MangaSourceIdInfo &
-        MangaTrackRecordInfo & {
+        MangaTrackRecordInfo &
+        MangaMetaInfo & {
             source?: Pick<SourceType, 'id' | 'displayName'> | null;
         };
     mode: MangaLocationState['mode'];
@@ -244,15 +247,6 @@ export const MangaDetails = ({
 
     const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
-    const copyTitle = async () => {
-        try {
-            await navigator.clipboard.writeText(manga.title);
-            makeToast(t`Copied to clipboard`, 'info');
-        } catch (e) {
-            defaultPromiseErrorHandler('MangaDetails::copyTitleLongPress')(e);
-        }
-    };
-
     return (
         <DetailsWrapper>
             <TopContentWrapper url={Mangas.getThumbnailUrl(manga)} mangaThumbnailBackdrop={mangaThumbnailBackdrop}>
@@ -265,11 +259,13 @@ export const MangaDetails = ({
                                     {manga.title}
                                 </Typography>
                             </SearchLink>
-                            <CustomTooltip title={t`Copy`}>
-                                <IconButton onClick={copyTitle} color="inherit">
-                                    <ContentCopyIcon fontSize="small" />
-                                </IconButton>
-                            </CustomTooltip>
+                            <ClipBoardGuard>
+                                <CustomTooltip title={t`Copy`}>
+                                    <IconButton onClick={() => copyToClipboard(manga.title)} color="inherit">
+                                        <ContentCopyIcon fontSize="small" />
+                                    </IconButton>
+                                </CustomTooltip>
+                            </ClipBoardGuard>
                         </Stack>
                         {manga.author && (
                             <Metadata

@@ -24,6 +24,7 @@ import { ReaderService } from '@/features/reader/services/ReaderService.ts';
 import type {
     PageInViewportType,
     ProgressBarPosition,
+    ReaderResumeMode,
     ReaderStatePages,
     ReadingDirection,
 } from '@/features/reader/Reader.types.ts';
@@ -189,8 +190,15 @@ class ReaderControlsClass {
 
     openChapter(
         offset: 'previous' | 'next' | ChapterIdInfo['id'],
-        doTransitionCheck: boolean = true,
-        scrollIntoView: boolean = true,
+        {
+            doTransitionCheck = true,
+            scrollIntoView = true,
+            resumeMode,
+        }: {
+            doTransitionCheck?: boolean;
+            scrollIntoView?: boolean;
+            resumeMode?: ReaderResumeMode;
+        } = {},
     ): void {
         const {
             currentChapter,
@@ -267,10 +275,12 @@ class ReaderControlsClass {
                 }
 
                 ReaderService.navigateToChapter(chapterToOpen, {
-                    resumeMode: getReaderOpenChapterResumeMode(
-                        isSpecificChapterMode || !keepRenderedChapters,
-                        isPreviousChapter,
-                    ),
+                    resumeMode:
+                        resumeMode ??
+                        getReaderOpenChapterResumeMode(
+                            isSpecificChapterMode || !keepRenderedChapters,
+                            isPreviousChapter,
+                        ),
                     updateInitialChapter: !keepRenderedChapters,
                 });
             } catch (error) {
@@ -304,11 +314,11 @@ class ReaderControlsClass {
 
         const offsetToTranslations: Record<typeof offset, Record<'scanlator' | 'chapter_number', MessageDescriptor>> = {
             previous: {
-                scanlator: msg`The previous chapter has a different scanlator then the current one.\nPrevious: {nextScanlator}\nCurrent: {currentScanlator}`,
+                scanlator: msg`The previous chapter has a different scanlator than the current one.\nPrevious: {nextScanlator}\nCurrent: {currentScanlator}`,
                 chapter_number: msg`{count, plural, one {There is # missing chapter.\nPrevious: {nextChapter}\nCurrent: {currentChapter}} other {There are # missing chapters.\nPrevious: {nextChapter}\nCurrent: {currentChapter}}}`,
             },
             next: {
-                scanlator: msg`The next chapter has a different scanlator then the current one.\nCurrent: {currentScanlator}\nNext: {nextScanlator}`,
+                scanlator: msg`The next chapter has a different scanlator than the current one.\nCurrent: {currentScanlator}\nNext: {nextScanlator}`,
                 chapter_number: msg`{count, plural, one {There is # missing chapter.\nCurrent: {currentChapter}\nNext: {nextChapter}} other {There are # missing chapters.\nCurrent: {currentChapter}\nNext: {nextChapter}}}`,
             },
         };
@@ -337,15 +347,20 @@ class ReaderControlsClass {
         const warningLineBreak = !isSameScanlator && !isContinuousChapter ? '\n\n' : '';
         const warning = `${sameScanlator}${warningLineBreak}${continuousChapter}`;
 
-        await Confirmation.show({
-            title: t`Chapter transition warning`,
-            message: warning,
-            actions: {
-                confirm: {
-                    title: t`Open`,
+        await Confirmation.show(
+            {
+                title: t`Chapter transition warning`,
+                message: warning,
+                actions: {
+                    confirm: {
+                        title: t`Open`,
+                    },
                 },
             },
-        });
+            {
+                id: `reader-chapter-warning-${currentChapter.id}-${chapterToOpen.id}`,
+            },
+        );
     }
 
     openPage(page: number | 'previous' | 'next', forceDirection?: Direction, hideOverlay: boolean = true): void {
@@ -528,18 +543,24 @@ class ReaderControlsClass {
             (image) =>
                 image &&
                 isPageInViewport(image, type, {
-                    thresholds: {
-                        bottom: 1,
-                        left: getOptionForDirection(
-                            0,
-                            pageHorizontalEndInViewportThreshold,
-                            themeDirectionOfReadingDirection,
-                        ),
-                        right: getOptionForDirection(
-                            pageHorizontalEndInViewportThreshold,
-                            0,
-                            themeDirectionOfReadingDirection,
-                        ),
+                    bounds: {
+                        bottom: {
+                            min: 1,
+                        },
+                        left: {
+                            min: getOptionForDirection(
+                                0,
+                                pageHorizontalEndInViewportThreshold,
+                                themeDirectionOfReadingDirection,
+                            ),
+                        },
+                        right: {
+                            min: getOptionForDirection(
+                                pageHorizontalEndInViewportThreshold,
+                                0,
+                                themeDirectionOfReadingDirection,
+                            ),
+                        },
                     },
                 }),
         );

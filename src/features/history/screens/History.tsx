@@ -7,7 +7,7 @@
  */
 
 import Typography from '@mui/material/Typography';
-import React, { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { requestManager } from '@/lib/requests/RequestManager.ts';
 import { LoadingPlaceholder } from '@/base/components/feedback/LoadingPlaceholder.tsx';
@@ -22,7 +22,10 @@ import { ChapterHistoryCard } from '@/features/history/components/ChapterHistory
 import { Chapters } from '@/features/chapter/services/Chapters.ts';
 import { useAppTitle } from '@/features/navigation-bar/hooks/useAppTitle.ts';
 import { STABLE_EMPTY_ARRAY } from '@/base/Base.constants.ts';
-import type { ChapterHistoryListFieldsFragment } from '@/lib/graphql/generated/graphql.ts';
+import uniqBy from 'lodash/fp/uniqBy';
+import mapValues from 'lodash/fp/mapValues';
+import { epochToDate, getDateString } from '@/base/utils/DateHelper.ts';
+import difference from 'lodash/fp/difference';
 
 export const History: React.FC = () => {
     const { t } = useLingui();
@@ -39,51 +42,92 @@ export const History: React.FC = () => {
         fetchPolicy: 'cache-and-network',
     });
     const hasNextPage = !!chapterHistoryData?.chapters.pageInfo.hasNextPage;
-    const endCursor = chapterHistoryData?.chapters.pageInfo.endCursor;
 
-    const readEntries = useMemo(() => {
-        const entries = chapterHistoryData?.chapters.nodes ?? STABLE_EMPTY_ARRAY;
+    const allReadEntries = chapterHistoryData?.chapters.nodes ?? STABLE_EMPTY_ARRAY;
+    const readEntries = useMemo(() => uniqBy('mangaId', allReadEntries), [allReadEntries]);
 
-        const latestByMangaId = new Map<
-            ChapterHistoryListFieldsFragment['manga']['id'],
-            ChapterHistoryListFieldsFragment
-        >();
+    // fork: show every manga only once, in the day it was last read (entries are ordered by "lastReadAt" desc)
+    const historyEntries = useMemo(() => {
+        const latestDayByMangaId = new Map<number, string>();
 
-        entries.forEach((chapter) => {
-            const mangaId = chapter.manga.id;
-            const existing = latestByMangaId.get(mangaId);
+        return allReadEntries.filter((entry) => {
+            const day = getDateString(epochToDate(Number(entry.lastReadAt)));
+            const latestDay = latestDayByMangaId.get(entry.mangaId);
 
-            if (!existing) {
-                latestByMangaId.set(mangaId, chapter);
-                return;
+            if (latestDay === undefined) {
+                latestDayByMangaId.set(entry.mangaId, day);
+                return true;
             }
 
-            const existingLastReadAt = Number(existing.lastReadAt ?? 0);
-            const currentLastReadAt = Number(chapter.lastReadAt ?? 0);
-
-            if (currentLastReadAt > existingLastReadAt) {
-                latestByMangaId.set(mangaId, chapter);
-            }
+            return latestDay === day;
         });
+    }, [allReadEntries]);
 
-        return Array.from(latestByMangaId.values()).sort(
-            (a, b) => Number(b.lastReadAt ?? 0) - Number(a.lastReadAt ?? 0),
+    const [prevReadEntriesLength, setPrevReadEntriesLength] = useState(0);
+
+    const [lastReadEntriesByGroup, otherEntriesByMangaByGroup] = useMemo(() => {
+        const groupedEntries = Chapters.groupByDate(historyEntries, 'lastReadAt');
+
+        const mangaIdByGroup = mapValues(
+            (groupEntries) => uniqBy('mangaId', groupEntries).map((entry) => entry.mangaId),
+            groupedEntries,
         );
-    }, [chapterHistoryData?.chapters.nodes]);
 
-    const groupedHistory = useMemo(
-        () => Object.entries(Chapters.groupByDate(readEntries, 'lastReadAt')),
-        [readEntries],
+        const entriesByMangaByGroup = mapValues(
+            (entries) => Object.groupBy(entries!, (entry) => entry.mangaId),
+            groupedEntries,
+        );
+
+        const lastReadEntryByMangaByGroup = mapValues(
+            (entriesByManga) => mapValues((mangaEntries) => [mangaEntries![0]], entriesByManga),
+            entriesByMangaByGroup,
+        );
+
+        const lastReadEntryByGroup = mapValues(
+            (lastReadEntryByManga) =>
+                Object.values(lastReadEntryByManga)
+                    .flat()
+                    .toSorted((a, b) => {
+                        const groupMangaIds = mangaIdByGroup[getDateString(epochToDate(Number(a.lastReadAt)))];
+
+                        return groupMangaIds.indexOf(a.mangaId) - groupMangaIds.indexOf(b.mangaId);
+                    }),
+            lastReadEntryByMangaByGroup,
+        );
+
+        const remainingEntriesByMangaByGroup = mapValues(
+            (entriesByManga) =>
+                mapValues(
+                    (mangaEntries) =>
+                        difference(
+                            mangaEntries!,
+                            lastReadEntryByMangaByGroup[
+                                getDateString(epochToDate(Number(mangaEntries![0].lastReadAt)))
+                            ]![mangaEntries![0].mangaId],
+                        ),
+                    entriesByManga,
+                ),
+            entriesByMangaByGroup,
+        );
+
+        return [Object.entries(lastReadEntryByGroup), remainingEntriesByMangaByGroup];
+    }, [historyEntries]);
+
+    const filteredOutAllItemsOfFetchedPage = allReadEntries.length > 0 && readEntries.length === prevReadEntriesLength;
+
+    const lastReadEntriesGroupCounts = useMemo(
+        () => lastReadEntriesByGroup.flatMap((entriesByGroup) => entriesByGroup[VirtuosoUtil.ITEMS].length),
+        [lastReadEntriesByGroup],
     );
-    const groupCounts: number[] = useMemo(
-        () => groupedHistory.map((group) => group[VirtuosoUtil.ITEMS].length),
-        [groupedHistory],
+    const lastReadEntries = useMemo(
+        () => lastReadEntriesByGroup.flatMap((entriesByGroup) => entriesByGroup[VirtuosoUtil.ITEMS]),
+        [lastReadEntriesByGroup],
     );
 
-    const computeItemKey = VirtuosoUtil.useCreateGroupedComputeItemKey(
-        groupCounts,
-        useCallback((index) => groupedHistory[index][VirtuosoUtil.GROUP], [groupedHistory]),
-        useCallback((index) => readEntries[index].id, [readEntries]),
+    const computeLastReadEntryItemKey = VirtuosoUtil.useCreateGroupedComputeItemKey(
+        lastReadEntriesGroupCounts,
+        useCallback((index) => lastReadEntriesByGroup[index][VirtuosoUtil.GROUP], [lastReadEntriesByGroup]),
+        useCallback((index) => lastReadEntries[index].id, [lastReadEntries]),
     );
 
     const loadMore = useCallback(() => {
@@ -91,8 +135,16 @@ export const History: React.FC = () => {
             return;
         }
 
-        fetchMore({ variables: { offset: readEntries.length } });
-    }, [hasNextPage, endCursor]);
+        fetchMore({ variables: { offset: allReadEntries.length } }).then(() =>
+            setPrevReadEntriesLength(readEntries.length),
+        );
+    }, [hasNextPage, allReadEntries.length, readEntries.length]);
+
+    useEffect(() => {
+        if (filteredOutAllItemsOfFetchedPage && hasNextPage && !isLoading) {
+            loadMore();
+        }
+    }, [filteredOutAllItemsOfFetchedPage, isLoading, hasNextPage, loadMore]);
 
     if (error) {
         return (
@@ -114,20 +166,26 @@ export const History: React.FC = () => {
             components={{
                 Footer: () => (isLoading ? <LoadingPlaceholder usePadding /> : null),
             }}
-            overscan={window.innerHeight * 0.5}
             endReached={loadMore}
-            groupCounts={groupCounts}
+            groupCounts={lastReadEntriesGroupCounts}
             groupContent={(index) => (
                 <StyledGroupHeader isFirstItem={index === 0}>
                     <Typography variant="h5" component="h2">
-                        {groupedHistory[index][VirtuosoUtil.GROUP]}
+                        {lastReadEntriesByGroup[index][VirtuosoUtil.GROUP]}
                     </Typography>
                 </StyledGroupHeader>
             )}
-            computeItemKey={computeItemKey}
+            computeItemKey={computeLastReadEntryItemKey}
             itemContent={(index) => (
                 <StyledGroupItemWrapper>
-                    <ChapterHistoryCard chapter={readEntries[index]} />
+                    <ChapterHistoryCard
+                        chapter={lastReadEntries[index]}
+                        otherChapters={
+                            otherEntriesByMangaByGroup[
+                                getDateString(epochToDate(Number(lastReadEntries[index].lastReadAt)))
+                            ][lastReadEntries[index].mangaId]
+                        }
+                    />
                 </StyledGroupItemWrapper>
             )}
         />

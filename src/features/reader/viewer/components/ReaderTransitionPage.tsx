@@ -14,8 +14,7 @@ import type { ComponentProps } from 'react';
 import { memo, useMemo } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { useLingui } from '@lingui/react/macro';
-import type { IReaderSettings } from '@/features/reader/Reader.types.ts';
-import { ReaderTransitionPageMode, ReadingMode } from '@/features/reader/Reader.types.ts';
+import { ReaderBackgroundColor, ReaderTransitionPageMode, ReadingMode } from '@/features/reader/Reader.types.ts';
 import { isTransitionPageVisible } from '@/features/reader/viewer/pager/ReaderPager.utils.tsx';
 import { useBackButton } from '@/base/hooks/useBackButton.ts';
 import { applyStyles } from '@/base/utils/ApplyStyles.ts';
@@ -28,7 +27,6 @@ import { AppRoutes } from '@/base/AppRoute.constants.ts';
 import type { NavbarContextType } from '@/features/navigation-bar/NavigationBar.types.ts';
 import { withPropsFrom } from '@/base/hoc/withPropsFrom.tsx';
 import { getValueFromObject, noOp } from '@/lib/HelperFunctions.ts';
-import { READER_BACKGROUND_TO_COLOR } from '@/features/reader/settings/ReaderSettings.constants.tsx';
 import type { ChapterIdInfo, ChapterNameInfo, ChapterScanlatorInfo } from '@/features/chapter/Chapter.types.ts';
 import {
     useReaderChaptersStore,
@@ -37,6 +35,8 @@ import {
     useReaderSettingsStore,
     useReaderStore,
 } from '@/features/reader/stores/ReaderStore.ts';
+import { READER_BACKGROUND_TO_COLOR } from '@/features/reader/settings/ReaderSettings.constants.tsx';
+import { getPage } from '@/features/reader/overlay/progress-bar/ReaderProgressBar.utils.tsx';
 
 const ChapterInfo = ({
     title,
@@ -47,12 +47,22 @@ const ChapterInfo = ({
     title: string;
     name?: ChapterNameInfo['name'];
     scanlator?: ChapterScanlatorInfo['scanlator'];
-    backgroundColor: IReaderSettings['backgroundColor'];
+    backgroundColor: ReaderBackgroundColor;
 }) => {
     const theme = useTheme();
 
+    const readingMode = useReaderSettingsStore((state) => state.readingMode.value);
+    const useAutoBackgroundColorContinuousMode = useReaderSettingsStore('useAutoBackgroundColorContinuousMode');
+    const autoBackgroundColor = useReaderPagesStore((state) =>
+        backgroundColor === ReaderBackgroundColor.AUTO &&
+        useAutoBackgroundColorContinuousMode &&
+        isContinuousReadingMode(readingMode)
+            ? state.pageBackgroundColors[getPage(state.currentPageIndex, state.pages)?.pagesIndex ?? 0]?.color
+            : undefined,
+    );
+
     const contrastText = theme.palette.getContrastText(
-        getValueFromObject(theme.palette, READER_BACKGROUND_TO_COLOR[backgroundColor]),
+        autoBackgroundColor ?? getValueFromObject<string>(theme.palette, READER_BACKGROUND_TO_COLOR[backgroundColor]),
     );
     const disabledText = theme.alpha(contrastText, 0.5);
 
@@ -132,8 +142,9 @@ const BaseReaderTransitionPage = ({
                 justifyContent: 'center',
                 alignItems: 'center',
                 ...applyStyles(!isContinuousReadingMode(readingMode), {
-                    width: '100%',
-                    height: '100%',
+                    backgroundColor: READER_BACKGROUND_TO_COLOR[backgroundColor],
+                    width: `calc(100vw - ${scrollbar.ySize}px - ${readerNavBarWidth}px)`,
+                    height: `calc(100vh - ${scrollbar.xSize}px)`,
                 }),
                 ...applyStyles(isContinuousReadingMode(readingMode), {
                     position: 'sticky',

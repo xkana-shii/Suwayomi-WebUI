@@ -32,6 +32,7 @@ import type { I18nResourceCode } from '@/i18n';
 import { i18nResources } from '@/i18n';
 import { toUniqueLanguageCodes } from '@/base/utils/Languages.ts';
 import { assertIsDefined } from '@/base/Asserts.ts';
+import { DEFAULT_CATEGORY_METADATA } from '@/features/category/services/CategoryMetadata.ts';
 
 const MATCH_ARRAY_NUMBERS = /^\[\d+(?:,\d+)*]$/g;
 
@@ -110,6 +111,9 @@ export const APP_METADATA: Record<
     ignoreFilters: {
         convert: convertToBoolean,
     },
+    fuzzySearch: {
+        convert: convertToBoolean,
+    },
     removeMangaFromCategories: {
         convert: convertToBoolean,
     },
@@ -176,6 +180,12 @@ export const APP_METADATA: Record<
     gridLayout: {
         convert: convertToNumber, // GridLayout (enum)
     },
+    notifyNewChapters: {
+        convert: convertToBoolean,
+    },
+    notifyNewChaptersLastNotifiedAt: {
+        convert: convertToNumber,
+    },
     sortBy: {
         convert: convertToStringNullAndUndefined, // LibrarySortMode
     },
@@ -205,6 +215,9 @@ export const APP_METADATA: Record<
     },
     hasStatus: {
         convert: convertToObject<LibraryOptions['hasStatus']>,
+    },
+    hasSource: {
+        convert: convertToObject<LibraryOptions['hasSource']>,
     },
     customThemes: {
         convert: convertToObject<MetadataThemeSettings['customThemes']>,
@@ -302,6 +315,9 @@ export const APP_METADATA: Record<
     backgroundColor: {
         convert: convertToNumber, // ReaderBackgroundColor (enum)
     },
+    useAutoBackgroundColorContinuousMode: {
+        convert: convertToBoolean,
+    },
     pageGap: {
         convert: convertToNumber,
         toConstrainedValue: (value: number) => coerceIn(value, PAGE_GAP.min, PAGE_GAP.max),
@@ -333,6 +349,9 @@ export const APP_METADATA: Record<
         convert: convertToBoolean,
     },
     shouldInformAboutScanlatorChange: {
+        convert: convertToBoolean,
+    },
+    shouldWakeLockScreen: {
         convert: convertToBoolean,
     },
     hideHistory: {
@@ -400,6 +419,9 @@ export const APP_METADATA: Record<
     excludedScanlators: {
         convert: convertToObject<string[]>,
     },
+    notes: {
+        convert: convertToString,
+    },
     locale: {
         convert: convertToString,
         toConstrainedValue: (value: string) => {
@@ -414,6 +436,9 @@ export const APP_METADATA: Record<
     },
     safeAreaInset: {
         convert: convertToObject<SafeAreaInset>,
+    },
+    shouldEnterFullscreen: {
+        convert: convertToBoolean,
     },
 } as const;
 
@@ -431,8 +456,10 @@ export const GLOBAL_METADATA_KEYS: AppMetadataKeys[] = [
     // library
     'showAddToLibraryCategorySelectDialog',
     'ignoreFilters',
+    'fuzzySearch',
     'removeMangaFromCategories',
     'showTabSize',
+    'notifyNewChaptersLastNotifiedAt',
 
     // library category options
     // filter
@@ -444,6 +471,7 @@ export const GLOBAL_METADATA_KEYS: AppMetadataKeys[] = [
     'hasDuplicateChapters',
     'hasTrackerBinding',
     'hasStatus',
+    'hasSource',
     // sort
     'sortBy',
     'sortDesc',
@@ -511,6 +539,7 @@ export const GLOBAL_METADATA_KEYS: AppMetadataKeys[] = [
     'unread',
     'showChapterNumber',
     'excludedScanlators',
+    'notes',
 ];
 
 /**
@@ -735,6 +764,44 @@ export const METADATA_MIGRATIONS: IMetadataMigration[] = [
                         return JSON.stringify(array[0]);
                     },
                 })) satisfies IMetadataMigration['values'])(),
+        ],
+    },
+    {
+        values: [
+            {
+                key: 'browseLanguages',
+                oldValue: /^\[.*]$/g,
+                newValue: (browseLanguagesValue) => {
+                    const convertedBrowseLanguages = convertToObject<string[]>(browseLanguagesValue, []);
+
+                    const convertedToValidIsoCodes = convertedBrowseLanguages.map(
+                        (language) => getISOLanguage(language)?.isoCode ?? language,
+                    );
+
+                    return JSON.stringify(convertedToValidIsoCodes);
+                },
+            },
+        ],
+    },
+    {
+        values: [
+            {
+                key: 'hasTrackerBinding',
+                oldValue: /^\{.*}$/g,
+                newValue: (hasTrackerBindingValue) => {
+                    const convertedHasTrackerBinding = convertToObject<Record<string, NullAndUndefined<boolean>>>(
+                        hasTrackerBindingValue,
+                        {},
+                    );
+
+                    const migratedHasTrackerBinding = {
+                        ...DEFAULT_CATEGORY_METADATA.hasTrackerBinding,
+                        filters: convertedHasTrackerBinding,
+                    };
+
+                    return JSON.stringify(migratedHasTrackerBinding);
+                },
+            },
         ],
     },
 ];

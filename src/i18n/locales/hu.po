@@ -311,8 +311,8 @@ msgid "A preview focused web frontend built with svelte"
 msgstr "Előnézet-orientált web frontend Svelte-ben írva"
 
 #: src/features/library/components/LibraryOptionsPanel.tsx
-msgid "A-Z"
-msgstr "A-Z"
+msgid "A—Z"
+msgstr "A—Z"
 
 #: src/features/navigation-bar/NavigationBar.constants.ts
 #: src/features/settings/screens/About.tsx
@@ -339,14 +339,6 @@ msgstr "Hozzáadás"
 #: src/features/chapter/Chapter.constants.ts
 msgid "Add bookmark"
 msgstr "Könyvjelző hozzáadása"
-
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Add repositories from which extensions can be installed"
-msgstr "Tárolók hozzáadása bővítmények telepítéséhez"
-
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Add repository"
-msgstr "Tároló hozzáadása"
 
 #: src/features/manga/components/details/MangaDetails.tsx
 #: src/features/manga/components/MangaBadges.tsx
@@ -391,11 +383,6 @@ msgstr "Összes"
 #: src/features/downloads/screens/DownloadSettings.tsx
 msgid "Allow deleting bookmarked chapters"
 msgstr "Könyvjelzőkhöz adott fejezetek törlésének engedélyezése"
-
-#: src/base/components/inputs/LanguageSelect.tsx
-#: src/features/source/components/SourceLanguageSelect.tsx
-msgid "Allowed Languages"
-msgstr "Engedélyezett Nyelvek"
 
 #: src/features/reader/filters/settings/components/ReaderSettingRGBA.tsx
 msgid "Alpha"
@@ -789,10 +776,6 @@ msgstr "Cache ürítése"
 msgid "Cleared the cache"
 msgstr "Cache kiürítve"
 
-#: src/features/manga/Manga.constants.ts
-msgid "Comic"
-msgstr "Képregény"
-
 #: src/features/settings/screens/ServerSettings.tsx
 msgid "Client"
 msgstr "Kliens"
@@ -870,11 +853,6 @@ msgstr "Függőlegesen folyamatos"
 #: src/features/settings/Settings.constants.ts
 msgid "Convert images to different formats"
 msgstr "Képek más formátumúvá alakítása"
-
-#: src/features/manga/components/details/MangaDetails.tsx
-#: src/features/reader/overlay/mobile/ReaderOverlayHeaderMobile.tsx
-msgid "Copied to clipboard"
-msgstr "Másolva a vágólapra"
 
 #: src/features/manga/components/details/MangaDetails.tsx
 #: src/features/migration/components/MigrationSingleMangaDialog.tsx
@@ -997,10 +975,6 @@ msgstr "Nem sikerült az összes letöltés eltávolítása a várólistáról"
 #: src/features/library/screens/LibrarySettings.tsx
 msgid "Could not remove non library manga from categories"
 msgstr "Nem sikerült a nem könyvtári manga eltávolítása a kategóriákból"
-
-#: src/features/downloads/components/DownloadQueueChapterCard.tsx
-msgid "Could not remove the download from the queue."
-msgstr "Nem sikerült a letöltés eltávolítása a várólistáról."
 
 #: src/features/backup/screens/Backup.tsx
 #: src/features/backup/screens/Backup.tsx
@@ -1458,10 +1432,6 @@ msgstr "Bővítmény adatai"
 msgid "Extension installed"
 msgstr "Bővítmény telepítve"
 
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Extension repositories"
-msgstr "Bővítménytárolók"
-
 #: src/features/settings/components/koreaderSync/KoreaderSyncSettings.tsx
 msgid "Failed to connect to KOReader Sync server."
 msgstr "Nem sikerült a KOReader Sync szerverhez való csatlakozás."
@@ -1508,10 +1478,6 @@ msgstr "Nem sikerült a KOReader Sync szerverről való lecsatlakozás."
 #: src/features/tracker/screens/TrackingSettings.tsx
 msgid "Failed to save changes"
 msgstr "Nem sikerült a változtatások mentése"
-
-#: src/features/settings/screens/Appearance.tsx
-msgid "Feel free to translate the project on"
-msgstr "Segíts a projekt lefordításában"
 
 #: src/features/downloads/components/DeleteChaptersWhileReadingSetting.tsx
 msgid "Fifth to last read chapter"
@@ -1774,10 +1740,6 @@ msgstr "Érvénytelen bemenet"
 #: src/features/theme/components/CreateThemeDialog.tsx
 msgid "Invalid json"
 msgstr "Érvénytelen json"
-
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Invalid repository url"
-msgstr "Érvénytelen tároló-url"
 
 #: src/features/reader/settings/layout/components/ReaderSettingTapZoneInvertMode.tsx
 msgid "Invert tap zones"
@@ -3020,26 +2982,6 @@ msgstr "A bejelentkezés a kliens által lesz kezelve."
 msgid "The login will be handled by the server."
 msgstr "A bejelentkezés a szerver által lesz kezelve."
 
-#: src/features/reader/services/ReaderControls.ts
-msgid ""
-"The next chapter has a different scanlator then the current one.\n"
-"Current: {currentScanlator}\n"
-"Next: {nextScanlator}"
-msgstr ""
-"A következő fejezetet másik fordítócsoport fordította.\n"
-"Jelenlegi: {currentScanlator}\n"
-"Következő: {nextScanlator}"
-
-#: src/features/reader/services/ReaderControls.ts
-msgid ""
-"The previous chapter has a different scanlator then the current one.\n"
-"Previous: {nextScanlator}\n"
-"Current: {currentScanlator}"
-msgstr ""
-"Az előző fejezetet másik fordítócsoport fordította.\n"
-"Előző: {nextScanlator}\n"
-"Jelenlegi: {currentScanlator}"
-
 #: src/features/theme/components/CreateThemeDialog.tsx
 msgid "The theme name must be unique and has a limit of 16 characters"
 msgstr ""
@@ -3354,10 +3296,6 @@ msgstr "VUI"
 msgid "Warning"
 msgstr "Figyelmeztetés"
 
-#: src/features/settings/screens/Appearance.tsx
-msgid "Weblate"
-msgstr "Weblate"
-
 #: src/features/manga/Manga.constants.ts
 #: src/features/reader/settings/ReaderSettings.constants.tsx
 msgid "Webtoon"
@@ -3444,11 +3382,6 @@ msgstr "Már van egy könyvtári elemed ezzel a névvel."
 msgid "You have not read any series yet."
 msgstr "Még nem olvastál egyetlen sorozatot sem."
 
-#: src/features/browse/extensions/Extensions.tsx
-msgid "You have to add a extension repository to be able to install extensions"
-msgstr ""
-"Hozzá kell adnod egy bővítménytárolót, hogy tudj bővítményeket telepíteni"
-
 #: src/features/settings/Settings.constants.ts
 msgid "Your browser will prompt you to enter credentials with a dialog."
 msgstr "A böngésző kérni fogja a bejelentkezési adataid egy panelben."
@@ -3463,14 +3396,6 @@ msgid "Your library will be accessible. Use this only on private networks or whe
 msgstr ""
 "A könyvtárad elérhető lesz. Ezt csak privát hálózatokon használd, vagy "
 "védett hozzáférés mellett."
-
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "<0>Suwayomi does not provide any support for 3rd party repositories or extensions!</0><1/>Use with caution as there could be malicious actors making those repositories.<2/>You as the user need to verify the security and that you trust any repository or extension."
-msgstr ""
-"<0>Suwayomi nem nyújt semmilyen támogatást külső tárolóknak vagy "
-"bővítményeknek!</0><1/>Használd elővigyázatossággal, mivel akár ártalmas "
-"személyek is készíthetik őket.<2/>Neked, mint felhasználónak kell "
-"megbizonyosodnod a tárolók vagy a bővítmények megbízhatóságáról."
 
 #: src/features/settings/screens/Appearance.tsx
 msgid "Changes the theme colors on the manga page based on the thumbnail"
@@ -3642,12 +3567,6 @@ msgstr "Kérés időtúllépése"
 #: src/features/manga/Manga.constants.ts
 msgid "Licensed"
 msgstr "Hivatalos"
-
-#: src/features/manga/Manga.constants.ts
-#: src/features/manga/Manga.constants.ts
-#: src/features/manga/Manga.constants.ts
-msgid "Long strip"
-msgstr "Függőleges folyamatos"
 
 #: src/features/device/screens/DeviceSetting.tsx
 msgid ""

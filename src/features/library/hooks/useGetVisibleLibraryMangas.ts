@@ -11,8 +11,10 @@ import { useMemo } from 'react';
 import { useMetadataServerSettings } from '@/features/settings/services/ServerSettingsMetadata.ts';
 import type { ChapterType, MangaType, TrackRecordType } from '@/lib/graphql/generated/graphql-base.types.ts';
 import { enhancedCleanup } from '@/base/utils/Strings.ts';
+import { createFuzzySearch, fuzzySearch } from '@/base/utils/FuzzySearch.ts';
 import { useGetCategoryMetadata } from '@/features/category/services/CategoryMetadata.ts';
 import type { LibraryOptions, LibrarySortMode } from '@/features/library/Library.types.ts';
+import { FilterMode } from '@/features/library/Library.types.ts';
 import type { CategoryIdInfo, CategoryMetadataInfo } from '@/features/category/Category.types.ts';
 import type {
     MangaArtistInfo,
@@ -30,6 +32,13 @@ import type {
     MangaUnreadInfo,
 } from '@/features/manga/Manga.types.ts';
 import { SearchParam } from '@/base/Base.types.ts';
+import { Sources } from '@/features/source/services/Sources';
+import pickBy from 'lodash/fp/pickBy';
+import { CustomCache } from '@/lib/storage/CustomCache.ts';
+import { STABLE_EMPTY_ARRAY } from '@/base/Base.constants.ts';
+import { Mangas } from '@/features/manga/services/Mangas.ts';
+import isEqual from 'lodash/fp/isEqual';
+import partition from 'lodash/fp/partition';
 
 const triStateFilter = (
     triState: NullAndUndefined<boolean>,
@@ -89,33 +98,52 @@ const querySearchManga = (
     { title, genre: genres, description, artist, author, source, sourceId }: TMangaQueryFilter,
 ): boolean =>
     performSearch([query], [title]) ||
-    performSearch(query?.split(','), genres.map((genre) => enhancedCleanup(genre))) ||
+    performSearch(
+        query?.split(','),
+        genres.map((genre) => enhancedCleanup(genre)),
+    ) ||
     performSearch([query], [description]) ||
     performSearch([query], [artist]) ||
     performSearch([query], [author]) ||
     performSearch([query], [source?.displayName]) ||
     performSearch([query], [sourceId]);
 
-type TMangaTrackerFilter = { trackRecords: { nodes: Pick<TrackRecordType, 'id' | 'trackerId'>[] } };
-const trackerFilter = (trackFilters: LibraryOptions['hasTrackerBinding'], manga: TMangaTrackerFilter): boolean =>
-    Object.entries(trackFilters)
-        .map(([trackFilterId, trackFilterState]) => {
-            const isTrackerBound = manga.trackRecords.nodes.some(
-                (trackRecord) => trackRecord.trackerId === Number(trackFilterId),
-            );
+const listTriStateBooleanFilter = (
+    mode: FilterMode,
+    filters: Record<string, NullAndUndefined<boolean>>,
+    getStatus: (key: string) => boolean,
+): boolean => {
+    const [includedFilters, excludedFilters] = partition(
+        ([_key, filterState]) => !!filterState,
+        Object.entries(filters),
+    );
 
-            return triStateFilter(
-                trackFilterState,
-                () => isTrackerBound,
-                () => !isTrackerBound,
-            );
-        })
-        .every(Boolean);
+    const includedFilterStates = includedFilters.map(([key, filterState]) =>
+        triStateFilterBoolean(filterState, getStatus(key)),
+    );
+    const hasIncludedFilter =
+        !includedFilters.length ||
+        (mode === 'OR' ? includedFilterStates.some(Boolean) : includedFilterStates.every(Boolean));
+    const hasExcludedFilter =
+        !!excludedFilters.length &&
+        excludedFilters
+            .map(([key, filterState]) => triStateFilterBoolean(filterState, getStatus(key)))
+            .some((state) => !state);
+
+    return hasIncludedFilter && !hasExcludedFilter;
+};
+
+type TMangaTrackerFilter = { trackRecords: { nodes: Pick<TrackRecordType, 'id' | 'trackerId'>[] } };
+const trackerFilter = (trackFilter: LibraryOptions['hasTrackerBinding'], manga: TMangaTrackerFilter): boolean =>
+    listTriStateBooleanFilter(trackFilter.mode, trackFilter.filters, (trackFilterId) =>
+        manga.trackRecords.nodes.some((trackRecord) => trackRecord.trackerId === Number(trackFilterId)),
+    );
 
 const statusFilter = (statusFilters: LibraryOptions['hasStatus'], manga: MangaStatusInfo): boolean =>
-    Object.entries(statusFilters)
-        .map(([status, statusFilterState]) => triStateFilterBoolean(statusFilterState, status === manga.status))
-        .every(Boolean);
+    listTriStateBooleanFilter(FilterMode.OR, statusFilters, (status) => status === manga.status);
+
+const sourceFilter = (sourceFilters: LibraryOptions['hasSource'], manga: MangaSourceIdInfo): boolean =>
+    listTriStateBooleanFilter(FilterMode.OR, sourceFilters, (sourceId) => sourceId === manga.sourceId);
 
 type TMangaFilterOptions = Pick<
     LibraryOptions,
@@ -127,10 +155,12 @@ type TMangaFilterOptions = Pick<
     | 'hasDuplicateChapters'
     | 'hasTrackerBinding'
     | 'hasStatus'
+    | 'hasSource'
 >;
 type TMangaFilter = Pick<MangaType, 'bookmarkCount' | 'fillermarkCount' | 'hasDuplicateChapters'> &
     TMangaTrackerFilter &
     MangaStatusInfo &
+    MangaSourceIdInfo &
     MangaChapterCountInfo &
     MangaDownloadInfo &
     MangaUnreadInfo;
@@ -145,6 +175,7 @@ const filterManga = (
         hasDuplicateChapters,
         hasTrackerBinding,
         hasStatus,
+        hasSource,
     }: TMangaFilterOptions,
 ): boolean =>
     triStateFilterNumber(hasDownloadedChapters, manga.downloadCount) &&
@@ -154,27 +185,36 @@ const filterManga = (
     triStateFilterNumber(hasFillermarkedChapters, manga.fillermarkCount) &&
     triStateFilterBoolean(hasDuplicateChapters, manga.hasDuplicateChapters) &&
     trackerFilter(hasTrackerBinding, manga) &&
-    statusFilter(hasStatus, manga);
+    statusFilter(hasStatus, manga) &&
+    sourceFilter(hasSource, manga);
+
+const FUZZY_SEARCH_WEIGHTS = [
+    { name: 'title', weight: 10 },
+    { name: 'author', weight: 4 },
+    { name: 'artist', weight: 4 },
+    { name: 'genre', weight: 2.5 },
+    { name: 'source.displayName', weight: 1 },
+    { name: 'sourceId', weight: 1 },
+    { name: 'description', weight: 0.5 },
+];
 
 type TMangasFilter = TMangaQueryFilter & TMangaFilter;
+
 const filterMangas = <Manga extends TMangasFilter>(
     mangas: Manga[],
-    query: NullAndUndefined<string>,
+    isSearching: boolean,
     options: TMangaFilterOptions & { ignoreFilters: boolean },
 ): Manga[] => {
-    const ignoreFiltersWhileSearching = options.ignoreFilters && query?.length;
+    const ignoreFiltersWhileSearching = options.ignoreFilters && isSearching;
 
-    return mangas.filter((manga) => {
-        const matchesSearch = querySearchManga(query, manga);
-        const matchesFilters = ignoreFiltersWhileSearching || filterManga(manga, options);
-
-        return matchesSearch && matchesFilters;
-    });
+    return mangas.filter((manga) => ignoreFiltersWhileSearching || filterManga(manga, options));
 };
 
 const sortByNumber = (a: number | string = 0, b: number | string = 0) => Number(a) - Number(b);
 
 const sortByString = (a: string, b: string): number => a.localeCompare(b, undefined, { sensitivity: 'base' });
+
+const sortByRandom = () => Math.floor(Math.random() * 3 - 1);
 
 type TMangaSort = MangaTitleInfo &
     MangaInLibraryInfo &
@@ -207,6 +247,8 @@ const sortManga = <Manga extends TMangaSort>(
                 return (a, b) => sortByNumber(a.latestFetchedChapter?.fetchedAt, b.latestFetchedChapter?.fetchedAt);
             case 'totalChapters':
                 return (a, b) => sortByNumber(a.chapters.totalCount, b.chapters.totalCount);
+            case 'random':
+                return () => sortByRandom();
             default:
                 return () => 0;
         }
@@ -227,17 +269,71 @@ const sortManga = <Manga extends TMangaSort>(
     return result;
 };
 
+const SORT_CACHE = new CustomCache();
+type SortOptions = Pick<LibraryOptions, 'sortBy' | 'sortDesc'>;
+const useSortedMangas = <Manga extends MangaIdInfo & TMangasFilter & TMangaSort>(
+    categoryId: number | undefined,
+    mangas: Manga[],
+    options: SortOptions,
+): Manga[] => {
+    const CACHE_MANGAS_KEY = `library-category-${categoryId}-mangas`;
+    const CACHE_MANGA_IDS_KEY = `library-category-${categoryId}-manga-ids`;
+    const CACHE_MANGAS_SORTED_KEY = `library-category-${categoryId}-mangas-sorted`;
+    const CACHE_SORT_OPTIONS_KEY = `library-category-${categoryId}-sort-options`;
+
+    const mangaIds = useMemo(() => Mangas.getIds(mangas), [mangas]);
+
+    const cachedMangas = SORT_CACHE.getResponseFor<Manga[]>(CACHE_MANGAS_KEY, undefined);
+    const cachedMangaIds = SORT_CACHE.getResponseFor<MangaIdInfo['id'][]>(CACHE_MANGA_IDS_KEY, undefined);
+    const cachedSortOptions = SORT_CACHE.getResponseFor<SortOptions>(CACHE_SORT_OPTIONS_KEY, undefined);
+
+    const previousSortBy = cachedSortOptions?.sortBy;
+    const previousSortDesc = cachedSortOptions?.sortDesc;
+
+    const haveMangasChanged = !isEqual(mangas, cachedMangas);
+    const haveMangaIdsChanged = !isEqual(mangaIds, cachedMangaIds);
+    const haveSortOptionsChanged = previousSortBy !== options.sortBy || previousSortDesc !== options.sortDesc;
+    const reapplySorting = haveMangaIdsChanged || haveSortOptionsChanged;
+
+    const sortedMangas = (() => {
+        if (reapplySorting) {
+            const { sortBy, sortDesc } = options;
+
+            SORT_CACHE.cacheResponse(CACHE_SORT_OPTIONS_KEY, undefined, { sortBy, sortDesc });
+
+            return sortManga(mangas, sortBy, sortDesc);
+        }
+
+        return SORT_CACHE.getResponseFor<Manga[]>(CACHE_MANGAS_SORTED_KEY, undefined) ?? STABLE_EMPTY_ARRAY;
+    })();
+
+    const sortedMangasUpdatedReferences = useMemo(() => {
+        if (haveMangasChanged) {
+            return sortedMangas.map((sortedManga) => mangas.find((manga) => manga.id === sortedManga.id)!);
+        }
+
+        return sortedMangas;
+    }, [haveMangasChanged, sortedMangas, mangas]);
+
+    SORT_CACHE.cacheResponse(CACHE_MANGAS_KEY, undefined, mangas);
+    SORT_CACHE.cacheResponse(CACHE_MANGA_IDS_KEY, undefined, mangaIds);
+    SORT_CACHE.cacheResponse(CACHE_MANGAS_SORTED_KEY, undefined, sortedMangasUpdatedReferences);
+
+    return sortedMangasUpdatedReferences;
+};
+
 const DEFAULT_CATEGORY: CategoryIdInfo = { id: -1 };
 export const useGetVisibleLibraryMangas = <Manga extends MangaIdInfo & TMangasFilter & TMangaSort>(
     mangas: Manga[],
     category?: CategoryMetadataInfo,
 ): {
     visibleMangas: Manga[];
+    searchSuggestions: Manga[];
     showFilteredOutMessage: boolean;
     filterKey: string;
 } => {
     const [query] = useQueryParam(SearchParam.QUERY, StringParam);
-    const options = useGetCategoryMetadata(category ?? DEFAULT_CATEGORY);
+    const { hasSource: hasSourceFilter, ...options } = useGetCategoryMetadata(category ?? DEFAULT_CATEGORY);
     const {
         hasUnreadChapters,
         hasReadChapters,
@@ -249,16 +345,28 @@ export const useGetVisibleLibraryMangas = <Manga extends MangaIdInfo & TMangasFi
         hasStatus,
     } = options;
     const { settings } = useMetadataServerSettings();
+    const { sources } = Sources.useGetMigratableSources();
+
+    const hasSource = useMemo(
+        () => pickBy((_state, sourceId) => sources.some((source) => source.id === sourceId), hasSourceFilter),
+        [hasSourceFilter, sources],
+    );
+
+    const sortedMangas = useSortedMangas(category?.id, mangas, options);
+
+    const isSearching = !!query?.length;
+    const isFuzzySearchActive = settings.fuzzySearch && isSearching;
 
     const filteredMangas = useMemo(
         () =>
-            filterMangas(mangas, query, {
+            filterMangas(sortedMangas, isSearching, {
                 ...options,
+                hasSource,
                 ignoreFilters: settings.ignoreFilters,
             }),
         [
-            mangas,
-            query,
+            sortedMangas,
+            isSearching,
             hasUnreadChapters,
             hasReadChapters,
             hasDownloadedChapters,
@@ -267,17 +375,32 @@ export const useGetVisibleLibraryMangas = <Manga extends MangaIdInfo & TMangasFi
             hasTrackerBinding,
             hasDuplicateChapters,
             hasStatus,
+            hasSource,
             settings.ignoreFilters,
         ],
     );
-    const sortedMangas = useMemo(
-        () => sortManga(filteredMangas, options.sortBy, options.sortDesc),
-        [filteredMangas, options.sortBy, options.sortDesc],
+
+    const fuzzySearchIndex = useMemo(
+        () => (isFuzzySearchActive ? createFuzzySearch(filteredMangas, FUZZY_SEARCH_WEIGHTS) : null),
+        [isFuzzySearchActive, filteredMangas],
     );
 
-    const isATrackFilterActive = Object.values(options.hasTrackerBinding).some(
-        (trackFilterState) => trackFilterState != null,
+    const visibleMangas = useMemo(() => {
+        if (fuzzySearchIndex && query) {
+            return fuzzySearch(fuzzySearchIndex, query);
+        }
+
+        return filteredMangas.filter((manga) => querySearchManga(query, manga));
+    }, [fuzzySearchIndex, filteredMangas, query]);
+
+    // Suggestions are based on the "unsearched" mangas; otherwise, the search query would incorrectly shrink the suggestions
+    const searchSuggestions = useMemo(
+        () => (settings.ignoreFilters ? mangas : filteredMangas),
+        [settings.ignoreFilters, filteredMangas, mangas],
     );
+
+    const isATrackFilterActive = Object.values(hasTrackerBinding).some((trackFilterState) => trackFilterState != null);
+    const isASourceFilterActive = Object.values(hasSource).some((sourceFilterState) => sourceFilterState != null);
     const showFilteredOutMessage =
         (hasUnreadChapters != null ||
             hasReadChapters != null ||
@@ -285,13 +408,15 @@ export const useGetVisibleLibraryMangas = <Manga extends MangaIdInfo & TMangasFi
             hasBookmarkedChapters != null ||
             hasFillermarkedChapters != null ||
             !!query ||
-            isATrackFilterActive) &&
-        filteredMangas.length === 0 &&
+            isATrackFilterActive ||
+            isASourceFilterActive) &&
+        visibleMangas.length === 0 &&
         mangas.length > 0;
 
     return {
-        visibleMangas: sortedMangas,
+        visibleMangas,
+        searchSuggestions,
         showFilteredOutMessage,
-        filterKey: `${JSON.stringify(options)}${settings.ignoreFilters}`,
+        filterKey: `${JSON.stringify(options)}${JSON.stringify(hasSource)}${query}${settings.ignoreFilters}${settings.fuzzySearch}`,
     };
 };

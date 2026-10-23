@@ -26,17 +26,13 @@ msgstr "{progress}% | Aggiornamento…"
 msgid "*: Active setting"
 msgstr "*: Impostazioni attive"
 
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "<0>Suwayomi does not provide any support for 3rd party repositories or extensions!</0><1/>Use with caution as there could be malicious actors making those repositories.<2/>You as the user need to verify the security and that you trust any repository or extension."
-msgstr "<0>Suwayomi non fornisce alcun supporto per repository o estensioni di terze parti!</0><1/>Usare con cautela poichè potrebbero esserci malintenzionati che creano questi repository.<2/>L'utente deve verificare la sicurezza e la fiducia in qualsiasi repository o estensione."
-
 #: src/features/settings/Settings.constants.ts
 msgid "A preview focused web frontend built with svelte"
 msgstr "Un frontend web focalizzato sulle anteprime costruito con svelte"
 
 #: src/features/library/components/LibraryOptionsPanel.tsx
-msgid "A-Z"
-msgstr "A-Z"
+msgid "A—Z"
+msgstr "A—Z"
 
 #: src/features/navigation-bar/NavigationBar.constants.ts
 #: src/features/settings/screens/About.tsx
@@ -63,14 +59,6 @@ msgstr "Aggiungi"
 #: src/features/chapter/Chapter.constants.ts
 msgid "Add bookmark"
 msgstr "Aggiungi segnalibro"
-
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Add repositories from which extensions can be installed"
-msgstr "Aggiungi repository da cui installare le estensioni"
-
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Add repository"
-msgstr "Aggiungi repository"
 
 #: src/features/manga/components/details/MangaDetails.tsx
 #: src/features/manga/components/MangaBadges.tsx
@@ -113,11 +101,6 @@ msgstr "Tutti"
 #: src/features/downloads/screens/DownloadSettings.tsx
 msgid "Allow deleting bookmarked chapters"
 msgstr "Permetti la cancellazione di capitoli con segnalibro"
-
-#: src/base/components/inputs/LanguageSelect.tsx
-#: src/features/source/components/SourceLanguageSelect.tsx
-msgid "Allowed Languages"
-msgstr "Lingue consentite"
 
 #: src/features/reader/filters/settings/components/ReaderSettingRGBA.tsx
 msgid "Alpha"
@@ -516,10 +499,6 @@ msgstr "Modalità di fusione del filtro colore"
 msgid "Comfortable grid"
 msgstr "Griglia confortevole"
 
-#: src/features/manga/Manga.constants.ts
-msgid "Comic"
-msgstr "Fumetti"
-
 #: src/base/components/GridLayouts.tsx
 #: src/features/library/components/LibraryOptionsPanel.tsx
 msgid "Compact grid"
@@ -553,11 +532,6 @@ msgstr "Verticale continuo"
 #: src/features/settings/Settings.constants.ts
 msgid "Convert images to different formats"
 msgstr "Convertire le immagini in formati diversi"
-
-#: src/features/manga/components/details/MangaDetails.tsx
-#: src/features/reader/overlay/mobile/ReaderOverlayHeaderMobile.tsx
-msgid "Copied to clipboard"
-msgstr "Copiato negli appunti"
 
 #: src/features/manga/components/details/MangaDetails.tsx
 #: src/features/migration/components/MigrationSingleMangaDialog.tsx
@@ -637,10 +611,6 @@ msgstr "Impossibile rimuovere i download dalla coda"
 #: src/features/library/screens/LibrarySettings.tsx
 msgid "Could not remove non library manga from categories"
 msgstr "Impossibile rimuovere i manga non della libreria dalle categorie"
-
-#: src/features/downloads/components/DownloadQueueChapterCard.tsx
-msgid "Could not remove the download from the queue."
-msgstr "Impossibile rimuovere il download dalla coda."
 
 #: src/features/backup/screens/Backup.tsx
 #: src/features/backup/screens/Backup.tsx
@@ -1083,10 +1053,6 @@ msgstr "Esci alla pagina precedente"
 msgid "Extension info"
 msgstr "Info estensione"
 
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Extension repositories"
-msgstr "Repository delle estensioni"
-
 #: src/features/backup/screens/Backup.tsx
 #: src/features/backup/screens/Backup.tsx
 #: src/features/browse/extensions/Extensions.tsx
@@ -1138,10 +1104,6 @@ msgstr ""
 "\n"
 "Dopo aver modificato questa impostazione, andare alla pagina \"Informazioni\", verificare la presenza di un aggiornamento della webUI e installarlo\n"
 ""
-
-#: src/features/settings/screens/Appearance.tsx
-msgid "Feel free to translate the project on"
-msgstr "Sentitevi liberi di tradurre il progetto su"
 
 #: src/features/downloads/components/DeleteChaptersWhileReadingSetting.tsx
 msgid "Fifth to last read chapter"
@@ -1445,10 +1407,6 @@ msgstr "Inserimento non valido"
 msgid "Invalid json"
 msgstr "JSON non valido"
 
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Invalid repository url"
-msgstr "URL del repository non valido"
-
 #: src/features/reader/filters/settings/components/ReaderSettingInvert.tsx
 msgid "Invert"
 msgstr "Invertire"
@@ -1635,12 +1593,6 @@ msgstr "Esci"
 #: src/features/tracker/components/cards/SettingsTrackerCard.tsx
 msgid "Logged in"
 msgstr "Collegato"
-
-#: src/features/manga/Manga.constants.ts
-#: src/features/manga/Manga.constants.ts
-#: src/features/manga/Manga.constants.ts
-msgid "Long strip"
-msgstr "Striscia lunga"
 
 #: src/features/device/screens/DeviceSetting.tsx
 msgid ""
@@ -2685,17 +2637,6 @@ msgstr "L'accesso sarà gestito dal client."
 msgid "The login will be handled by the server."
 msgstr "L'accesso sarà gestito dal server."
 
-#: src/features/reader/services/ReaderControls.ts
-msgid ""
-"The next chapter has a different scanlator then the current one.\n"
-"Current: {currentScanlator}\n"
-"Next: {nextScanlator}"
-msgstr ""
-"Il prossimo capitolo ha un differente scanlator rispetto al precedente.\n"
-"Attuale: {currentScanlator}\n"
-"Successivo: {nextScanlator}\n"
-""
-
 #: src/features/backup/screens/Backup.tsx
 msgid "The path to the directory on the server where automated backups should get saved in"
 msgstr "Il percorso della directory del server in cui salvare i backup automatici"
@@ -2711,17 +2652,6 @@ msgstr "Il percorso della directory sul server in cui sono salvati i file di ori
 #: src/features/settings/screens/WebUISettings.tsx
 msgid "The path to the electron installation on the server"
 msgstr "Il percorso dell'installazione di electron sul server"
-
-#: src/features/reader/services/ReaderControls.ts
-msgid ""
-"The previous chapter has a different scanlator then the current one.\n"
-"Previous: {nextScanlator}\n"
-"Current: {currentScanlator}"
-msgstr ""
-"Il capitolo precedente ha un diverso scanlator rispetto all'attuale.\n"
-"Precedente: {nextScanlator}\n"
-"Attuale: {currentScanlator}\n"
-""
 
 #: src/features/theme/components/CreateThemeDialog.tsx
 msgid "The theme name must be unique and has a limit of 16 characters"
@@ -3041,10 +2971,6 @@ msgstr "VUI"
 msgid "Warning"
 msgstr "Attenzione"
 
-#: src/features/settings/screens/Appearance.tsx
-msgid "Weblate"
-msgstr "Weblate"
-
 #: src/features/manga/Manga.constants.ts
 #: src/features/reader/settings/ReaderSettings.constants.tsx
 msgid "Webtoon"
@@ -3117,10 +3043,6 @@ msgstr "Nella libreria è presente una voce con lo stesso nome."
 #: src/features/history/screens/History.tsx
 msgid "You have not read any series yet."
 msgstr "Non hai ancora letto nessuna serie."
-
-#: src/features/browse/extensions/Extensions.tsx
-msgid "You have to add a extension repository to be able to install extensions"
-msgstr "È necessario aggiungere un repository di estensioni per poter installare le estensioni"
 
 #: src/features/settings/Settings.constants.ts
 msgid "Your browser will prompt you to enter credentials with a dialog."

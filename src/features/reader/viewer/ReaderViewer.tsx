@@ -17,6 +17,7 @@ import { PageInViewportType, ReaderResumeMode, ReadingDirection, ReadingMode } f
 import { MediaQuery } from '@/base/utils/MediaQuery.tsx';
 import { ReaderControls } from '@/features/reader/services/ReaderControls.ts';
 import {
+    getPageGap,
     isContinuousReadingMode,
     isContinuousVerticalReadingMode,
     shouldApplyReaderWidth,
@@ -51,6 +52,7 @@ import {
     useReaderSettingsStore,
 } from '@/features/reader/stores/ReaderStore.ts';
 import { STABLE_EMPTY_OBJECT } from '@/base/Base.constants.ts';
+import { getPage } from '@/features/reader/overlay/progress-bar/ReaderProgressBar.utils.tsx';
 
 const READING_MODE_TO_IN_VIEWPORT_TYPE: Record<ReadingMode, PageInViewportType> = {
     [ReadingMode.SINGLE_PAGE]: PageInViewportType.X,
@@ -97,6 +99,7 @@ const BaseReaderViewer = ({
         customFilter,
         shouldStretchPage,
         isStaticNav,
+        shouldShowTransitionPage,
     } = useReaderSettingsStore((state) => ({
         readingMode: state.readingMode.value,
         readingDirection: state.readingDirection.value,
@@ -108,6 +111,7 @@ const BaseReaderViewer = ({
         customFilter: state.customFilter,
         shouldStretchPage: state.shouldStretchPage.value,
         isStaticNav: state.isStaticNav,
+        shouldShowTransitionPage: state.shouldShowTransitionPage,
     }));
     const safeAreaInset = useReaderSettingsStore('safeAreaInset');
     const { resumeMode = ReaderResumeMode.START } = useLocation<RouteStateReader>().state ?? STABLE_EMPTY_OBJECT;
@@ -121,8 +125,8 @@ const BaseReaderViewer = ({
 
     useEffect(() => getReaderAutoScrollStore().setScrollRef(scrollElementRef.current), []);
 
-    const scrollbarXSize = MediaQuery.useGetScrollbarSize('width', scrollElementRef.current);
-    const scrollbarYSize = MediaQuery.useGetScrollbarSize('height', scrollElementRef.current);
+    const scrollbarXSize = MediaQuery.useGetScrollbarSize('X', scrollElementRef.current);
+    const scrollbarYSize = MediaQuery.useGetScrollbarSize('Y', scrollElementRef.current);
     useLayoutEffect(() => {
         const { scrollbar } = getReaderStore();
         scrollbar.setXSize(scrollbarXSize);
@@ -130,11 +134,11 @@ const BaseReaderViewer = ({
     }, [scrollbarXSize, scrollbarYSize]);
 
     const imageRefs = useRef<(HTMLElement | null)[]>(pages.map(() => null));
-    const [{ minChapterViewWidth, minChapterViewHeight, minChapterSizeSourceChapterId }, setChapterViewerSize] =
+    const [{ minChapterViewerWidth, minChapterViewerHeight, minChapterViewerSourceChapterId }, setChapterViewerSize] =
         useState({
-            minChapterViewWidth: 0,
-            minChapterViewHeight: 0,
-            minChapterSizeSourceChapterId: -1,
+            minChapterViewerWidth: 0,
+            minChapterViewerHeight: 0,
+            minChapterViewerSourceChapterId: -1,
         });
 
     const [, setTriggerReRender] = useState({});
@@ -158,41 +162,41 @@ const BaseReaderViewer = ({
         [currentChapter, chaptersToRender],
     );
 
-    const onChapterViewSizeChange = useCallback(
+    const onChapterViewerSizeChange = useCallback(
         (width: number, height: number, chapterId: ChapterIdInfo['id']) => {
             if (!isContinuousReadingModeActive) {
                 return;
             }
 
-            const isSameChapterId = chapterId === minChapterSizeSourceChapterId;
+            const isSameChapterId = chapterId === minChapterViewerSourceChapterId;
 
             if (isContinuousVerticalReadingModeActive) {
-                if (!isSameChapterId && minChapterViewWidth >= width) {
+                if (!isSameChapterId && minChapterViewerWidth >= width) {
                     return;
                 }
 
                 setChapterViewerSize({
-                    minChapterViewWidth: width,
-                    minChapterViewHeight: 0,
-                    minChapterSizeSourceChapterId: chapterId,
+                    minChapterViewerWidth: width,
+                    minChapterViewerHeight: 0,
+                    minChapterViewerSourceChapterId: chapterId,
                 });
                 return;
             }
 
-            if (isSameChapterId || minChapterViewHeight < height) {
+            if (isSameChapterId || minChapterViewerHeight < height) {
                 setChapterViewerSize({
-                    minChapterViewWidth: 0,
-                    minChapterViewHeight: height,
-                    minChapterSizeSourceChapterId: chapterId,
+                    minChapterViewerWidth: 0,
+                    minChapterViewerHeight: height,
+                    minChapterViewerSourceChapterId: chapterId,
                 });
             }
         },
         [
             isContinuousReadingModeActive,
             isContinuousVerticalReadingModeActive,
-            minChapterViewWidth,
-            minChapterViewHeight,
-            minChapterSizeSourceChapterId,
+            minChapterViewerWidth,
+            minChapterViewerHeight,
+            minChapterViewerSourceChapterId,
         ],
     );
 
@@ -233,9 +237,9 @@ const BaseReaderViewer = ({
 
     useLayoutEffect(() => {
         setChapterViewerSize({
-            minChapterViewWidth: 0,
-            minChapterViewHeight: 0,
-            minChapterSizeSourceChapterId: -1,
+            minChapterViewerWidth: 0,
+            minChapterViewerHeight: 0,
+            minChapterViewerSourceChapterId: -1,
         });
         setTriggerReRender({});
     }, [readingMode]);
@@ -252,6 +256,9 @@ const BaseReaderViewer = ({
                 height: '100%',
                 overflow: 'auto',
                 flexWrap: 'nowrap',
+                ...applyStyles(isContinuousReadingModeActive && !shouldShowTransitionPage, {
+                    gap: `${getPageGap(pageGap, readingMode)}px`,
+                }),
                 ...applyStyles(
                     isContinuousVerticalReadingModeActive && shouldApplyReaderWidth(readerWidth, pageScaleMode),
                     { alignItems: 'center' },
@@ -286,14 +293,19 @@ const BaseReaderViewer = ({
                 const nextChapter =
                     chaptersToRender[chapterIndex - 1] ?? chapters[initialChapterIndex - visibleChapters.trailing - 1];
 
+                const isChapterViewerSourceChapter = chapter.id === minChapterViewerSourceChapterId;
+
                 const isInitialChapter = chapter.id === initialChapter.id;
                 const isCurrentChapter = chapter.id === currentChapter.id;
                 const isPreviousChapter = chapter.id === chaptersToRender[currentChapterIndex + 1]?.id;
                 const isNextChapter = chapter.id === chaptersToRender[currentChapterIndex - 1]?.id;
+                const isAdjacentChapterToCurrentChapter = isPreviousChapter || isNextChapter;
+
                 const isLeadingChapter = initialChapter.sourceOrder > chapter.sourceOrder;
                 const isTrailingChapter = initialChapter.sourceOrder < chapter.sourceOrder;
                 const isLastLeadingChapter = visibleChapters.lastLeadingChapterSourceOrder === chapter.sourceOrder;
                 const isLastTrailingChapter = visibleChapters.lastTrailingChapterSourceOrder === chapter.sourceOrder;
+
                 const isPreloadMode =
                     (isLastLeadingChapter && visibleChapters.isLeadingChapterPreloadMode) ||
                     (isLastTrailingChapter && visibleChapters.isTrailingChapterPreloadMode);
@@ -304,7 +316,28 @@ const BaseReaderViewer = ({
                     visibleChapters,
                 );
 
-                const isChapterSizeSourceChapter = chapter.id === minChapterSizeSourceChapterId;
+                const currentChapterCurrentPageIndex = isAdjacentChapterToCurrentChapter
+                    ? getReaderChapterViewerCurrentPageIndex(
+                          currentPageIndex,
+                          currentChapter,
+                          currentChapter,
+                          true,
+                          isCurrentChapterReady,
+                          initialChapter.sourceOrder > currentChapter.sourceOrder,
+                          initialChapter.sourceOrder < currentChapter.sourceOrder,
+                          visibleChapters,
+                      )
+                    : -1;
+                const currentChapterCurrentPagesIndex = isAdjacentChapterToCurrentChapter
+                    ? getPage(currentChapterCurrentPageIndex, pages).pagesIndex
+                    : -1;
+
+                const currentChapterRemainingLeadingPages = currentChapterCurrentPagesIndex;
+                const currentChapterRemainingTrailingPages = pages.length - 1 - currentChapterCurrentPagesIndex;
+
+                const currentChapterRemainingPages = isNextChapter
+                    ? currentChapterRemainingTrailingPages
+                    : currentChapterRemainingLeadingPages;
 
                 return (
                     <ReaderChapterViewer
@@ -315,6 +348,7 @@ const BaseReaderViewer = ({
                         isPreviousChapterVisible={previousNextChapterVisibility.previous}
                         isNextChapterVisible={previousNextChapterVisibility.next}
                         lastPageRead={coerceIn(chapter.lastPageRead, 0, chapter.pageCount - 1)}
+                        currentChapterRemainingPages={currentChapterRemainingPages}
                         currentPageIndex={getReaderChapterViewerCurrentPageIndex(
                             currentPageIndex,
                             chapter,
@@ -356,9 +390,9 @@ const BaseReaderViewer = ({
                         customFilter={customFilter}
                         shouldStretchPage={shouldStretchPage}
                         readerNavBarWidth={readerNavBarWidth}
-                        onSizeChange={onChapterViewSizeChange}
-                        minWidth={isChapterSizeSourceChapter ? 0 : minChapterViewWidth}
-                        minHeight={isChapterSizeSourceChapter ? 0 : minChapterViewHeight}
+                        onSizeChange={onChapterViewerSizeChange}
+                        minWidth={isChapterViewerSourceChapter ? 0 : minChapterViewerWidth}
+                        minHeight={isChapterViewerSourceChapter ? 0 : minChapterViewerHeight}
                         scrollElement={scrollElementRef.current}
                     />
                 );

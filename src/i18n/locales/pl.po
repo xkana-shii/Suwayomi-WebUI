@@ -3,8 +3,8 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-01-12T20:43:50.885Z\n"
-"PO-Revision-Date: 2026-03-30 09:09+0000\n"
-"Last-Translator: AteX <atex@users.noreply.hosted.weblate.org>\n"
+"PO-Revision-Date: 2026-08-25 18:23+0000\n"
+"Last-Translator: UnknownSkyrimPasserby <f7022961@opayq.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/suwayomi/suwayomi-"
 "webui/pl/>\n"
 "Language: pl\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
 "X-Message-Format: ICU\n"
-"X-Generator: Weblate 5.17-dev\n"
+"X-Generator: Weblate 2026.9.dev0\n"
 
 #: src/features/navigation-bar/NavigationBar.constants.ts
 msgid "{count} remaining"
@@ -28,17 +28,13 @@ msgstr "{progress}% | Aktualizację…"
 msgid "*: Active setting"
 msgstr "*: Aktywne ustawienia"
 
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "<0>Suwayomi does not provide any support for 3rd party repositories or extensions!</0><1/>Use with caution as there could be malicious actors making those repositories.<2/>You as the user need to verify the security and that you trust any repository or extension."
-msgstr "<0>Suwayomi nie zapewnia żadnego wsparcia dla zewnętrznych repozytoriów lub rozszerzeń! </0><1/>Dodawaj repozytoria rozważnie, ponieważ mogą istnieć twórcy, tworzący szkodliwe rozszerzenia.<2/>Ty jako użytkownik musisz zweryfikować bezpieczeństwo i czy ufasz jakiemukolwiek repozytorium lub rozszerzeniu."
-
 #: src/features/settings/Settings.constants.ts
 msgid "A preview focused web frontend built with svelte"
 msgstr "Frontend skoncentrowany na podglądzie, zbudowany przy użyciu svelte"
 
 #: src/features/library/components/LibraryOptionsPanel.tsx
-msgid "A-Z"
-msgstr "A-Z"
+msgid "A—Z"
+msgstr "A—Z"
 
 #: src/features/navigation-bar/NavigationBar.constants.ts
 #: src/features/settings/screens/About.tsx
@@ -65,14 +61,6 @@ msgstr "Dodaj"
 #: src/features/chapter/Chapter.constants.ts
 msgid "Add bookmark"
 msgstr "Dodaj zakładkę"
-
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Add repositories from which extensions can be installed"
-msgstr "Dodaj repozytoria, z których można instalować rozszerzenia"
-
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Add repository"
-msgstr "Dodaj repozytorium"
 
 #: src/features/manga/components/details/MangaDetails.tsx
 #: src/features/manga/components/MangaBadges.tsx
@@ -115,11 +103,6 @@ msgstr "Wszystko"
 #: src/features/downloads/screens/DownloadSettings.tsx
 msgid "Allow deleting bookmarked chapters"
 msgstr "Zezwól na usuwanie rozdziałów z zakładkami"
-
-#: src/base/components/inputs/LanguageSelect.tsx
-#: src/features/source/components/SourceLanguageSelect.tsx
-msgid "Allowed Languages"
-msgstr "Dozwolone Języki"
 
 #: src/features/reader/filters/settings/components/ReaderSettingRGBA.tsx
 msgid "Alpha"
@@ -492,10 +475,6 @@ msgstr "Tryb mieszania filtra kolorów"
 msgid "Comfortable grid"
 msgstr "Wygodna siatka"
 
-#: src/features/manga/Manga.constants.ts
-msgid "Comic"
-msgstr "Komiks"
-
 #: src/base/components/GridLayouts.tsx
 #: src/features/library/components/LibraryOptionsPanel.tsx
 msgid "Compact grid"
@@ -520,11 +499,6 @@ msgstr "Ciągły poziomy"
 #: src/features/reader/settings/ReaderSettings.constants.tsx
 msgid "Continuous vertical"
 msgstr "Ciągły pionowy"
-
-#: src/features/manga/components/details/MangaDetails.tsx
-#: src/features/reader/overlay/mobile/ReaderOverlayHeaderMobile.tsx
-msgid "Copied to clipboard"
-msgstr "Skopiowano do schowka"
 
 #: src/features/manga/components/details/MangaDetails.tsx
 #: src/features/migration/components/MigrationSingleMangaDialog.tsx
@@ -599,10 +573,6 @@ msgstr "Nie udało się usunąć wszystkich pobrań z kolejki"
 #: src/features/library/screens/LibrarySettings.tsx
 msgid "Could not remove non library manga from categories"
 msgstr "Nie można usunąć mangi spoza biblioteki z kategorii"
-
-#: src/features/downloads/components/DownloadQueueChapterCard.tsx
-msgid "Could not remove the download from the queue."
-msgstr "Nie można usunąć pobierania z kolejki."
 
 #: src/features/backup/screens/Backup.tsx
 #: src/features/backup/screens/Backup.tsx
@@ -1022,10 +992,6 @@ msgstr "Powróć do poprzedniej strony"
 msgid "Extension info"
 msgstr "Informacje o rozszerzeniu"
 
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Extension repositories"
-msgstr "Repozytoria rozszerzeń"
-
 #: src/features/backup/screens/Backup.tsx
 #: src/features/backup/screens/Backup.tsx
 #: src/features/browse/extensions/Extensions.tsx
@@ -1077,10 +1043,6 @@ msgstr ""
 "\n"
 "Po zmianie tego ustawienia przejdź do strony \"O Programie\", sprawdź dostępność aktualizacji webUI i zainstaluj ją\n"
 ""
-
-#: src/features/settings/screens/Appearance.tsx
-msgid "Feel free to translate the project on"
-msgstr "Zapraszamy do przetłumaczenia projektu na"
 
 #: src/features/downloads/components/DeleteChaptersWhileReadingSetting.tsx
 msgid "Fifth to last read chapter"
@@ -1360,10 +1322,6 @@ msgstr "Nieprawidłowe dane wejściowe"
 msgid "Invalid json"
 msgstr "Nieprawidłowy json"
 
-#: src/features/browse/screens/BrowseSettings.tsx
-msgid "Invalid repository url"
-msgstr "Nieprawidłowy adres URL repozytorium"
-
 #: src/features/reader/filters/settings/components/ReaderSettingInvert.tsx
 msgid "Invert"
 msgstr "Odwróć"
@@ -1521,12 +1479,6 @@ msgstr "Wyloguj"
 #: src/features/tracker/components/cards/SettingsTrackerCard.tsx
 msgid "Logged in"
 msgstr "Zalogowano"
-
-#: src/features/manga/Manga.constants.ts
-#: src/features/manga/Manga.constants.ts
-#: src/features/manga/Manga.constants.ts
-msgid "Long strip"
-msgstr "Długi pasek"
 
 #: src/features/device/screens/DeviceSetting.tsx
 msgid ""
@@ -2514,17 +2466,6 @@ msgstr "Następujące źródła nie są zainstalowane:"
 msgid "The following trackers are not logged in:"
 msgstr "Następujące trakery nie są zalogowane:"
 
-#: src/features/reader/services/ReaderControls.ts
-msgid ""
-"The next chapter has a different scanlator then the current one.\n"
-"Current: {currentScanlator}\n"
-"Next: {nextScanlator}"
-msgstr ""
-"Następny rozdział ma innego skanlatora niż bieżący.\n"
-"Bieżący: {currentScanlator}\n"
-"Następny: {nextScanlator}\n"
-""
-
 #: src/features/backup/screens/Backup.tsx
 msgid "The path to the directory on the server where automated backups should get saved in"
 msgstr "Ścieżka do katalogu na serwerze, w którym powinny być zapisywane automatyczne kopie zapasowe"
@@ -2540,17 +2481,6 @@ msgstr "Ścieżka do katalogu na serwerze, w którym zapisywane są lokalne plik
 #: src/features/settings/screens/WebUISettings.tsx
 msgid "The path to the electron installation on the server"
 msgstr "Ścieżka do instalacji electron-a na serwerze"
-
-#: src/features/reader/services/ReaderControls.ts
-msgid ""
-"The previous chapter has a different scanlator then the current one.\n"
-"Previous: {nextScanlator}\n"
-"Current: {currentScanlator}"
-msgstr ""
-"Poprzedni rozdział ma innego skanlatora niż bieżący.\n"
-"Poprzedni: {nextScanlator}\n"
-"Bieżący: {currentScanlator}\n"
-""
 
 #: src/features/theme/components/CreateThemeDialog.tsx
 msgid "The theme name must be unique and has a limit of 16 characters"
@@ -2849,10 +2779,6 @@ msgstr "VUI"
 msgid "Warning"
 msgstr "Ostrzeżenie"
 
-#: src/features/settings/screens/Appearance.tsx
-msgid "Weblate"
-msgstr "Weblate"
-
 #: src/features/manga/Manga.constants.ts
 #: src/features/reader/settings/ReaderSettings.constants.tsx
 msgid "Webtoon"
@@ -2921,10 +2847,6 @@ msgstr "W bibliotece znajduje się pozycja o tej samej nazwie."
 #: src/features/history/screens/History.tsx
 msgid "You have not read any series yet."
 msgstr "Nie czytałeś jeszcze żadnej serii."
-
-#: src/features/browse/extensions/Extensions.tsx
-msgid "You have to add a extension repository to be able to install extensions"
-msgstr "Aby móc instalować rozszerzenia, musisz dodać repozytorium rozszerzeń"
 
 #: src/features/settings/Settings.constants.ts
 msgid "Your browser will prompt you to enter credentials with a dialog."
@@ -3627,3 +3549,8 @@ msgstr "WebUI zostało zaktualizowane do wersji {newVersion} ({0})"
 #: src/features/app-updates/components/WebUIUpdateChecker.tsx
 msgid "WebUI version {0} ({1}) available for download"
 msgstr "Wersja WebUI {0} ({1}) jest dostępna do pobrania"
+
+#. placeholder {0}: t(SYNC_STATE_TRANSLATION[syncState])
+#: src/features/settings/screens/ServerSettings.tsx
+msgid "— State: {0}"
+msgstr "— Status: {0}"

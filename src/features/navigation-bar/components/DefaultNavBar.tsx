@@ -29,20 +29,32 @@ import { NAVIGATION_BAR_ITEMS } from '@/features/navigation-bar/NavigationBar.co
 import { NavigationBarUtil } from '@/features/navigation-bar/NavigationBar.util.ts';
 
 export function DefaultNavBar() {
-    const { title, action, override, isCollapsed, setIsCollapsed, setAppBarHeight, navBarWidth, setNavBarWidth } =
-        useNavBarContext();
+    const {
+        title,
+        hideTitle,
+        action,
+        override,
+        isCollapsed,
+        setIsCollapsed,
+        setAppBarHeight,
+        navBarWidth,
+        setNavBarWidth,
+    } = useNavBarContext();
 
     const theme = useTheme();
     const getOptionForDirection = useGetOptionForDirection();
     const { pathname } = useLocation();
     const handleBack = useBackButton();
     const isMobileWidth = MediaQuery.useIsMobileWidth();
+    const isTabletWidth = MediaQuery.useIsTabletWidth();
 
     const {
         settings: { hideHistory },
     } = useMetadataServerSettings();
 
     const appBarRef = useRef<HTMLDivElement | null>(null);
+
+    const isNavBarCollapsible = !isMobileWidth && !isTabletWidth;
 
     const isMainRoute = NAVIGATION_BAR_ITEMS.some(({ path, show }) => {
         if (isMobileWidth && show === 'desktop') {
@@ -55,7 +67,7 @@ export function DefaultNavBar() {
 
         return path === pathname;
     });
-    const actualNavBarWidth = isMobileWidth || isCollapsed ? 0 : navBarWidth;
+    const actualNavBarWidth = isMobileWidth || isTabletWidth || isCollapsed ? 0 : navBarWidth;
 
     const visibleNavBarItems = useMemo(
         () =>
@@ -120,7 +132,7 @@ export function DefaultNavBar() {
                 }}
             >
                 <Toolbar sx={{ position: 'relative' }}>
-                    {!isMobileWidth && (
+                    {isNavBarCollapsible && (
                         <Stack
                             sx={{
                                 position: 'absolute',
@@ -137,8 +149,8 @@ export function DefaultNavBar() {
                     )}
                     <Stack
                         sx={{
-                            ml: `${isCollapsed ? navBarWidth : 0}px`,
-                            width: `calc(100% - (${isCollapsed ? navBarWidth : 0}px + env(safe-area-inset-left)))`,
+                            ml: `${isNavBarCollapsible && isCollapsed ? navBarWidth : 0}px`,
+                            width: `calc(100% - (${isNavBarCollapsible && isCollapsed ? navBarWidth : 0}px + env(safe-area-inset-left)))`,
                             flexDirection: 'row',
                             alignItems: 'center',
                         }}
@@ -155,17 +167,19 @@ export function DefaultNavBar() {
                                 {getOptionForDirection(<ArrowBack />, <ArrowForwardIcon />)}
                             </IconButton>
                         )}
-                        <Typography
-                            variant="h5"
-                            component="h1"
-                            noWrap
-                            sx={{
-                                textOverflow: 'ellipsis',
-                                flexGrow: 1,
-                            }}
-                        >
-                            {title}
-                        </Typography>
+                        {!hideTitle && (
+                            <Typography
+                                variant="h5"
+                                component="h1"
+                                noWrap
+                                sx={{
+                                    textOverflow: 'ellipsis',
+                                    flexGrow: 1,
+                                }}
+                            >
+                                {title}
+                            </Typography>
+                        )}
                         {action}
                     </Stack>
                 </Toolbar>

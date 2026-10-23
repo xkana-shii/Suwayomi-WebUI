@@ -56,11 +56,12 @@ import { getErrorMessage } from '@/lib/HelperFunctions.ts';
 import { Sources } from '@/features/source/services/Sources.ts';
 import { STABLE_EMPTY_ARRAY, STABLE_EMPTY_OBJECT } from '@/base/Base.constants.ts';
 import { useAppTitleAndAction } from '@/features/navigation-bar/hooks/useAppTitleAndAction.ts';
-import { useNavBarContext } from '@/features/navigation-bar/NavbarContext.tsx';
 import { VirtuosoUtil } from '@/lib/virtuoso/Virtuoso.util.tsx';
 import { IconWebView } from '@/assets/icons/IconWebView.tsx';
 import { MigrationManager } from '@/features/migration/MigrationManager.ts';
 import { ReactRouter } from '@/lib/react-router/ReactRouter.ts';
+import type { FilterChangeInput } from '@/lib/graphql/generated/graphql-base.types.ts';
+import { OffsetComponent } from '@/base/OffsetComponent.tsx';
 
 // Selection related imports
 import { useSelectableCollection } from '@/base/collection/hooks/useSelectableCollection.ts';
@@ -70,9 +71,7 @@ const DEFAULT_SOURCE: SourceIdInfo = { id: '-1' };
 
 const ContentTypeMenu = styled('div')(({ theme }) => ({
     display: 'flex',
-    position: 'sticky',
     width: '100%',
-    zIndex: 1,
     padding: theme.spacing(1),
     gap: theme.spacing(1),
     backgroundColor: theme.palette.background.default,
@@ -113,6 +112,7 @@ const useSourceManga = (
     filters: IPos[],
     initialPages: number,
     hideLibraryEntries: boolean,
+    mangaId?: MangaIdInfo['id'],
 ): [
     AbortableApolloUseMutationPaginatedResponse<GetSourceMangasFetchMutation, GetSourceMangasFetchMutationVariables>[0],
     AbortableApolloUseMutationPaginatedResponse<
@@ -124,6 +124,7 @@ const useSourceManga = (
         GetSourceMangasFetchMutation,
         GetSourceMangasFetchMutationVariables
     >;
+
     switch (contentType) {
         case SourceContentType.POPULAR:
             result = requestManager.useGetSourcePopularMangas(sourceId, initialPages);
@@ -136,21 +137,27 @@ const useSourceManga = (
                 sourceId,
                 searchTerm ?? '',
                 filters.map((filter) => {
-                    const { position, state, group } = filter;
+                    const { positions, state } = filter;
 
-                    const isPartOfGroup = group !== undefined;
+                    const isPartOfGroup = positions.length > 1;
                     if (isPartOfGroup) {
-                        return {
-                            position: group,
-                            groupChange: {
+                        return positions.reduceRight((update, position, index) => {
+                            if (index === positions.length - 1) {
+                                return {
+                                    position: positions.slice(-1)[0],
+                                    [filter.type]: state,
+                                };
+                            }
+
+                            return {
                                 position,
-                                [filter.type]: state,
-                            },
-                        };
+                                groupChange: update,
+                            };
+                        }, {} as FilterChangeInput);
                     }
 
                     return {
-                        position,
+                        position: positions[0],
                         [filter.type]: state,
                     };
                 }),
@@ -173,7 +180,9 @@ const useSourceManga = (
 
         pages.forEach((page, index) => {
             const pageItems = page.data?.fetchSourceManga?.mangas ?? [];
-            const nonLibraryPageItems = pageItems.filter((item) => !hideLibraryEntries || !item.inLibrary);
+            const nonLibraryPageItems = pageItems.filter(
+                (item) => item.id !== mangaId && (!hideLibraryEntries || !item.inLibrary),
+            );
             const uniqueItems = getUniqueMangas([...allItems, ...nonLibraryPageItems]);
 
             const isLastPage = !isPageLoading && pages.length === index + 1;
@@ -212,7 +221,6 @@ const useSourceManga = (
 
 export function SourceMangas() {
     const { t } = useLingui();
-    const { appBarHeight } = useNavBarContext();
 
     const { sourceId } = useParams<{ sourceId: string }>();
 
@@ -292,7 +300,7 @@ export function SourceMangas() {
     const [
         loadPage,
         { data, error, isLoading: loading, size: lastPageNum, abortRequest, filteredOutAllItemsOfFetchedPage },
-    ] = useSourceManga(sourceId, contentType, query, filtersToApply, 1, hideLibraryEntries);
+    ] = useSourceManga(sourceId, contentType, query, filtersToApply, 1, hideLibraryEntries, mangaId);
     currentAbortRequest.current = abortRequest;
     const mangas = data?.fetchSourceManga?.mangas ?? STABLE_EMPTY_ARRAY;
     const hasNextPage = !!data?.fetchSourceManga?.hasNextPage;
@@ -474,12 +482,12 @@ export function SourceMangas() {
     useAppTitleAndAction(
         source?.displayName ?? t`Source`,
         <>
-            <AppbarSearch />
+            <AppbarSearch searchHistoryKey="source" />
             <SourceGridLayout />
-            <CustomTooltip title={t`Open in WebView`} disabled={!source?.baseUrl}>
+            <CustomTooltip title={t`Open in WebView`} disabled={!source?.homeUrl}>
                 <IconButton
-                    disabled={!source?.baseUrl}
-                    href={source?.baseUrl ? requestManager.getWebviewUrl(source?.baseUrl) : ''}
+                    disabled={!source?.homeUrl}
+                    href={source?.homeUrl ? requestManager.getWebviewUrl(source?.homeUrl) : ''}
                     rel="noreferrer"
                     target="_blank"
                     color="inherit"
@@ -540,32 +548,34 @@ export function SourceMangas() {
 
     return (
         <StyledGridWrapper>
-            <ContentTypeMenu sx={{ top: `${appBarHeight}px` }}>
-                <ContentTypeButton
-                    variant={contentType === SourceContentType.POPULAR ? 'contained' : 'outlined'}
-                    startIcon={<FavoriteIcon />}
-                    onClick={() => updateContentType(SourceContentType.POPULAR)}
-                >
-                    {t`Popular`}
-                </ContentTypeButton>
-                {source?.supportsLatest === undefined || source.supportsLatest ? (
+            <OffsetComponent>
+                <ContentTypeMenu>
                     <ContentTypeButton
-                        disabled={!source?.supportsLatest}
-                        variant={contentType === SourceContentType.LATEST ? 'contained' : 'outlined'}
-                        startIcon={<NewReleasesIcon />}
-                        onClick={() => updateContentType(SourceContentType.LATEST)}
+                        variant={contentType === SourceContentType.POPULAR ? 'contained' : 'outlined'}
+                        startIcon={<FavoriteIcon />}
+                        onClick={() => updateContentType(SourceContentType.POPULAR)}
                     >
-                        {t`Latest`}
+                        {t`Popular`}
                     </ContentTypeButton>
-                ) : null}
-                <ContentTypeButton
-                    variant={contentType === SourceContentType.SEARCH ? 'contained' : 'outlined'}
-                    startIcon={<FilterListIcon />}
-                    onClick={() => updateContentType(SourceContentType.SEARCH, query)}
-                >
-                    {t`Filter`}
-                </ContentTypeButton>
-            </ContentTypeMenu>
+                    {source?.supportsLatest === undefined || source.supportsLatest ? (
+                        <ContentTypeButton
+                            disabled={!source?.supportsLatest}
+                            variant={contentType === SourceContentType.LATEST ? 'contained' : 'outlined'}
+                            startIcon={<NewReleasesIcon />}
+                            onClick={() => updateContentType(SourceContentType.LATEST)}
+                        >
+                            {t`Latest`}
+                        </ContentTypeButton>
+                    ) : null}
+                    <ContentTypeButton
+                        variant={contentType === SourceContentType.SEARCH ? 'contained' : 'outlined'}
+                        startIcon={<FilterListIcon />}
+                        onClick={() => updateContentType(SourceContentType.SEARCH, query)}
+                    >
+                        {t`Filter`}
+                    </ContentTypeButton>
+                </ContentTypeMenu>
+            </OffsetComponent>
             {(isLoading || !error || (!!error && !!mangas.length)) && (
                 <BaseMangaGrid
                     // the key needs to include filters and query to force a re-render of the virtuoso grid to prevent https://github.com/petyosi/react-virtuoso/issues/1242

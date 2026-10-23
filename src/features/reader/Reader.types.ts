@@ -69,6 +69,7 @@ export enum ReaderBackgroundColor {
     BLACK,
     GRAY,
     WHITE,
+    AUTO,
 }
 
 export interface ReaderFilterRGBA {
@@ -159,6 +160,7 @@ export interface IReaderSettingsGlobal {
     shouldShowPageNumber: boolean;
     isStaticNav: boolean;
     backgroundColor: ReaderBackgroundColor;
+    useAutoBackgroundColorContinuousMode: boolean;
     hotkeys: Record<ReaderHotkey, string[]>;
     imagePreLoadAmount: number;
     shouldUseAutoWebtoonMode: boolean;
@@ -173,10 +175,12 @@ export interface IReaderSettingsGlobal {
     shouldShowTapZoneLayoutPreview: boolean;
     shouldInformAboutMissingChapter: boolean;
     shouldInformAboutScanlatorChange: boolean;
+    shouldWakeLockScreen: boolean;
     scrollAmount: ReaderScrollAmount;
     shouldUseInfiniteScroll: boolean;
     shouldShowTransitionPage: boolean;
     safeAreaInset: SafeAreaInset;
+    shouldEnterFullscreen: boolean;
 }
 
 export interface IReaderSettingsManga {
@@ -321,6 +325,10 @@ export interface ReaderStatePages {
     setPageLoadStates: (
         set: ((prevStates: ReaderPageLoadState[]) => ReaderPageLoadState[]) | ReaderPageLoadState[],
     ) => void;
+    pageBackgroundColors: ReaderPageBackgroundColor[];
+    setPageBackgroundColor: (
+        set: ((prev: ReaderPageBackgroundColor[]) => ReaderPageBackgroundColor[]) | ReaderPageBackgroundColor[],
+    ) => void;
     pages: PageData[];
     setPages: (pages: PageData[]) => void;
     transitionPageMode: ReaderTransitionPageMode;
@@ -363,6 +371,7 @@ export interface ReaderPagerProps
     resumeMode: ReaderResumeMode;
     handleAsInitialRender: boolean;
     ref?: Ref<HTMLDivElement>;
+    currentChapterRemainingPages: number;
 }
 
 export enum PageInViewportType {
@@ -394,3 +403,5 @@ export type TReaderStateSettingsContext = {
 };
 
 export type ReaderPageSpreadState = { url: string; isSpread: boolean };
+
+export type ReaderPageBackgroundColor = { url: string; color: string | undefined };

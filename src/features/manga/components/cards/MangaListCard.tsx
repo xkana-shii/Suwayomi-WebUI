@@ -20,13 +20,13 @@ import { MangaOptionButton } from '@/features/manga/components/MangaOptionButton
 import { ListCardAvatar } from '@/base/components/lists/cards/ListCardAvatar.tsx';
 import { ListCardContent } from '@/base/components/lists/cards/ListCardContent';
 import { MediaQuery } from '@/base/utils/MediaQuery.tsx';
+import { MUIUtil } from '@/lib/mui/MUI.util.ts';
 
 export const MangaListCard = memo(
     ({
         manga,
         longPressBind,
         popupState,
-        handleClick,
         mangaLinkTo,
         selected,
         inLibraryIndicator,
@@ -36,8 +36,6 @@ export const MangaListCard = memo(
         mangaBadges,
         mode,
     }: SpecificMangaCardProps) => {
-        const preventMobileContextMenu = MediaQuery.usePreventMobileContextMenu();
-
         const optionButtonRef = useRef<HTMLButtonElement>(null);
 
         const { id, title } = manga;
@@ -48,11 +46,8 @@ export const MangaListCard = memo(
                     component={RouterLink}
                     to={mangaLinkTo}
                     state={Mangas.createLocationState(manga, mode)}
-                    onClick={handleClick}
                     {...longPressBind(() => popupState.open(optionButtonRef.current))}
-                    onContextMenu={preventMobileContextMenu}
-                    sx={{
-                        ...MediaQuery.preventMobileContextMenuSx(),
+                    sx={MUIUtil.mergeSx(MediaQuery.preventMobileContextMenuSx(), {
                         '@media (hover: hover) and (pointer: fine)': {
                             '&:hover .manga-option-button': {
                                 visibility: 'visible',
@@ -65,7 +60,7 @@ export const MangaListCard = memo(
                                 display: mode === 'source' ? 'none' : 'inline-flex',
                             },
                         },
-                    }}
+                    })}
                 >
                     <ListCardContent
                         sx={{

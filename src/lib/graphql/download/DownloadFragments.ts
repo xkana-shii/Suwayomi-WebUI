@@ -7,25 +7,34 @@
  */
 
 import gql from 'graphql-tag';
+import { SOURCE_BASE_FIELDS } from '@/lib/graphql/source/SourceFragments.ts';
+import { MANGA_BASE_FIELDS } from '@/lib/graphql/manga/MangaFragments.ts';
+import { CHAPTER_BASE_FIELDS } from '@/lib/graphql/chapter/ChapterFragments.ts';
 
 export const DOWNLOAD_TYPE_FIELDS = gql`
+    ${MANGA_BASE_FIELDS}
+    ${SOURCE_BASE_FIELDS}
+    ${CHAPTER_BASE_FIELDS}
+
     fragment DOWNLOAD_TYPE_FIELDS on DownloadType {
         chapter {
-            id
-            name
-            sourceOrder
+            ...CHAPTER_BASE_FIELDS
             isDownloaded
+            pageCount
         }
 
         manga {
-            id
-            title
+            ...MANGA_BASE_FIELDS
             downloadCount
+            source {
+                ...SOURCE_BASE_FIELDS
+            }
         }
 
         progress
         state
         tries
+        position
     }
 `;
 
@@ -52,7 +61,6 @@ export const DOWNLOAD_UPDATES_FIELDS = gql`
             type
             download {
                 ...DOWNLOAD_TYPE_FIELDS
-                position
             }
         }
     }

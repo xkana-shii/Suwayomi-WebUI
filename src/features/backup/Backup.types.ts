@@ -26,6 +26,7 @@ export type AutoBackupFlag = Pick<
     | 'autoBackupIncludeHistory'
     | 'autoBackupIncludeManga'
     | 'autoBackupIncludeServerSettings'
+    | 'autoBackupIncludeUserSettings'
     | 'autoBackupIncludeTracking'
 >;
 
@@ -43,5 +44,6 @@ export type BackupSettingsType = Pick<
     | 'autoBackupIncludeHistory'
     | 'autoBackupIncludeManga'
     | 'autoBackupIncludeServerSettings'
+    | 'autoBackupIncludeUserSettings'
     | 'autoBackupIncludeTracking'
 >;

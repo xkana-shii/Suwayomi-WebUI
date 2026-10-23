@@ -11,6 +11,7 @@ import FormLabel from '@mui/material/FormLabel';
 import RadioGroup from '@mui/material/RadioGroup';
 import { useLingui } from '@lingui/react/macro';
 import { msg } from '@lingui/core/macro';
+import type { ReactNode } from 'react';
 import { CheckboxInput } from '@/base/components/inputs/CheckboxInput.tsx';
 import { RadioInput } from '@/base/components/inputs/RadioInput.tsx';
 import { SortRadioInput } from '@/base/components/inputs/SortRadioInput.tsx';
@@ -22,18 +23,28 @@ import type { GetTrackersSettingsQuery } from '@/lib/graphql/generated/graphql.t
 import { MangaStatus } from '@/lib/graphql/generated/graphql-base.types.ts';
 import { GET_TRACKERS_SETTINGS } from '@/lib/graphql/tracker/TrackerQuery.ts';
 import { STABLE_EMPTY_ARRAY } from '@/base/Base.constants.ts';
-import { createUpdateCategoryMetadata, useGetCategoryMetadata } from '@/features/category/services/CategoryMetadata.ts';
+import {
+    batchUpdateCategoryMetadata,
+    createUpdateCategoryMetadata,
+    useGetCategoryMetadata,
+} from '@/features/category/services/CategoryMetadata.ts';
 import { makeToast } from '@/base/utils/Toast.ts';
 import {
     createUpdateMetadataServerSettings,
     updateMetadataServerSettings,
     useMetadataServerSettings,
 } from '@/features/settings/services/ServerSettingsMetadata.ts';
-import type { LibrarySortMode } from '@/features/library/Library.types.ts';
-import type { CategoryMetadataInfo } from '@/features/category/Category.types.ts';
+import { FilterMode, type LibrarySortMode } from '@/features/library/Library.types.ts';
+import type { CategoryMetadataInfo, ICategoryMetadata } from '@/features/category/Category.types.ts';
 import { MANGA_STATUS_TO_TRANSLATION } from '@/features/manga/Manga.constants.ts';
-import { GridLayout } from '@/base/Base.types';
+import { GridLayout, type ValueToDisplayData } from '@/base/Base.types';
 import { getErrorMessage } from '@/lib/HelperFunctions.ts';
+import { Collapsable } from '@/base/components/Collapsable.tsx';
+import { ResetButton } from '@/base/components/buttons/ResetButton.tsx';
+import Replay from '@mui/icons-material/Replay';
+import { Sources } from '@/features/source/services/Sources';
+import Stack from '@mui/material/Stack';
+import { ValueRotationButton } from '@/base/components/buttons/ValueRotationButton.tsx';
 
 const TITLES: { [key in 'filter' | 'sort' | 'display']: MessageDescriptor } = {
     filter: msg`Filter`,
@@ -44,26 +55,122 @@ const TITLES: { [key in 'filter' | 'sort' | 'display']: MessageDescriptor } = {
 const SORT_OPTIONS: [LibrarySortMode, MessageDescriptor][] = [
     ['unreadChapters', msg`Unread chapters`],
     ['totalChapters', msg`Total chapters`],
-    ['alphabetically', msg`A-Z`],
+    ['alphabetically', msg`A—Z`],
     ['dateAdded', msg`Recently added`],
     ['lastRead', msg`Recently read`],
     ['latestFetchedChapter', msg`Latest fetched chapter`],
     ['latestUploadedChapter', msg`Latest uploaded chapter`],
+    ['random', msg`Random`],
 ];
+
+const FILTER_MODE_DISPLAY_DATA: ValueToDisplayData<FilterMode> = {
+    [FilterMode.AND]: {
+        title: msg`and`,
+        icon: null,
+    },
+    [FilterMode.OR]: {
+        title: msg`or`,
+        icon: null,
+    },
+};
+
+const FILTER_MODES = Object.values(FilterMode);
+
+const CollapsableFilter = ({
+    title,
+    items,
+    isActive,
+    reset,
+    mode,
+    setMode,
+}: {
+    title: string;
+    items: ReactNode[];
+    isActive: boolean;
+    reset: () => void;
+    mode?: FilterMode;
+    setMode?: (mode: FilterMode) => void;
+}) => {
+    const { t } = useLingui();
+
+    return (
+        <Collapsable
+            header={title}
+            headerEnd={
+                <Stack sx={{ flexGrow: 1, flexDirection: 'row', justifyContent: 'flex-end', gap: 1, flexWrap: 'wrap' }}>
+                    {mode && !!setMode && (
+                        <ValueRotationButton
+                            tooltip={t`Filter mode`}
+                            value={mode}
+                            values={FILTER_MODES}
+                            setValue={setMode}
+                            valueToDisplayData={FILTER_MODE_DISPLAY_DATA}
+                            slots={{
+                                button: {
+                                    base: {
+                                        size: 'small',
+                                        variant: 'outlined',
+                                        sx: { flexGrow: 0, justifyContent: 'center', textTransform: 'uppercase' },
+                                    },
+                                },
+                            }}
+                        />
+                    )}
+                    <ResetButton
+                        disabled={!isActive}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            reset();
+                        }}
+                        variant="outlined"
+                        size="small"
+                    />
+                </Stack>
+            }
+            collapse={items}
+            initialState={isActive}
+            slots={{
+                headerContainer: {
+                    sx: {
+                        mt: 2,
+                        flexWrap: 'wrap',
+                    },
+                },
+                headerWrapper: {
+                    component: FormLabel,
+                    sx: {
+                        color: isActive ? 'warning.main' : undefined,
+                    },
+                },
+            }}
+        />
+    );
+};
 
 export const LibraryOptionsPanel = ({
     category,
     open,
     onClose,
+    active,
+    isStatusFilterActive,
+    isTrackerFilterActive,
+    isSourceFilterActive,
 }: {
     category: CategoryMetadataInfo;
     open: boolean;
     onClose: () => void;
+    active: boolean;
+    isStatusFilterActive: boolean;
+    isTrackerFilterActive: boolean;
+    isSourceFilterActive: boolean;
 }) => {
     const { t } = useLingui();
 
     const trackerList = requestManager.useGetTrackerList<GetTrackersSettingsQuery>(GET_TRACKERS_SETTINGS);
     const loggedInTrackers = Trackers.getLoggedIn(trackerList.data?.trackers.nodes ?? STABLE_EMPTY_ARRAY);
+
+    const { sources: librarySources } = Sources.useGetMigratableSources();
 
     const categoryLibraryOptions = useGetCategoryMetadata(category);
     const updateCategoryLibraryOptions = createUpdateCategoryMetadata(category, (e) =>
@@ -77,6 +184,26 @@ export const LibraryOptionsPanel = ({
         makeToast(t`Could not save the default search settings to the server`, 'error', getErrorMessage(e)),
     );
 
+    const resetFilters = (
+        deleteKeys: (keyof ICategoryMetadata)[] = [
+            'hasUnreadChapters',
+            'hasReadChapters',
+            'hasDownloadedChapters',
+            'hasBookmarkedChapters',
+            'hasDuplicateChapters',
+            'hasStatus',
+            'hasTrackerBinding',
+            'hasSource',
+        ],
+    ) => {
+        batchUpdateCategoryMetadata([
+            {
+                categories: [category],
+                delete: deleteKeys,
+            },
+        ]).catch((e) => makeToast(t`Could not reset filters`, 'error', getErrorMessage(e)));
+    };
+
     return (
         <OptionsTabs<'filter' | 'sort' | 'display'>
             open={open}
@@ -87,6 +214,13 @@ export const LibraryOptionsPanel = ({
                 if (key === 'filter') {
                     return (
                         <>
+                            <ResetButton
+                                disabled={!active}
+                                onClick={() => resetFilters()}
+                                sx={{ alignSelf: 'flex-end' }}
+                                variant="outlined"
+                                size="small"
+                            />
                             <ThreeStateCheckboxInput
                                 label={t`Unread`}
                                 checked={categoryLibraryOptions.hasUnreadChapters}
@@ -117,34 +251,74 @@ export const LibraryOptionsPanel = ({
                                 checked={categoryLibraryOptions.hasDuplicateChapters}
                                 onChange={(c) => updateCategoryLibraryOptions('hasDuplicateChapters', c)}
                             />
-                            <FormLabel sx={{ mt: 2 }}>{t`Status`}</FormLabel>
-                            {Object.values(MangaStatus).map((status) => (
-                                <ThreeStateCheckboxInput
-                                    key={status}
-                                    label={t(MANGA_STATUS_TO_TRANSLATION[status])}
-                                    checked={categoryLibraryOptions.hasStatus[status]}
-                                    onChange={(checked) =>
-                                        updateCategoryLibraryOptions('hasStatus', {
-                                            ...categoryLibraryOptions.hasStatus,
-                                            [status]: checked,
-                                        })
-                                    }
-                                />
-                            ))}
-                            <FormLabel sx={{ mt: 2 }}>{t`Tracked`}</FormLabel>
-                            {loggedInTrackers.map((tracker) => (
-                                <ThreeStateCheckboxInput
-                                    key={tracker.id}
-                                    label={tracker.name}
-                                    checked={categoryLibraryOptions.hasTrackerBinding[tracker.id]}
-                                    onChange={(checked) =>
+                            <CollapsableFilter
+                                title={t`Status`}
+                                items={Object.values(MangaStatus).map((status) => (
+                                    <ThreeStateCheckboxInput
+                                        key={status}
+                                        label={t(MANGA_STATUS_TO_TRANSLATION[status])}
+                                        checked={categoryLibraryOptions.hasStatus[status]}
+                                        onChange={(checked) =>
+                                            updateCategoryLibraryOptions('hasStatus', {
+                                                ...categoryLibraryOptions.hasStatus,
+                                                [status]: checked,
+                                            })
+                                        }
+                                    />
+                                ))}
+                                isActive={isStatusFilterActive}
+                                reset={() => resetFilters(['hasStatus'])}
+                            />
+                            {!!loggedInTrackers.length && (
+                                <CollapsableFilter
+                                    title={t`Tracked`}
+                                    items={loggedInTrackers.map((tracker) => (
+                                        <ThreeStateCheckboxInput
+                                            key={tracker.id}
+                                            label={tracker.name}
+                                            checked={categoryLibraryOptions.hasTrackerBinding.filters[tracker.id]}
+                                            onChange={(checked) =>
+                                                updateCategoryLibraryOptions('hasTrackerBinding', {
+                                                    ...categoryLibraryOptions.hasTrackerBinding,
+                                                    filters: {
+                                                        ...categoryLibraryOptions.hasTrackerBinding.filters,
+                                                        [tracker.id]: checked,
+                                                    },
+                                                })
+                                            }
+                                        />
+                                    ))}
+                                    isActive={isTrackerFilterActive}
+                                    reset={() => resetFilters(['hasTrackerBinding'])}
+                                    mode={categoryLibraryOptions.hasTrackerBinding.mode}
+                                    setMode={(mode) =>
                                         updateCategoryLibraryOptions('hasTrackerBinding', {
                                             ...categoryLibraryOptions.hasTrackerBinding,
-                                            [tracker.id]: checked,
+                                            mode,
                                         })
                                     }
                                 />
-                            ))}
+                            )}
+                            {!!librarySources.length && (
+                                <CollapsableFilter
+                                    title={t`Source`}
+                                    items={librarySources.map((source) => (
+                                        <ThreeStateCheckboxInput
+                                            key={source.id}
+                                            label={source.displayName ?? source.id}
+                                            checked={categoryLibraryOptions.hasSource[source.id]}
+                                            onChange={(checked) =>
+                                                updateCategoryLibraryOptions('hasSource', {
+                                                    ...categoryLibraryOptions.hasSource,
+                                                    [source.id]: checked,
+                                                })
+                                            }
+                                        />
+                                    ))}
+                                    isActive={isSourceFilterActive}
+                                    reset={() => resetFilters(['hasSource'])}
+                                />
+                            )}
                         </>
                     );
                 }
@@ -154,6 +328,7 @@ export const LibraryOptionsPanel = ({
                             key={mode}
                             label={t(label)}
                             checked={categoryLibraryOptions.sortBy === mode}
+                            checkedIcon={mode === 'random' ? <Replay color="primary" /> : undefined}
                             sortDescending={categoryLibraryOptions.sortDesc}
                             onClick={() =>
                                 mode !== categoryLibraryOptions.sortBy

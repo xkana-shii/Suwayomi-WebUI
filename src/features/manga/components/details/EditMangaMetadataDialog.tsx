@@ -404,6 +404,21 @@ const MatchResultCard = ({
 }) => {
     const { t } = useLingui();
     const externalUrl = getResultExternalUrl(provider, result);
+    const coverImage = result.coverUrl ? (
+        <Box
+            component="img"
+            src={result.coverUrl}
+            alt={result.title}
+            draggable={false}
+            sx={{
+                width: 80,
+                height: 120,
+                objectFit: 'cover',
+                borderRadius: 1,
+                display: 'block',
+            }}
+        />
+    ) : null;
 
     return (
         <Card variant="outlined">
@@ -412,39 +427,12 @@ const MatchResultCard = ({
                     <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
                         <StackAny direction="row" spacing={2} sx={{ flex: 1, minWidth: 0 }}>
                             <Box sx={{ flexShrink: 0 }}>
-                                {result.coverUrl ? (
-                                    externalUrl ? (
-                                        <a href={externalUrl} rel="noreferrer" target="_blank">
-                                            <Box
-                                                component="img"
-                                                src={result.coverUrl}
-                                                alt={result.title}
-                                                draggable={false}
-                                                sx={{
-                                                    width: 80,
-                                                    height: 120,
-                                                    objectFit: 'cover',
-                                                    borderRadius: 1,
-                                                    display: 'block',
-                                                }}
-                                            />
-                                        </a>
-                                    ) : (
-                                        <Box
-                                            component="img"
-                                            src={result.coverUrl}
-                                            alt={result.title}
-                                            draggable={false}
-                                            sx={{
-                                                width: 80,
-                                                height: 120,
-                                                objectFit: 'cover',
-                                                borderRadius: 1,
-                                                display: 'block',
-                                            }}
-                                        />
-                                    )
-                                ) : null}
+                                {coverImage && externalUrl && (
+                                    <a href={externalUrl} rel="noreferrer" target="_blank">
+                                        {coverImage}
+                                    </a>
+                                )}
+                                {coverImage && !externalUrl && coverImage}
                             </Box>
 
                             <StackAny spacing={1} sx={{ minWidth: 0, flex: 1 }}>

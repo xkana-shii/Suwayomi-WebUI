@@ -12,7 +12,7 @@ import ListItemText from '@mui/material/ListItemText';
 import { fromEvent } from 'file-selector';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import ListSubheader from '@mui/material/ListSubheader';
+import { ListSubheader } from '@/base/components/lists/ListSubheader.tsx';
 import { useEventListener, useMergedRef, useWindowEvent } from '@mantine/hooks';
 import { AwaitableComponent } from 'awaitable-component';
 import { useLingui } from '@lingui/react/macro';
@@ -20,7 +20,7 @@ import { plural } from '@lingui/core/macro';
 import { requestManager } from '@/lib/requests/RequestManager.ts';
 import { makeToast } from '@/base/utils/Toast.ts';
 import { BackupRestoreState } from '@/lib/graphql/generated/graphql-base.types.ts';
-import { Progress } from '@/base/components/feedback/Progress.tsx';
+import { CircularProgressWithText } from '@/base/components/feedback/CircularProgressWithText.tsx';
 import { TextSetting } from '@/base/components/settings/text/TextSetting.tsx';
 import { NumberSetting } from '@/base/components/settings/NumberSetting.tsx';
 import { TimeSetting } from '@/base/components/settings/TimeSetting.tsx';
@@ -320,14 +320,14 @@ export function Backup() {
                     />
                     {backupRestoreId ? (
                         <ListItemIcon>
-                            <Progress progress={restoreProgress} />
+                            <CircularProgressWithText progress={restoreProgress} />
                         </ListItemIcon>
                     ) : null}
                 </ListItemButton>
                 <List
                     subheader={
                         <ListSubheader component="div" id="backup-settings">
-                            Automated backup
+                            {t`Automated backup`}
                         </ListSubheader>
                     }
                 >

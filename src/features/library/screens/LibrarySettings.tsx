@@ -12,7 +12,6 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Switch from '@mui/material/Switch';
-import ListSubheader from '@mui/material/ListSubheader';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -23,7 +22,9 @@ import Checkbox from '@mui/material/Checkbox';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import ListItemSecondaryAction from '@mui/material/ListItemSecondaryAction';
-import { useLingui } from '@lingui/react/macro';
+import Link from '@mui/material/Link';
+import { ListSubheader } from '@/base/components/lists/ListSubheader.tsx';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { plural, t as translate } from '@lingui/core/macro';
 import { GlobalUpdateSettings } from '@/features/settings/components/globalUpdate/GlobalUpdateSettings.tsx';
 import { makeToast } from '@/base/utils/Toast.ts';
@@ -57,6 +58,8 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import BrokenImageIcon from '@mui/icons-material/BrokenImage';
 import { GET_SOURCES_WITH_COUNTS } from '@/lib/graphql/source/SourceQuery.ts';
 import { CLEAR_DATABASE } from '@/lib/graphql/server/ServerInfoMutation.ts';
+import { Notifications } from '@/features/notifications/services/Notifications.ts';
+import { LibraryUpdateNotifier } from '@/features/notifications/services/LibraryUpdateNotifier.ts';
 
 /**
  * Build the extension-style icon path used by the browse screen.
@@ -114,8 +117,21 @@ const removeNonLibraryMangasFromCategories = async (): Promise<void> => {
     }
 };
 
+const setNotifyNewChapters = async (enable: boolean) => {
+    if (!enable) {
+        await LibraryUpdateNotifier.disable();
+        return;
+    }
+
+    // without the permission, updates still get shown while Suwayomi is in use
+    await Notifications.requestPermission();
+    await LibraryUpdateNotifier.enable();
+};
+
 export function LibrarySettings() {
     const { t } = useLingui();
+
+    const [notificationPermission, setNotificationPermission] = useState(Notifications.getPermission());
 
     useAppTitle(t`Library`);
 
@@ -396,6 +412,58 @@ export function LibrarySettings() {
                         checked={settings.ignoreFilters}
                         onChange={(e) => setSettingValue('ignoreFilters', e.target.checked)}
                         aria-label="ignore-filters"
+                    />
+                </ListItem>
+                <ListItem>
+                    <ListItemText
+                        primary={t`Fuzzy search`}
+                        secondary={t`Match the library search even with typos or words in a different order, and show the closest matches first`}
+                    />
+                    <Switch
+                        edge="end"
+                        checked={settings.fuzzySearch}
+                        onChange={(e) => setSettingValue('fuzzySearch', e.target.checked)}
+                    />
+                </ListItem>
+                <ListItem>
+                    <ListItemText
+                        primary={t`Notify about new chapters`}
+                        secondary={(() => {
+                            if (!settings.notifyNewChapters || notificationPermission === 'granted') {
+                                return t`Notify about new chapters of library entries`;
+                            }
+
+                            if (notificationPermission === 'default') {
+                                return (
+                                    <Trans>
+                                        Only while Suwayomi is in use.{' '}
+                                        <Link
+                                            component="button"
+                                            onClick={() =>
+                                                Notifications.requestPermission().then(() =>
+                                                    setNotificationPermission(Notifications.getPermission()),
+                                                )
+                                            }
+                                        >
+                                            Allow browser notifications
+                                        </Link>
+                                    </Trans>
+                                );
+                            }
+
+                            return t`Only while Suwayomi is in use, notification permission have not been granted`;
+                        })()}
+                    />
+                    <Switch
+                        edge="end"
+                        checked={settings.notifyNewChapters}
+                        onChange={(e) =>
+                            setNotifyNewChapters(e.target.checked)
+                                .then(() => setNotificationPermission(Notifications.getPermission()))
+                                .catch((saveError) =>
+                                    makeToast(t`Failed to save changes`, 'error', getErrorMessage(saveError)),
+                                )
+                        }
                     />
                 </ListItem>
             </List>
