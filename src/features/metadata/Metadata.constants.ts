@@ -419,6 +419,34 @@ export const APP_METADATA: Record<
     excludedScanlators: {
         convert: convertToObject<string[]>,
     },
+    // fork (Komikku port)
+    bookmarkColorsIncluded: {
+        convert: convertToObject<number[]>,
+    },
+    bookmarkColorsExcluded: {
+        convert: convertToObject<number[]>,
+    },
+    hideBlacklistedChapters: {
+        convert: convertToBoolean,
+    },
+    showMergedChapters: {
+        convert: convertToBoolean,
+    },
+    autoRefreshOpenedManga: {
+        convert: convertToBoolean,
+    },
+    defaultBookmarkColor: {
+        convert: convertToNumber,
+    },
+    rememberLastBookmarkColor: {
+        convert: convertToBoolean,
+    },
+    lastBookmarkColor: {
+        convert: convertToNumber,
+    },
+    preferredMetadataTrackerId: {
+        convert: convertToNumber,
+    },
     notes: {
         convert: convertToString,
     },
@@ -540,6 +568,16 @@ export const GLOBAL_METADATA_KEYS: AppMetadataKeys[] = [
     'showChapterNumber',
     'excludedScanlators',
     'notes',
+    // fork (Komikku port)
+    'bookmarkColorsIncluded',
+    'bookmarkColorsExcluded',
+    'hideBlacklistedChapters',
+    'showMergedChapters',
+    'autoRefreshOpenedManga',
+    'defaultBookmarkColor',
+    'rememberLastBookmarkColor',
+    'lastBookmarkColor',
+    'preferredMetadataTrackerId',
 ];
 
 /**

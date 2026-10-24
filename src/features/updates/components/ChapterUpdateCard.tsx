@@ -61,6 +61,7 @@ const ChapterUpdateCardCompactRow = memo(({ chapter }: { chapter: ChapterUpdateL
                     title=""
                     secondaryText={chapter.name}
                     showUnreadDot={!chapter.isRead}
+                    bookmarkColor={chapter.isBookmarked ? chapter.bookmarkColor : null}
                     disableTooltips
                 />
             </Box>
@@ -115,6 +116,7 @@ export const ChapterUpdateCard = memo(
                                 secondaryText={chapter.scanlator}
                                 ternaryText={chapter.name}
                                 showUnreadDot={!chapter.isRead}
+                                bookmarkColor={chapter.isBookmarked ? chapter.bookmarkColor : null}
                             />
                         </Box>
                         {isGroup && (

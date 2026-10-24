@@ -74,6 +74,7 @@ export const ChapterHistoryCard = memo(
                                     secondaryText={chapter.scanlator}
                                     ternaryText={`${chapter.name} — ${timeFormatter.format(epochToDate(Number(chapter.lastReadAt)).valueOf())}`}
                                     showUnreadDot={!chapter.isRead}
+                                    bookmarkColor={chapter.isBookmarked ? chapter.bookmarkColor : null}
                                 />
                                 {isGroup && (
                                     <ChapterCardExpandButton

@@ -102,6 +102,13 @@ export const SERVER_SETTINGS_METADATA_DEFAULT: MetadataServerSettings = {
     mangaThumbnailBackdrop: true,
     mangaDynamicColorSchemes: true,
     mangaGridItemWidth: MANGA_GRID_WIDTH.default,
+
+    // fork (Komikku port)
+    autoRefreshOpenedManga: false,
+    defaultBookmarkColor: 0,
+    rememberLastBookmarkColor: false,
+    lastBookmarkColor: 0,
+    preferredMetadataTrackerId: 0,
 };
 
 const AUTH_MODES = [AuthMode.None].concat(Object.values(AuthMode).filter((mode) => mode !== AuthMode.None));

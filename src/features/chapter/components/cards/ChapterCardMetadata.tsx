@@ -6,6 +6,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { ChapterBookmarkIcon } from '@/features/chapter/bookmark/ChapterBookmarkIcon.tsx';
 import Box from '@mui/material/Box';
 import type { ComponentProps, ReactElement, ReactNode } from 'react';
 import Stack from '@mui/material/Stack';
@@ -60,6 +61,7 @@ export const ChapterCardMetadata = ({
     infoIcons,
     showUnreadDot,
     disableTooltips,
+    bookmarkColor,
     slotProps,
 }: {
     title: string;
@@ -68,6 +70,8 @@ export const ChapterCardMetadata = ({
     infoIcons?: ReactNode;
     showUnreadDot?: boolean;
     disableTooltips?: boolean;
+    /** fork (Komikku port): the bookmark color of a bookmarked chapter, shown next to the chapter line */
+    bookmarkColor?: number | null;
     slotProps?: {
         title?: ComponentProps<typeof TypographyMaxLines>;
         secondaryText?: ComponentProps<typeof TypographyMaxLines>;
@@ -78,6 +82,9 @@ export const ChapterCardMetadata = ({
     const unreadDotSize = `calc(${theme.typography.caption.fontSize} * 0.6)`;
     // the dot is shown in front of the last text line (the chapter name in the updates and history lists)
     const unreadDotLine = ternaryText ? 'ternary' : 'secondary';
+    const bookmarkIcon = bookmarkColor != null && (
+        <ChapterBookmarkIcon bookmarkColor={bookmarkColor} sx={{ fontSize: theme.typography.body2.fontSize }} />
+    );
     const unreadDot = showUnreadDot && (
         <Box
             sx={{
@@ -125,6 +132,7 @@ export const ChapterCardMetadata = ({
                     }}
                 >
                     {unreadDotLine === 'secondary' && unreadDot}
+                    {unreadDotLine === 'secondary' && bookmarkIcon}
                     <OptionalTooltip title={secondaryText} disabled={disableTooltips}>
                         <TypographyMaxLines
                             variant="caption"
@@ -152,6 +160,7 @@ export const ChapterCardMetadata = ({
                     }}
                 >
                     {unreadDotLine === 'ternary' && unreadDot}
+                    {unreadDotLine === 'ternary' && bookmarkIcon}
                     <OptionalTooltip title={ternaryText} disabled={disableTooltips}>
                         <TypographyMaxLines
                             variant="caption"

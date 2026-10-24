@@ -263,13 +263,13 @@ export class Mangas {
                     const { mangaId } = chapters![0]!;
                     const manga = mangaByMangaId[mangaId]![0]!;
 
-                    return filterChapters(chapters!, getMangaMetadata(manga));
+                    return filterChapters(chapters!, getMangaMetadata(manga), { strictVisibility: true });
                 }, chaptersToConsiderByMangaId);
                 const filteredUnReadDownloadedChaptersByMangaId = mapValues((chapters) => {
                     const { mangaId } = chapters![0]!;
                     const manga = mangaByMangaId[mangaId]![0]!;
 
-                    return filterChapters(chapters!, getMangaMetadata(manga));
+                    return filterChapters(chapters!, getMangaMetadata(manga), { strictVisibility: true });
                 }, unReadDownloadedChaptersByMangaId);
 
                 type MangaIdToDownloadSize = [MangaId: string, DownloadSize: number | undefined];

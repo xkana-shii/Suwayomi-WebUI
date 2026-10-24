@@ -6,57 +6,52 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import { bindTrigger, usePopupState } from 'material-ui-popup-state/hooks';
+import type { ComponentProps } from 'react';
+import { useState } from 'react';
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
-import DisabledByDefaultRounded from '@mui/icons-material/DisabledByDefaultRounded';
 import { useLingui } from '@lingui/react/macro';
-import { CheckboxListSetting } from '@/base/components/settings/CheckboxListSetting.tsx';
 import type { updateChapterListOptions } from '@/features/chapter/utils/ChapterList.util.tsx';
 import { CheckboxInput } from '@/base/components/inputs/CheckboxInput.tsx';
+import { ScanlatorSettingsDialog } from '@/features/chapter/components/ScanlatorSettingsDialog.tsx';
+import type { ChapterListOptions } from '@/features/chapter/Chapter.types.ts';
 
+/**
+ * The scanlator filter entry of the chapter filters. fork (Komikku port): it opens the scanlator settings, which
+ * combine the scanlator filter with Smart Scanlator Merge (Mihon-like ordering plus range rules) and the blacklist.
+ */
 export const ChapterExcludeSanlatorsFilter = ({
     updateOption,
-    scanlators,
-    excludedScanlators,
+    options,
+    mangaId,
+    chapters,
 }: {
     updateOption: ReturnType<typeof updateChapterListOptions>;
-    scanlators: string[];
-    excludedScanlators: string[];
+    options: ChapterListOptions;
+    mangaId: number;
+    chapters: ComponentProps<typeof ScanlatorSettingsDialog>['chapters'];
 }) => {
     const { t } = useLingui();
-    const popupState = usePopupState({ variant: 'dialog', popupId: 'chapter-list-options-scanlator-filter-dialog' });
-
-    if (!scanlators.length) {
-        return null;
-    }
+    const [open, setOpen] = useState(false);
 
     return (
         <>
             <CheckboxInput
-                {...bindTrigger(popupState)}
-                label={t`Scanlator`}
+                onClick={(e) => {
+                    e.preventDefault();
+                    setOpen(true);
+                }}
+                label={t`Scanlators`}
                 icon={<PeopleAltOutlinedIcon />}
                 checkedIcon={<PeopleAltOutlinedIcon color="warning" />}
-                checked={!!excludedScanlators.length}
+                checked={!!options.excludedScanlators.length}
             />
-            <CheckboxListSetting
-                title={t`Exclude scanlators`}
-                open={popupState.isOpen}
-                onClose={(selectedScanlators) => {
-                    if (selectedScanlators) {
-                        updateOption('excludedScanlators', selectedScanlators);
-                    }
-                    popupState.close();
-                }}
-                items={scanlators}
-                getId={(scanlator) => scanlator}
-                getLabel={(scanlator) => scanlator}
-                isChecked={(scanlator) => excludedScanlators.includes(scanlator)}
-                slotProps={{
-                    checkbox: {
-                        checkedIcon: <DisabledByDefaultRounded />,
-                    },
-                }}
+            <ScanlatorSettingsDialog
+                open={open}
+                onClose={() => setOpen(false)}
+                mangaId={mangaId}
+                chapters={chapters}
+                options={options}
+                updateOption={updateOption}
             />
         </>
     );

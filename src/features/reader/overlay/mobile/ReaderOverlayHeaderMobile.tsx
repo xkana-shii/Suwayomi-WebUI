@@ -50,6 +50,7 @@ const BaseReaderOverlayHeaderMobile = ({ isVisible, ref }: MobileHeaderProps & {
 
     const { id: mangaId, title } = manga ?? DEFAULT_MANGA;
     const { id: chapterId, name, realUrl, isBookmarked, isFillermarked } = currentChapter ?? FALLBACK_CHAPTER;
+    const bookmarkColor = currentChapter?.bookmarkColor ?? 0;
 
     return (
         <Slide direction="down" in={isVisible} ref={ref}>
@@ -92,7 +93,7 @@ const BaseReaderOverlayHeaderMobile = ({ isVisible, ref }: MobileHeaderProps & {
                     )}
                 </Stack>
                 <ReaderLibraryButton />
-                <ReaderBookmarkButton id={chapterId} isBookmarked={isBookmarked} />
+                <ReaderBookmarkButton id={chapterId} isBookmarked={isBookmarked} bookmarkColor={bookmarkColor} />
                 <ReaderFillermarkButton id={chapterId} isFillermarked={isFillermarked} />
                 <IconButton {...bindTrigger(popupState)} color="inherit">
                     <MoreVertIcon />

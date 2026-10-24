@@ -6,6 +6,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import type { ComponentProps } from 'react';
 import FilterList from '@mui/icons-material/FilterList';
 import IconButton from '@mui/material/IconButton';
 import * as React from 'react';
@@ -35,18 +36,10 @@ interface IProps {
     options: ChapterListOptions;
     updateOption: ReturnType<typeof updateChapterListOptions>;
     chapters: (ChapterIdInfo & ChapterReadInfo & ChapterDownloadInfo & ChapterBookmarkInfo & ChapterFillermarkInfo)[];
-    scanlators: string[];
-    excludeScanlators: string[];
+    allChapters: ComponentProps<typeof ChapterOptions>['chapters'];
 }
 
-export const ChaptersToolbarMenu = ({
-    mangaId,
-    options,
-    updateOption,
-    chapters,
-    scanlators,
-    excludeScanlators,
-}: IProps) => {
+export const ChaptersToolbarMenu = ({ mangaId, options, updateOption, chapters, allChapters }: IProps) => {
     const { t } = useLingui();
 
     const [open, setOpen] = React.useState(false);
@@ -96,8 +89,8 @@ export const ChaptersToolbarMenu = ({
                 onClose={() => setOpen(false)}
                 options={options}
                 updateOption={updateOption}
-                scanlators={scanlators}
-                excludedScanlators={excludeScanlators}
+                mangaId={mangaId}
+                chapters={allChapters}
             />
         </>
     );

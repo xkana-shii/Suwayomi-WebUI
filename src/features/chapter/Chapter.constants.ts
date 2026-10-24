@@ -28,6 +28,10 @@ export const DEFAULT_CHAPTER_OPTIONS: ChapterListOptions = {
     sortBy: 'source',
     showChapterNumber: false,
     excludedScanlators: [],
+    bookmarkColorsIncluded: [],
+    bookmarkColorsExcluded: [],
+    hideBlacklistedChapters: true,
+    showMergedChapters: false,
 };
 
 export const CHAPTER_SORT_OPTIONS_TO_TRANSLATION: Record<ChapterSortMode, MessageDescriptor> = {
@@ -50,6 +54,8 @@ export const CHAPTER_ACTION_TO_CONFIRMATION_REQUIRED: Record<
     mark_as_unread: { always: false, bulkAction: true },
     fillermark: { always: false, bulkAction: false },
     unfillermark: { always: false, bulkAction: true },
+    blacklist: { always: false, bulkAction: true },
+    unblacklist: { always: false, bulkAction: false },
 };
 
 export const CHAPTER_ACTION_TO_TRANSLATION: {
@@ -123,6 +129,23 @@ export const CHAPTER_ACTION_TO_TRANSLATION: {
         confirmation: msg`{count, plural, one {You are about to remove one fillermark} other {You are about to remove # fillermarks}}`,
         success: msg`{count, plural, one {Chapter fillermark removed} other {# chapter fillermarks removed}}`,
         error: msg`{count, plural, one {Could not remove the fillermark} other {Could not remove the fillermarks}}`,
+    },
+    blacklist: {
+        action: {
+            single: msg`Blacklist chapter`,
+            selected: msg`Blacklist selected`,
+        },
+        confirmation: msg`{count, plural, one {You are about to blacklist one chapter. It will be hidden everywhere until you remove it from the blacklist.} other {You are about to blacklist # chapters. They will be hidden everywhere until you remove them from the blacklist.}}`,
+        success: msg`{count, plural, one {Chapter blacklisted} other {# chapters blacklisted}}`,
+        error: msg`{count, plural, one {Could not blacklist the chapter} other {Could not blacklist chapters}}`,
+    },
+    unblacklist: {
+        action: {
+            single: msg`Remove from blacklist`,
+            selected: msg`Remove selected from blacklist`,
+        },
+        success: msg`{count, plural, one {Chapter removed from the blacklist} other {# chapters removed from the blacklist}}`,
+        error: msg`{count, plural, one {Could not remove the chapter from the blacklist} other {Could not remove chapters from the blacklist}}`,
     },
     mark_as_read: {
         action: {

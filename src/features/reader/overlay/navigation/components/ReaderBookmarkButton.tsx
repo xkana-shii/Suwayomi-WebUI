@@ -8,25 +8,42 @@
 
 import IconButton from '@mui/material/IconButton';
 import { memo } from 'react';
-import BookmarkIcon from '@mui/icons-material/Bookmark';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import { useLingui } from '@lingui/react/macro';
 import { CustomTooltip } from '@/base/components/CustomTooltip.tsx';
-import { Chapters } from '@/features/chapter/services/Chapters.ts';
-import type { ChapterAction, TChapterReader } from '@/features/chapter/Chapter.types.ts';
+import type { TChapterReader } from '@/features/chapter/Chapter.types.ts';
 import { CHAPTER_ACTION_TO_TRANSLATION } from '@/features/chapter/Chapter.constants.ts';
+import { useBookmarkControl } from '@/features/chapter/bookmark/useBookmarkControl.tsx';
+import { ChapterBookmarkIcon } from '@/features/chapter/bookmark/ChapterBookmarkIcon.tsx';
 
-const BaseReaderBookmarkButton = ({ id, isBookmarked }: Pick<TChapterReader, 'id' | 'isBookmarked'>) => {
+const BaseReaderBookmarkButton = ({
+    id,
+    isBookmarked,
+    bookmarkColor,
+}: Pick<TChapterReader, 'id' | 'isBookmarked' | 'bookmarkColor'>) => {
     const { t } = useLingui();
 
-    const bookmarkAction: Extract<ChapterAction, 'unbookmark' | 'bookmark'> = isBookmarked ? 'unbookmark' : 'bookmark';
+    // fork (Komikku port): click toggles the bookmark, long press / context menu picks its color
+    const control = useBookmarkControl({
+        chapters: [{ id, isBookmarked, bookmarkColor }],
+        defaultAction: isBookmarked ? 'unbookmark' : 'bookmark',
+    });
 
     return (
-        <CustomTooltip title={t(CHAPTER_ACTION_TO_TRANSLATION[bookmarkAction].action.single)}>
-            <IconButton onClick={() => Chapters.performAction(bookmarkAction, [id], {})} color="inherit">
-                {isBookmarked ? <BookmarkIcon /> : <BookmarkBorderIcon />}
-            </IconButton>
-        </CustomTooltip>
+        <>
+            <CustomTooltip
+                title={`${t(CHAPTER_ACTION_TO_TRANSLATION[isBookmarked ? 'unbookmark' : 'bookmark'].action.single)} · ${t`Hold or right click for colors`}`}
+            >
+                <IconButton {...control.bindTrigger()} color="inherit">
+                    {isBookmarked ? (
+                        <ChapterBookmarkIcon bookmarkColor={bookmarkColor} defaultColor="currentColor" />
+                    ) : (
+                        <BookmarkBorderIcon />
+                    )}
+                </IconButton>
+            </CustomTooltip>
+            {control.menu}
+        </>
     );
 };
 

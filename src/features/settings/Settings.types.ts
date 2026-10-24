@@ -34,7 +34,23 @@ export type MetadataServerSettings = MetadataDownloadSettings &
     MetadataTrackingSettings &
     MetadataUpdateSettings &
     MetadataThemeSettings &
-    MetadataHistorySettings;
+    MetadataHistorySettings &
+    MetadataKomikkuPortSettings;
+
+/**
+ * fork (Komikku port)
+ */
+export type MetadataKomikkuPortSettings = {
+    /** refresh the details and chapters of a manga in the background when its page is opened */
+    autoRefreshOpenedManga: boolean;
+    /** the bookmark color a normal click on a bookmark control applies */
+    defaultBookmarkColor: number;
+    /** a normal click applies the color last picked from the bookmark color menu instead */
+    rememberLastBookmarkColor: boolean;
+    lastBookmarkColor: number;
+    /** tracker used for metadata autofill when a manga is tracked with several (0 = ask) */
+    preferredMetadataTrackerId: number;
+};
 
 export interface ISearchSettings {
     ignoreFilters: boolean;

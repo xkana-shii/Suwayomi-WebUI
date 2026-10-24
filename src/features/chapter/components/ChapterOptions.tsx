@@ -6,9 +6,15 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import type { ComponentProps } from 'react';
+import React, { useState } from 'react';
+import Stack from '@mui/material/Stack';
+import Button from '@mui/material/Button';
+import PaletteOutlinedIcon from '@mui/icons-material/PaletteOutlined';
+import { CheckboxInput } from '@/base/components/inputs/CheckboxInput.tsx';
+import { BookmarkColorFilterDialog } from '@/features/chapter/bookmark/BookmarkColorFilterDialog.tsx';
 import type { MessageDescriptor } from '@lingui/core';
 import RadioGroup from '@mui/material/RadioGroup';
-import React from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { msg } from '@lingui/core/macro';
 import { RadioInput } from '@/base/components/inputs/RadioInput.tsx';
@@ -25,8 +31,8 @@ interface IProps {
     onClose: () => void;
     options: ChapterListOptions;
     updateOption: ReturnType<typeof updateChapterListOptions>;
-    scanlators: string[];
-    excludedScanlators: string[];
+    mangaId: number;
+    chapters: ComponentProps<typeof ChapterExcludeSanlatorsFilter>['chapters'];
 }
 
 const TITLES: { [key in 'filter' | 'sort' | 'display']: MessageDescriptor } = {
@@ -35,15 +41,10 @@ const TITLES: { [key in 'filter' | 'sort' | 'display']: MessageDescriptor } = {
     display: msg`Display`,
 };
 
-export const ChapterOptions: React.FC<IProps> = ({
-    open,
-    onClose,
-    options,
-    updateOption,
-    scanlators,
-    excludedScanlators,
-}) => {
+export const ChapterOptions: React.FC<IProps> = ({ open, onClose, options, updateOption, mangaId, chapters }) => {
     const { t } = useLingui();
+    const [isColorFilterOpen, setIsColorFilterOpen] = useState(false);
+    const colorFilterCount = options.bookmarkColorsIncluded.length + options.bookmarkColorsExcluded.length;
 
     return (
         <OptionsTabs<'filter' | 'sort' | 'display'>
@@ -76,9 +77,52 @@ export const ChapterOptions: React.FC<IProps> = ({
                                 checked={options.fillermarked}
                                 onChange={(c) => updateOption('fillermarked', c)}
                             />
+                            {/* fork (Komikku port): bookmark color, blacklist and Smart Scanlator Merge filters */}
+                            <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
+                                <CheckboxInput
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        setIsColorFilterOpen(true);
+                                    }}
+                                    label={
+                                        colorFilterCount
+                                            ? `${t`Bookmark colors`} (${colorFilterCount})`
+                                            : t`Bookmark colors`
+                                    }
+                                    icon={<PaletteOutlinedIcon />}
+                                    checkedIcon={<PaletteOutlinedIcon color="warning" />}
+                                    checked={!!colorFilterCount}
+                                />
+                                <Button size="small" onClick={() => setIsColorFilterOpen(true)}>
+                                    {t`Edit`}
+                                </Button>
+                            </Stack>
+                            <BookmarkColorFilterDialog
+                                open={isColorFilterOpen}
+                                included={options.bookmarkColorsIncluded}
+                                excluded={options.bookmarkColorsExcluded}
+                                onClose={(filter) => {
+                                    setIsColorFilterOpen(false);
+                                    if (filter) {
+                                        updateOption('bookmarkColorsIncluded', filter.included);
+                                        updateOption('bookmarkColorsExcluded', filter.excluded);
+                                    }
+                                }}
+                            />
+                            <CheckboxInput
+                                label={t`Show blacklisted chapters`}
+                                checked={!options.hideBlacklistedChapters}
+                                onChange={(_, checked) => updateOption('hideBlacklistedChapters', !checked)}
+                            />
+                            <CheckboxInput
+                                label={t`Show merged duplicates`}
+                                checked={options.showMergedChapters}
+                                onChange={(_, checked) => updateOption('showMergedChapters', checked)}
+                            />
                             <ChapterExcludeSanlatorsFilter
-                                scanlators={scanlators}
-                                excludedScanlators={excludedScanlators}
+                                mangaId={mangaId}
+                                chapters={chapters}
+                                options={options}
                                 updateOption={updateOption}
                             />
                         </>

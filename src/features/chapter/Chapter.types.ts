@@ -17,6 +17,15 @@ export interface ChapterListFilterOptions {
     bookmarked: NullAndUndefined<boolean>;
     fillermarked: NullAndUndefined<boolean>;
     excludedScanlators: string[];
+    // fork (Komikku port)
+    /** bookmark colors a chapter needs one of (empty = any) */
+    bookmarkColorsIncluded: number[];
+    /** bookmark colors that hide a chapter */
+    bookmarkColorsExcluded: number[];
+    /** false reveals the chapters of the chapter blacklist (they are marked in the list) */
+    hideBlacklistedChapters: boolean;
+    /** shows the duplicates Smart Scanlator Merge hides */
+    showMergedChapters: boolean;
 }
 
 export interface ChapterListSortOptions {
@@ -40,6 +49,8 @@ export type ChapterAction =
     | 'unbookmark'
     | 'fillermark'
     | 'unfillermark'
+    | 'blacklist'
+    | 'unblacklist'
     | 'mark_as_read'
     | 'mark_as_unread';
 
@@ -54,6 +65,11 @@ export type ChapterDownloadInfo = Pick<ChapterType, 'isDownloaded'>;
 export type ChapterBookmarkInfo = Pick<ChapterType, 'isBookmarked'>;
 
 export type ChapterFillermarkInfo = Pick<ChapterType, 'isFillermarked'>;
+
+// fork (Komikku port)
+export type ChapterBookmarkColorInfo = Pick<ChapterType, 'isBookmarked' | 'bookmarkColor'>;
+
+export type ChapterVisibilityInfo = Pick<ChapterType, 'isBlacklisted' | 'isMergeHidden'>;
 
 export type ChapterReadInfo = Pick<ChapterType, 'isRead'>;
 

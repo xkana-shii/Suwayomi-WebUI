@@ -281,6 +281,31 @@ export class Chapters {
         );
     }
 
+    /** fork (Komikku port): bookmarks the chapters with [color] (or changes the color of their bookmark) */
+    static async setBookmarkColor(chapterIds: number[], color: number): Promise<void> {
+        return Chapters.executeAction(
+            'bookmark',
+            chapterIds.length,
+            () => requestManager.updateChapters(chapterIds, { bookmarkColor: color }).response,
+        );
+    }
+
+    static async blacklist(chapterIds: number[]): Promise<void> {
+        return Chapters.executeAction(
+            'blacklist',
+            chapterIds.length,
+            () => requestManager.updateChapters(chapterIds, { isBlacklisted: true }).response,
+        );
+    }
+
+    static async unBlacklist(chapterIds: number[]): Promise<void> {
+        return Chapters.executeAction(
+            'unblacklist',
+            chapterIds.length,
+            () => requestManager.updateChapters(chapterIds, { isBlacklisted: false }).response,
+        );
+    }
+
     static async unBookmark(chapterIds: number[]): Promise<void> {
         return Chapters.executeAction(
             'unbookmark',
@@ -397,6 +422,10 @@ export class Chapters {
                 return Chapters.fillermark(chapterIds);
             case 'unfillermark':
                 return Chapters.unFillermark(chapterIds);
+            case 'blacklist':
+                return Chapters.blacklist(chapterIds);
+            case 'unblacklist':
+                return Chapters.unBlacklist(chapterIds);
             default:
                 throw new Error(`Chapters::performAction: unknown action "${action}"`);
         }

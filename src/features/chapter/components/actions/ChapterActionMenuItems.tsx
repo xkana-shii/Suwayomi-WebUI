@@ -44,7 +44,12 @@ import type {
     ChapterReadInfo,
     ChapterRealUrlInfo,
     ChapterFillermarkInfo,
+    ChapterBookmarkColorInfo,
+    ChapterVisibilityInfo,
 } from '@/features/chapter/Chapter.types.ts';
+import Block from '@mui/icons-material/Block';
+import SettingsBackupRestore from '@mui/icons-material/SettingsBackupRestore';
+import { useBookmarkControl } from '@/features/chapter/bookmark/useBookmarkControl.tsx';
 import { IconWebView } from '@/assets/icons/IconWebView.tsx';
 import { IconBrowser } from '@/assets/icons/IconBrowser.tsx';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -57,7 +62,9 @@ type TChapter = ChapterIdInfo &
     ChapterBookmarkInfo &
     ChapterReadInfo &
     ChapterRealUrlInfo &
-    ChapterFillermarkInfo;
+    ChapterFillermarkInfo &
+    ChapterBookmarkColorInfo &
+    Partial<ChapterVisibilityInfo>;
 
 type SingleModeProps = {
     chapter: TChapter;
@@ -84,7 +91,7 @@ export const ChapterActionMenuItems = ({
     const { t } = useLingui();
 
     const isSingleMode = !!chapter;
-    const { isDownloaded, isRead, isBookmarked, isFillermarked } = chapter ?? STABLE_EMPTY_OBJECT;
+    const { isDownloaded, isRead, isBookmarked, isFillermarked, isBlacklisted } = chapter ?? STABLE_EMPTY_OBJECT;
 
     const mangaChaptersResponse = requestManager.useGetMangaChapters<GetChaptersMangaQuery>(
         GET_CHAPTERS_MANGA,
@@ -114,6 +121,8 @@ export const ChapterActionMenuItems = ({
         readChapters,
         unfillermarkedChapters,
         fillermarkedChapters,
+        unblacklistedChapters,
+        blacklistedChapters,
     } = useMemo(
         () => ({
             downloadingChapters: Chapters.getDownloading(selectedChapters),
@@ -125,9 +134,23 @@ export const ChapterActionMenuItems = ({
             readChapters: Chapters.getRead(selectedChapters),
             unfillermarkedChapters: Chapters.getNonFillermarked ? Chapters.getNonFillermarked(selectedChapters) : [],
             fillermarkedChapters: Chapters.getFillermarked ? Chapters.getFillermarked(selectedChapters) : [],
+            unblacklistedChapters: selectedChapters.filter((selectedChapter) => !selectedChapter.isBlacklisted),
+            blacklistedChapters: selectedChapters.filter((selectedChapter) => !!selectedChapter.isBlacklisted),
         }),
         [selectedChapters],
     );
+
+    // fork (Komikku port): click bookmarks with the default color, long press / context menu picks a color
+    const addBookmarkControl = useBookmarkControl({
+        chapters: chapter ? [chapter] : unbookmarkedChapters,
+        defaultAction: 'bookmark',
+        onDone: onClose,
+    });
+    const changeBookmarkControl = useBookmarkControl({
+        chapters: chapter ? [chapter] : bookmarkedChapters,
+        defaultAction: 'unbookmark',
+        onDone: onClose,
+    });
 
     const handleSelect = () => {
         handleSelection?.(chapter.id, true);
@@ -244,7 +267,7 @@ export const ChapterActionMenuItems = ({
                 <MenuItem
                     Icon={BookmarkAdd}
                     disabled={isMenuItemDisabled(!unbookmarkedChapters.length)}
-                    onClick={() => performAction('bookmark', unbookmarkedChapters)}
+                    {...addBookmarkControl.bindTrigger()}
                     title={getMenuItemTitle('bookmark', unbookmarkedChapters.length)}
                 />
             )}
@@ -252,10 +275,12 @@ export const ChapterActionMenuItems = ({
                 <MenuItem
                     Icon={BookmarkRemove}
                     disabled={isMenuItemDisabled(!bookmarkedChapters.length)}
-                    onClick={() => performAction('unbookmark', bookmarkedChapters)}
+                    {...changeBookmarkControl.bindTrigger()}
                     title={getMenuItemTitle('unbookmark', bookmarkedChapters.length)}
                 />
             )}
+            {addBookmarkControl.menu}
+            {changeBookmarkControl.menu}
             {shouldShowMenuItem && shouldShowMenuItem(!isFillermarked) && (
                 <MenuItem
                     Icon={VisibilityOff}
@@ -270,6 +295,22 @@ export const ChapterActionMenuItems = ({
                     disabled={isMenuItemDisabled(!fillermarkedChapters.length)}
                     onClick={() => performAction('unfillermark', fillermarkedChapters)}
                     title={getMenuItemTitle('unfillermark', fillermarkedChapters.length)}
+                />
+            )}
+            {shouldShowMenuItem(!isBlacklisted) && (
+                <MenuItem
+                    Icon={Block}
+                    disabled={isMenuItemDisabled(!unblacklistedChapters.length)}
+                    onClick={() => performAction('blacklist', unblacklistedChapters)}
+                    title={getMenuItemTitle('blacklist', unblacklistedChapters.length)}
+                />
+            )}
+            {shouldShowMenuItem(!!isBlacklisted) && (
+                <MenuItem
+                    Icon={SettingsBackupRestore}
+                    disabled={isMenuItemDisabled(!blacklistedChapters.length)}
+                    onClick={() => performAction('unblacklist', blacklistedChapters)}
+                    title={getMenuItemTitle('unblacklist', blacklistedChapters.length)}
                 />
             )}
             {shouldShowMenuItem(!isRead) && (

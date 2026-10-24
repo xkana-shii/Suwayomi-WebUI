@@ -6,7 +6,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import BookmarkIcon from '@mui/icons-material/Bookmark';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CardActionArea from '@mui/material/CardActionArea';
@@ -42,7 +41,12 @@ import type {
     ChapterScanlatorInfo,
     ChapterFillermarkInfo,
     ChapterSourceOrderInfo,
+    ChapterBookmarkColorInfo,
+    ChapterVisibilityInfo,
 } from '@/features/chapter/Chapter.types.ts';
+import BlockIcon from '@mui/icons-material/Block';
+import CallMergeIcon from '@mui/icons-material/CallMerge';
+import { ChapterBookmarkIcon } from '@/features/chapter/bookmark/ChapterBookmarkIcon.tsx';
 import { MediaQuery } from '@/base/utils/MediaQuery.tsx';
 import type { ChapterType } from '@/lib/graphql/generated/graphql-base.types.ts';
 import { usePress } from '@/base/hooks/usePress.ts';
@@ -59,6 +63,8 @@ type TChapter = ChapterIdInfo &
     ChapterFillermarkInfo &
     ChapterNameInfo &
     ChapterSourceOrderInfo &
+    ChapterBookmarkColorInfo &
+    Partial<ChapterVisibilityInfo> &
     Pick<ChapterType, 'name' | 'sourceOrder' | 'uploadDate'>;
 
 interface IProps {
@@ -144,6 +150,7 @@ export const ChapterCard = memo((props: IProps) => {
                             sx={MediaQuery.preventMobileContextMenuSx()}
                             style={{
                                 color: theme.palette.text[chapter.isRead ? 'disabled' : 'primary'],
+                                opacity: chapter.isBlacklisted || chapter.isMergeHidden ? 0.6 : undefined,
                             }}
                             replace={mode === 'reader'}
                             {...longPressBind(popupState.open)}
@@ -169,10 +176,26 @@ export const ChapterCard = memo((props: IProps) => {
                                                     }}
                                                 />
                                             ) : null}
+                                            {chapter.isBlacklisted && (
+                                                <CustomTooltip title={t`Blacklisted`}>
+                                                    <BlockIcon color="error" aria-label={t`Blacklisted`} />
+                                                </CustomTooltip>
+                                            )}
+                                            {chapter.isMergeHidden && (
+                                                <CustomTooltip title={t`Hidden by Smart Scanlator Merge`}>
+                                                    <CallMergeIcon
+                                                        color="disabled"
+                                                        aria-label={t`Hidden by Smart Scanlator Merge`}
+                                                    />
+                                                </CustomTooltip>
+                                            )}
                                             {chapter.isBookmarked && (
-                                                <BookmarkIcon
-                                                    color={
-                                                        mode === 'reader' && isActiveChapter ? 'secondary' : 'primary'
+                                                <ChapterBookmarkIcon
+                                                    bookmarkColor={chapter.bookmarkColor}
+                                                    defaultColor={
+                                                        mode === 'reader' && isActiveChapter
+                                                            ? theme.palette.secondary.main
+                                                            : undefined
                                                     }
                                                 />
                                             )}

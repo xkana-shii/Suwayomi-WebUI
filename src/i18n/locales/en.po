@@ -19,9 +19,11 @@ msgstr ""
 msgid "— State: {0}"
 msgstr "— State: {0}"
 
+#. placeholder {0}: info.count
 #. placeholder {0}: selectedChapters.length
 #. placeholder {0}: visibleChapters.length
 #: src/features/chapter/components/ChapterList.tsx
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
 msgid "{0, plural, one {# chapter} other {# chapters}}"
 msgstr "{0, plural, one {# chapter} other {# chapters}}"
 
@@ -160,6 +162,10 @@ msgid "{count, plural, one {Changed categories of manga} other {Changed categori
 msgstr "{count, plural, one {Changed categories of manga} other {Changed categories of # manga}}"
 
 #: src/features/chapter/Chapter.constants.ts
+msgid "{count, plural, one {Chapter blacklisted} other {# chapters blacklisted}}"
+msgstr "{count, plural, one {Chapter blacklisted} other {# chapters blacklisted}}"
+
+#: src/features/chapter/Chapter.constants.ts
 msgid "{count, plural, one {Chapter bookmark removed} other {# chapter bookmarks removed}}"
 msgstr "{count, plural, one {Chapter bookmark removed} other {# chapter bookmarks removed}}"
 
@@ -188,8 +194,16 @@ msgid "{count, plural, one {Chapter marked as unread} other {# chapters marked a
 msgstr "{count, plural, one {Chapter marked as unread} other {# chapters marked as unread}}"
 
 #: src/features/chapter/Chapter.constants.ts
+msgid "{count, plural, one {Chapter removed from the blacklist} other {# chapters removed from the blacklist}}"
+msgstr "{count, plural, one {Chapter removed from the blacklist} other {# chapters removed from the blacklist}}"
+
+#: src/features/chapter/Chapter.constants.ts
 msgid "{count, plural, one {Could not add the download} other {Could not add downloads}}"
 msgstr "{count, plural, one {Could not add the download} other {Could not add downloads}}"
+
+#: src/features/chapter/Chapter.constants.ts
+msgid "{count, plural, one {Could not blacklist the chapter} other {Could not blacklist chapters}}"
+msgstr "{count, plural, one {Could not blacklist the chapter} other {Could not blacklist chapters}}"
 
 #: src/features/chapter/Chapter.constants.ts
 msgid "{count, plural, one {Could not bookmark the chapter} other {Could not bookmark chapters}}"
@@ -230,6 +244,10 @@ msgstr "{count, plural, one {Could not remove manga from the library} other {Cou
 #: src/features/chapter/Chapter.constants.ts
 msgid "{count, plural, one {Could not remove the bookmark} other {Could not remove the bookmarks}}"
 msgstr "{count, plural, one {Could not remove the bookmark} other {Could not remove the bookmarks}}"
+
+#: src/features/chapter/Chapter.constants.ts
+msgid "{count, plural, one {Could not remove the chapter from the blacklist} other {Could not remove chapters from the blacklist}}"
+msgstr "{count, plural, one {Could not remove the chapter from the blacklist} other {Could not remove chapters from the blacklist}}"
 
 #: src/features/chapter/Chapter.constants.ts
 msgid "{count, plural, one {Could not remove the fillermark} other {Could not remove the fillermarks}}"
@@ -286,6 +304,10 @@ msgstr "{count, plural, one {There is # missing chapter.\n"
 "Current: {currentChapter}} other {There are # missing chapters.\n"
 "Previous: {nextChapter}\n"
 "Current: {currentChapter}}}"
+
+#: src/features/chapter/Chapter.constants.ts
+msgid "{count, plural, one {You are about to blacklist one chapter. It will be hidden everywhere until you remove it from the blacklist.} other {You are about to blacklist # chapters. They will be hidden everywhere until you remove them from the blacklist.}}"
+msgstr "{count, plural, one {You are about to blacklist one chapter. It will be hidden everywhere until you remove it from the blacklist.} other {You are about to blacklist # chapters. They will be hidden everywhere until you remove them from the blacklist.}}"
 
 #: src/features/chapter/Chapter.constants.ts
 msgid "{count, plural, one {You are about to cancel one download} other {You are about to cancel # downloads}}"
@@ -428,6 +450,7 @@ msgid "Active setting ({title})"
 msgstr "Active setting ({title})"
 
 #: src/base/components/settings/MutableListSetting.tsx
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
 #: src/features/extension/store/screens/ExtensionStores.tsx
 #: src/features/manga/components/details/MangaNotes.tsx
 #: src/features/manga/hooks/useManageMangaLibraryState.tsx
@@ -730,9 +753,43 @@ msgstr "Binary file size"
 msgid "Black"
 msgstr "Black"
 
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Blacklist"
+msgstr "Blacklist"
+
+#: src/features/chapter/Chapter.constants.ts
+msgid "Blacklist chapter"
+msgstr "Blacklist chapter"
+
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Blacklist fillermarked chapters"
+msgstr "Blacklist fillermarked chapters"
+
+#: src/features/chapter/Chapter.constants.ts
+msgid "Blacklist selected"
+msgstr "Blacklist selected"
+
+#: src/features/chapter/components/cards/ChapterCard.tsx
+msgid "Blacklisted"
+msgstr "Blacklisted"
+
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Blacklisted chapters are hidden everywhere: chapter list, reader, Updates, unread counts and downloads. Revealed chapters are marked in the chapter list and stay out of reading and downloads. Blacklist chapters from their menu or a selection."
+msgstr "Blacklisted chapters are hidden everywhere: chapter list, reader, Updates, unread counts and downloads. Revealed chapters are marked in the chapter list and stay out of reading and downloads. Blacklist chapters from their menu or a selection."
+
+#: src/features/chapter/bookmark/BookmarkColor.ts
 #: src/features/reader/filters/settings/components/ReaderSettingRGBA.tsx
 msgid "Blue"
 msgstr "Blue"
+
+#: src/features/chapter/bookmark/BookmarkColorMenu.tsx
+msgid "Bookmark color"
+msgstr "Bookmark color"
+
+#: src/features/chapter/bookmark/BookmarkColorFilterDialog.tsx
+#: src/features/chapter/components/ChapterOptions.tsx
+msgid "Bookmark colors"
+msgstr "Bookmark colors"
 
 #: src/features/chapter/Chapter.constants.ts
 msgid "Bookmark selected"
@@ -840,6 +897,7 @@ msgstr "Can't migrate an entry to itself"
 #: src/features/category/components/CategoriesInclusionSetting.tsx
 #: src/features/category/components/CategorySelect.tsx
 #: src/features/category/components/CreateOrEditCategoryDialog.tsx
+#: src/features/chapter/bookmark/BookmarkColorFilterDialog.tsx
 #: src/features/downloads/components/DownloadQueueChapterCard.tsx
 #: src/features/library/screens/LibrarySettings.tsx
 #: src/features/manga/components/details/EditMangaMetadataDialog.tsx
@@ -931,6 +989,11 @@ msgstr "Channel"
 msgid "Chapter"
 msgstr "Chapter"
 
+#. placeholder {0}: entry.chapterNumber
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Chapter {0}"
+msgstr "Chapter {0}"
+
 #: src/features/reader/screens/Reader.tsx
 msgid "Chapter does not exist"
 msgstr "Chapter does not exist"
@@ -978,6 +1041,10 @@ msgstr "Check out"
 #: src/features/library/screens/LibraryDuplicates.tsx
 msgid "Check tracker bindings"
 msgstr "Check tracker bindings"
+
+#: src/features/chapter/bookmark/BookmarkColorFilterDialog.tsx
+msgid "Checked colors are included, crossed colors are excluded."
+msgstr "Checked colors are included, crossed colors are excluded."
 
 #: src/features/app-updates/components/VersionInfo.tsx
 msgid "Checking for update"
@@ -1034,6 +1101,7 @@ msgstr "Client data"
 
 #: src/base/components/feedback/SnackbarWithDescription.tsx
 #: src/features/app-updates/components/VersionUpdateInfoDialog.tsx
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
 #: src/features/migration/components/migration-entry/MigrationDestinationEntry.tsx
 msgid "Close"
 msgstr "Close"
@@ -1507,6 +1575,7 @@ msgstr "Decrease auto scroll speed"
 #: src/base/components/buttons/ValueRotationButton.tsx
 #: src/features/backup/screens/Backup.tsx
 #: src/features/browse/screens/BrowseSettings.tsx
+#: src/features/chapter/bookmark/BookmarkColor.ts
 #: src/features/device/screens/DeviceSetting.tsx
 #: src/features/downloads/screens/DownloadSettings.tsx
 #: src/features/reader/settings/ReaderSettings.constants.tsx
@@ -1762,6 +1831,7 @@ msgstr "Edge"
 
 #: src/features/category/components/CategorySelect.tsx
 #: src/features/category/components/CategorySettingsCard.tsx
+#: src/features/chapter/components/ChapterOptions.tsx
 #: src/features/manga/components/details/EditMangaMetadataDialog.tsx
 #: src/features/manga/components/details/MangaNotes.tsx
 #: src/features/theme/components/ThemePreview.tsx
@@ -1879,10 +1949,6 @@ msgstr "Example for possible values: 1 (bytes), 1KB (kilobytes), 1MB (megabytes)
 #: src/features/migration/components/migration-entry/MigrationEntrySearchExcludeActions.tsx
 msgid "Exclude"
 msgstr "Exclude"
-
-#: src/features/chapter/components/ChapterExcludeSanlatorsFilter.tsx
-msgid "Exclude scanlators"
-msgstr "Exclude scanlators"
 
 #: src/features/backup/screens/Backup.tsx
 #: src/features/category/components/CategoriesInclusionSetting.tsx
@@ -2012,6 +2078,10 @@ msgstr "Fillermark selected"
 msgid "Fillermarked"
 msgstr "Fillermarked"
 
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Fillermarked chapters blacklisted"
+msgstr "Fillermarked chapters blacklisted"
+
 #: src/features/chapter/components/ChapterOptions.tsx
 #: src/features/library/components/LibraryOptionsPanel.tsx
 #: src/features/source/browse/components/SourceOptions.tsx
@@ -2108,6 +2178,10 @@ msgstr "Forget manga categories"
 msgid "Fourth to last read chapter"
 msgstr "Fourth to last read chapter"
 
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "From"
+msgstr "From"
+
 #: src/features/reader/settings/general/ReaderGeneralSettings.tsx
 msgid "Fullscreen"
 msgstr "Fullscreen"
@@ -2132,6 +2206,14 @@ msgstr "GitHub Server"
 #: src/features/settings/screens/About.tsx
 msgid "GitHub WebUI"
 msgstr "GitHub WebUI"
+
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Global"
+msgstr "Global"
+
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Global (on)"
+msgstr "Global (on)"
 
 #: src/features/browse/sources/Sources.tsx
 #: src/features/global-search/screens/SearchAll.tsx
@@ -2162,6 +2244,7 @@ msgstr "Gray"
 msgid "Grayscale"
 msgstr "Grayscale"
 
+#: src/features/chapter/bookmark/BookmarkColor.ts
 #: src/features/reader/filters/settings/components/ReaderSettingRGBA.tsx
 msgid "Green"
 msgstr "Green"
@@ -2197,6 +2280,14 @@ msgstr "Hiatus"
 msgid "Hidden"
 msgstr "Hidden"
 
+#: src/features/chapter/components/cards/ChapterCard.tsx
+msgid "Hidden by Smart Scanlator Merge"
+msgstr "Hidden by Smart Scanlator Merge"
+
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Hide blacklisted chapters"
+msgstr "Hide blacklisted chapters"
+
 #: src/features/browse/screens/BrowseSettings.tsx
 msgid "Hide entries already in library"
 msgstr "Hide entries already in library"
@@ -2220,6 +2311,10 @@ msgstr "Hikari max pool size"
 #: src/features/settings/screens/Settings.tsx
 msgid "History"
 msgstr "History"
+
+#: src/features/reader/overlay/navigation/components/ReaderBookmarkButton.tsx
+msgid "Hold or right click for colors"
+msgstr "Hold or right click for colors"
 
 #: src/features/reader/settings/layout/components/ReaderSettingTapZoneInvertMode.tsx
 msgid "Horizontal"
@@ -2880,9 +2975,25 @@ msgstr "Modern"
 msgid "More"
 msgstr "More"
 
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Most preferred first. Uncheck a scanlator to hide all its chapters."
+msgstr "Most preferred first. Uncheck a scanlator to hide all its chapters."
+
 #: src/features/theme/Themes.ts
 msgid "Mountain Sunset"
 msgstr "Mountain Sunset"
+
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Move {scanlator} down"
+msgstr "Move {scanlator} down"
+
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Move {scanlator} up"
+msgstr "Move {scanlator} up"
+
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Move down"
+msgstr "Move down"
 
 #: src/features/downloads/components/DownloadQueueChapterCard.tsx
 msgid "Move series to bottom"
@@ -2899,6 +3010,10 @@ msgstr "Move to bottom"
 #: src/features/downloads/components/DownloadQueueChapterCard.tsx
 msgid "Move to top"
 msgstr "Move to top"
+
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Move up"
+msgstr "Move up"
 
 #: src/base/utils/Languages.ts
 #: src/features/extension/Extensions.constants.ts
@@ -2940,6 +3055,10 @@ msgstr "Next page"
 #: src/features/reader/viewer/components/ReaderTransitionPage.tsx
 msgid "Next:"
 msgstr "Next:"
+
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "No blacklisted chapters"
+msgstr "No blacklisted chapters"
 
 #: src/features/chapter/components/ChapterList.tsx
 msgid "No chapters found"
@@ -3006,6 +3125,10 @@ msgstr "No sources selected"
 msgid "None"
 msgstr "None"
 
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Not in the current chapter list"
+msgstr "Not in the current chapter list"
+
 #: src/features/tracker/Tracker.constants.ts
 msgid "Not yet published"
 msgstr "Not yet published"
@@ -3061,6 +3184,10 @@ msgstr "Obsolete"
 msgid "OEL"
 msgstr "OEL"
 
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Off"
+msgstr "Off"
+
 #: src/features/reader/overlay/navigation/desktop/quick-settings/components/ReaderNavBarDesktopOffsetDoubleSpread.tsx
 #: src/features/reader/settings/behaviour/ReaderBehaviourSettings.tsx
 msgid "Offset double spreads"
@@ -3080,6 +3207,7 @@ msgstr "Offset double spreads"
 #: src/features/backup/component/BackupFlagInclusionDialog.tsx
 #: src/features/category/components/CategoriesInclusionSetting.tsx
 #: src/features/category/components/CategorySelect.tsx
+#: src/features/chapter/bookmark/BookmarkColorFilterDialog.tsx
 #: src/features/chapter/services/Chapters.ts
 #: src/features/manga/services/Mangas.ts
 #: src/features/settings/components/globalUpdate/GlobalUpdateSettingsEntries.tsx
@@ -3093,6 +3221,10 @@ msgstr "Offset double spreads"
 #: src/features/tracker/components/cards/TrackerActiveCard.tsx
 msgid "Ok"
 msgstr "Ok"
+
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "On"
+msgstr "On"
 
 #: src/features/tracker/Tracker.constants.ts
 msgid "Oneshot"
@@ -3175,6 +3307,10 @@ msgstr "Options"
 msgid "or"
 msgstr "or"
 
+#: src/features/chapter/bookmark/BookmarkColor.ts
+msgid "Orange"
+msgstr "Orange"
+
 #: src/features/theme/Themes.ts
 msgid "Orange Juice"
 msgstr "Orange Juice"
@@ -3248,6 +3384,10 @@ msgstr "Port"
 msgid "PostgreSQL"
 msgstr "PostgreSQL"
 
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Prefer a scanlator for a range of chapter numbers. Where rules overlap, the newer rule wins."
+msgstr "Prefer a scanlator for a range of chapter numbers. Where rules overlap, the newer rule wins."
+
 #: src/features/reader/settings/behaviour/ReaderBehaviourSettings.tsx
 msgid "Preload images"
 msgstr "Preload images"
@@ -3307,6 +3447,10 @@ msgstr "Publishing finished"
 msgid "Pure black dark mode"
 msgstr "Pure black dark mode"
 
+#: src/features/chapter/bookmark/BookmarkColor.ts
+msgid "Purple"
+msgstr "Purple"
+
 #: src/features/reader/overlay/progress-bar/settings/components/ReaderSettingProgressBarSize.tsx
 #: src/features/reader/settings/layout/components/ReaderSettingPageGap.tsx
 msgid "px"
@@ -3323,6 +3467,10 @@ msgstr "Quick settings"
 #: src/features/library/components/LibraryOptionsPanel.tsx
 msgid "Random"
 msgstr "Random"
+
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Range rules"
+msgstr "Range rules"
 
 #: src/features/reader/settings/screens/GlobalReaderSettings.tsx
 #: src/features/settings/screens/Settings.tsx
@@ -3368,6 +3516,7 @@ msgstr "Record keybind"
 msgid "Recorded hotkeys: {0}"
 msgstr "Recorded hotkeys: {0}"
 
+#: src/features/chapter/bookmark/BookmarkColor.ts
 #: src/features/reader/filters/settings/components/ReaderSettingRGBA.tsx
 msgid "Red"
 msgstr "Red"
@@ -3399,6 +3548,7 @@ msgstr "Remove"
 msgid "Remove {0} tracking?"
 msgstr "Remove {0} tracking?"
 
+#: src/features/chapter/bookmark/BookmarkColorMenu.tsx
 #: src/features/chapter/Chapter.constants.ts
 msgid "Remove bookmark"
 msgstr "Remove bookmark"
@@ -3415,6 +3565,11 @@ msgstr "Remove fillermark"
 msgid "Remove fillermarks from selected"
 msgstr "Remove fillermarks from selected"
 
+#: src/features/chapter/Chapter.constants.ts
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Remove from blacklist"
+msgstr "Remove from blacklist"
+
 #: src/features/manga/components/MangaBadges.tsx
 #: src/features/manga/Manga.constants.ts
 #: src/features/reader/overlay/navigation/components/ReaderLibraryButton.tsx
@@ -3429,6 +3584,14 @@ msgstr "Remove manga from categories when removing them from the library"
 msgid "Remove non library manga from categories"
 msgstr "Remove non library manga from categories"
 
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Remove rule"
+msgstr "Remove rule"
+
+#: src/features/chapter/Chapter.constants.ts
+msgid "Remove selected from blacklist"
+msgstr "Remove selected from blacklist"
+
 #: src/features/manga/Manga.constants.ts
 msgid "Remove selected from the library"
 msgstr "Remove selected from the library"
@@ -3439,6 +3602,7 @@ msgstr "Removed non library manga from categories"
 
 #: src/base/components/buttons/ResetButton.tsx
 #: src/base/components/settings/CheckboxListSetting.tsx
+#: src/features/chapter/bookmark/BookmarkColorFilterDialog.tsx
 #: src/features/reader/hotkeys/settings/components/RecordHotkey.tsx
 #: src/features/source/browse/components/SourceOptions.tsx
 msgid "Reset"
@@ -3561,9 +3725,18 @@ msgstr "Saving..."
 msgid "Scale type"
 msgstr "Scale type"
 
-#: src/features/chapter/components/ChapterExcludeSanlatorsFilter.tsx
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
 msgid "Scanlator"
 msgstr "Scanlator"
+
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Scanlator settings were not saved"
+msgstr "Scanlator settings were not saved"
+
+#: src/features/chapter/components/ChapterExcludeSanlatorsFilter.tsx
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Scanlators"
+msgstr "Scanlators"
 
 #: src/features/settings/screens/ServerSettings.tsx
 msgid "Schema"
@@ -3780,9 +3953,17 @@ msgstr "Share"
 msgid "Show"
 msgstr "Show"
 
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Show {scanlator}"
+msgstr "Show {scanlator}"
+
 #: src/features/library/screens/LibrarySettings.tsx
 msgid "Show all duplicated entries in your library"
 msgstr "Show all duplicated entries in your library"
+
+#: src/features/chapter/components/ChapterOptions.tsx
+msgid "Show blacklisted chapters"
+msgstr "Show blacklisted chapters"
 
 #: src/features/library/components/LibraryOptionsPanel.tsx
 msgid "Show continue reading button"
@@ -3807,6 +3988,10 @@ msgstr "Show in sources and extensions lists"
 #: src/features/tracker/components/cards/TrackerMangaCard.tsx
 msgid "Show less"
 msgstr "Show less"
+
+#: src/features/chapter/components/ChapterOptions.tsx
+msgid "Show merged duplicates"
+msgstr "Show merged duplicates"
 
 #: src/base/components/feedback/EmptyView.tsx
 #: src/base/components/feedback/SnackbarWithDescription.tsx
@@ -3862,6 +4047,10 @@ msgstr "Shows a dialog in case the version got updated. This dialog will be show
 msgid "Shows a dialog in case the version of the server has changed"
 msgstr "Shows a dialog in case the version of the server has changed"
 
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Shows one release per chapter number: the scanlator of a matching range rule, else the first scanlator in the order below. Hidden duplicates are never deleted."
+msgstr "Shows one release per chapter number: the scanlator of a matching range rule, else the first scanlator in the order below. Hidden duplicates are never deleted."
+
 #: src/features/settings/screens/About.tsx
 msgid "Shut down server"
 msgstr "Shut down server"
@@ -3901,6 +4090,10 @@ msgstr "Skip updating entries"
 #: src/features/reader/settings/behaviour/components/ReaderSettingScrollAmount.tsx
 msgid "Small"
 msgstr "Small"
+
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Smart Scanlator Merge"
+msgstr "Smart Scanlator Merge"
 
 #: src/features/device/screens/DeviceSetting.tsx
 msgid "Smartphone_Name-1 | length: 16, chars: letters, numbers, -, _"
@@ -4156,6 +4349,10 @@ msgstr "The cache of the client (browser, electron) should get cleared alongside
 msgid "The category is empty"
 msgstr "The category is empty"
 
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "The chapters of this manga have no scanlators"
+msgstr "The chapters of this manga have no scanlators"
+
 #: src/features/backup/component/BackupValidationDialog.tsx
 msgid "The following sources are not installed:"
 msgstr "The following sources are not installed:"
@@ -4273,6 +4470,10 @@ msgstr "Tiny"
 #: src/features/manga/components/details/EditMangaMetadataDialog.tsx
 msgid "Title"
 msgstr "Title"
+
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "To"
+msgstr "To"
 
 #: src/base/utils/DateHelper.ts
 msgid "Today"
@@ -4415,6 +4616,10 @@ msgstr "Unable to load extension stores"
 msgid "Unable to load sources"
 msgstr "Unable to load sources"
 
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Uncheck a scanlator to hide all its chapters. The order is used by Smart Scanlator Merge."
+msgstr "Uncheck a scanlator to hide all its chapters. The order is used by Smart Scanlator Merge."
+
 #: src/features/migration/MigrationManager.ts
 #: src/features/settings/screens/ServerSettings.tsx
 msgid "Understood"
@@ -4435,6 +4640,10 @@ msgstr "Uninstalling"
 #: src/features/tracker/Tracker.constants.ts
 msgid "Unknown"
 msgstr "Unknown"
+
+#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
+msgid "Unknown chapter"
+msgstr "Unknown chapter"
 
 #: src/features/migration/MigrationManager.ts
 msgid "Unknown source"
@@ -4665,6 +4874,10 @@ msgstr "With unread chapter(s)"
 #: src/features/manga/components/details/EditMangaMetadataDialog.tsx
 msgid "Year"
 msgstr "Year"
+
+#: src/features/chapter/bookmark/BookmarkColor.ts
+msgid "Yellow"
+msgstr "Yellow"
 
 #: src/base/utils/DateHelper.ts
 msgid "Yesterday"

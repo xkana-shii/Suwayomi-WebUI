@@ -20,7 +20,10 @@ import type {
     ChapterReadInfo,
     ChapterScanlatorInfo,
     ChapterSourceOrderInfo,
+    ChapterBookmarkColorInfo,
+    ChapterVisibilityInfo,
 } from '@/features/chapter/Chapter.types.ts';
+import { matchesBookmarkColorFilter } from '@/features/chapter/bookmark/BookmarkColor.ts';
 import type { MangaIdInfo } from '@/features/manga/Manga.types.ts';
 import type { GqlMetaHolder } from '@/features/metadata/Metadata.types.ts';
 import { createUpdateMangaMetadata, useGetMangaMetadata } from '@/features/manga/services/MangaMetadata.ts';
@@ -79,6 +82,29 @@ function scanlatorFilter(excludedScanlators: string[], { scanlator }: ChapterSca
     return !scanlator || !excludedScanlators.includes(scanlator);
 }
 
+/** fork (Komikku port): hidden by the chapter blacklist or Smart Scanlator Merge */
+export const isChapterHidden = ({ isBlacklisted, isMergeHidden }: Partial<ChapterVisibilityInfo>): boolean =>
+    !!isBlacklisted || !!isMergeHidden;
+
+/**
+ * fork (Komikku port): the chapter list can reveal blacklisted chapters and merged duplicates; reading navigation and
+ * downloads ([strict]) never include them.
+ */
+function visibilityFilter(
+    {
+        hideBlacklistedChapters,
+        showMergedChapters,
+    }: Pick<ChapterListFilterOptions, 'hideBlacklistedChapters' | 'showMergedChapters'>,
+    { isBlacklisted, isMergeHidden }: Partial<ChapterVisibilityInfo>,
+    strict: boolean,
+): boolean {
+    if (isBlacklisted && (strict || hideBlacklistedChapters)) {
+        return false;
+    }
+
+    return !isMergeHidden || (!strict && showMergedChapters);
+}
+
 type TChapterSort = ChapterSourceOrderInfo & ChapterNumberInfo & Pick<ChapterType, 'fetchedAt' | 'uploadDate'>;
 const sortChapters = <T extends TChapterSort>(chapters: T[], { sortBy, reverse }: ChapterListSortOptions): T[] => {
     const sortedChapters: T[] = [...chapters];
@@ -111,13 +137,21 @@ type TChapterFilter = ChapterReadInfo &
     ChapterDownloadInfo &
     ChapterBookmarkInfo &
     ChapterScanlatorInfo &
-    ChapterFillermarkInfo;
+    ChapterFillermarkInfo &
+    Partial<ChapterBookmarkColorInfo & ChapterVisibilityInfo>;
 export function filterChapters<Chapters extends TChapterFilter>(
     chapters: Chapters[],
     options: ChapterListFilterOptions,
+    { strictVisibility = false }: { strictVisibility?: boolean } = {},
 ): Chapters[] {
     return chapters.filter(
         (chp) =>
+            visibilityFilter(options, chp, strictVisibility) &&
+            matchesBookmarkColorFilter(
+                { isBookmarked: chp.isBookmarked, bookmarkColor: chp.bookmarkColor ?? 0 },
+                options.bookmarkColorsIncluded ?? [],
+                options.bookmarkColorsExcluded ?? [],
+            ) &&
             unreadFilter(options.unread, chp) &&
             downloadFilter(options.downloaded, chp) &&
             bookmarkedFilter(options.bookmarked, chp) &&
@@ -136,19 +170,45 @@ export function filterAndSortChapters<Chapters extends TChapterSort & TChapterFi
 }
 
 export const isFilterActive = (options: ChapterListFilterOptions) => {
-    const { unread, downloaded, bookmarked, fillermarked, excludedScanlators } = options;
+    const {
+        unread,
+        downloaded,
+        bookmarked,
+        fillermarked,
+        excludedScanlators,
+        bookmarkColorsIncluded,
+        bookmarkColorsExcluded,
+        hideBlacklistedChapters,
+        showMergedChapters,
+    } = options;
     return (
         unread != null ||
         downloaded != null ||
         bookmarked != null ||
         fillermarked != null ||
-        !!excludedScanlators.length
+        !!excludedScanlators.length ||
+        !!bookmarkColorsIncluded?.length ||
+        !!bookmarkColorsExcluded?.length ||
+        hideBlacklistedChapters === false ||
+        !!showMergedChapters
     );
 };
 
 export const useChapterListOptions = (manga: MangaIdInfo & GqlMetaHolder): ChapterListOptions => {
-    const { unread, downloaded, bookmarked, fillermarked, reverse, sortBy, showChapterNumber, excludedScanlators } =
-        useGetMangaMetadata(manga);
+    const {
+        unread,
+        downloaded,
+        bookmarked,
+        fillermarked,
+        reverse,
+        sortBy,
+        showChapterNumber,
+        excludedScanlators,
+        bookmarkColorsIncluded,
+        bookmarkColorsExcluded,
+        hideBlacklistedChapters,
+        showMergedChapters,
+    } = useGetMangaMetadata(manga);
 
     return useMemo(
         () => ({
@@ -160,8 +220,25 @@ export const useChapterListOptions = (manga: MangaIdInfo & GqlMetaHolder): Chapt
             sortBy,
             showChapterNumber,
             excludedScanlators,
+            bookmarkColorsIncluded,
+            bookmarkColorsExcluded,
+            hideBlacklistedChapters,
+            showMergedChapters,
         }),
-        [unread, downloaded, bookmarked, fillermarked, reverse, sortBy, showChapterNumber, excludedScanlators],
+        [
+            unread,
+            downloaded,
+            bookmarked,
+            fillermarked,
+            reverse,
+            sortBy,
+            showChapterNumber,
+            excludedScanlators,
+            bookmarkColorsIncluded,
+            bookmarkColorsExcluded,
+            hideBlacklistedChapters,
+            showMergedChapters,
+        ],
     );
 };
 
