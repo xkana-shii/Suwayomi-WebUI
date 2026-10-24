@@ -103,6 +103,8 @@ export type CategoryBaseFieldsFragment = {
     isDefaultCategory: boolean;
     parentId: number | null;
     trackStatus: number | null;
+    hidden: boolean;
+    updateInterval: number | null;
 };
 
 export type CategoryLibraryFieldsFragment = {
@@ -115,6 +117,8 @@ export type CategoryLibraryFieldsFragment = {
     isDefaultCategory: boolean;
     parentId: number | null;
     trackStatus: number | null;
+    hidden: boolean;
+    updateInterval: number | null;
     meta: Array<{ __typename: 'CategoryMetaType'; categoryId: number; key: string; value: string }>;
     mangas: { __typename: 'MangaNodeList'; totalCount: number };
 };
@@ -130,6 +134,8 @@ export type CategorySettingFieldsFragment = {
     isDefaultCategory: boolean;
     parentId: number | null;
     trackStatus: number | null;
+    hidden: boolean;
+    updateInterval: number | null;
 };
 
 export type CreateCategoryMutationVariables = Exact<{
@@ -151,6 +157,8 @@ export type CreateCategoryMutation = {
             isDefaultCategory: boolean;
             parentId: number | null;
             trackStatus: number | null;
+            hidden: boolean;
+            updateInterval: number | null;
         };
     } | null;
 };
@@ -188,6 +196,8 @@ export type UpdateCategoryMutation = {
             name?: string;
             parentId: number | null;
             trackStatus: number | null;
+            hidden: boolean;
+            updateInterval: number | null;
         };
     } | null;
 };
@@ -213,6 +223,8 @@ export type UpdateCategoriesMutation = {
             name?: string;
             parentId: number | null;
             trackStatus: number | null;
+            hidden: boolean;
+            updateInterval: number | null;
         }>;
     } | null;
 };
@@ -285,6 +297,8 @@ export type GetCategoriesBaseQuery = {
             isDefaultCategory: boolean;
             parentId: number | null;
             trackStatus: number | null;
+            hidden: boolean;
+            updateInterval: number | null;
         }>;
         pageInfo: {
             __typename: 'PageInfo';
@@ -322,6 +336,8 @@ export type GetCategoriesLibraryQuery = {
             isDefaultCategory: boolean;
             parentId: number | null;
             trackStatus: number | null;
+            hidden: boolean;
+            updateInterval: number | null;
             meta: Array<{ __typename: 'CategoryMetaType'; categoryId: number; key: string; value: string }>;
             mangas: { __typename: 'MangaNodeList'; totalCount: number };
         }>;
@@ -362,6 +378,8 @@ export type GetCategoriesSettingsQuery = {
             isDefaultCategory: boolean;
             parentId: number | null;
             trackStatus: number | null;
+            hidden: boolean;
+            updateInterval: number | null;
         }>;
         pageInfo: {
             __typename: 'PageInfo';
@@ -404,6 +422,7 @@ export type GetCategoryMangasQuery = {
                 unreadCount: number;
                 downloadCount: number;
                 bookmarkCount: number;
+                bookmarkColors: Array<number>;
                 hasDuplicateChapters: boolean;
                 meta: Array<{ __typename: 'MangaMetaType'; mangaId: number; key: string; value: string }>;
                 source: {
@@ -556,6 +575,7 @@ export type ChapterUpdateListFieldsFragment = {
         unreadCount: number;
         downloadCount: number;
         bookmarkCount: number;
+        bookmarkColors: Array<number>;
         hasDuplicateChapters: boolean;
         chapters: { __typename: 'ChapterNodeList'; totalCount: number };
     };
@@ -591,6 +611,7 @@ export type ChapterHistoryListFieldsFragment = {
         unreadCount: number;
         downloadCount: number;
         bookmarkCount: number;
+        bookmarkColors: Array<number>;
         hasDuplicateChapters: boolean;
         chapters: { __typename: 'ChapterNodeList'; totalCount: number };
     };
@@ -646,6 +667,7 @@ export type UpdateChapterMutation = {
                 id: number;
                 unreadCount: number;
                 bookmarkCount: number;
+                bookmarkColors: Array<number>;
                 lastReadChapter: { __typename: 'ChapterType'; id: number } | null;
                 latestReadChapter: { __typename: 'ChapterType'; id: number } | null;
                 firstUnreadChapter: { __typename: 'ChapterType'; id: number } | null;
@@ -722,6 +744,7 @@ export type UpdateChaptersMutation = {
                 id: number;
                 unreadCount: number;
                 bookmarkCount: number;
+                bookmarkColors: Array<number>;
                 lastReadChapter: { __typename: 'ChapterType'; id: number } | null;
                 latestReadChapter: { __typename: 'ChapterType'; id: number } | null;
                 firstUnreadChapter: { __typename: 'ChapterType'; id: number } | null;
@@ -935,6 +958,7 @@ export type GetChaptersUpdatesQuery = {
                 unreadCount: number;
                 downloadCount: number;
                 bookmarkCount: number;
+                bookmarkColors: Array<number>;
                 hasDuplicateChapters: boolean;
                 chapters: { __typename: 'ChapterNodeList'; totalCount: number };
             };
@@ -995,6 +1019,7 @@ export type GetChaptersHistoryQuery = {
                 unreadCount: number;
                 downloadCount: number;
                 bookmarkCount: number;
+                bookmarkColors: Array<number>;
                 hasDuplicateChapters: boolean;
                 chapters: { __typename: 'ChapterNodeList'; totalCount: number };
             };
@@ -2118,6 +2143,7 @@ export type MangaChapterStatFieldsFragment = {
     unreadCount: number;
     downloadCount: number;
     bookmarkCount: number;
+    bookmarkColors: Array<number>;
     hasDuplicateChapters: boolean;
     chapters: { __typename: 'ChapterNodeList'; totalCount: number };
 };
@@ -2183,6 +2209,7 @@ export type MangaLibraryFieldsFragment = {
     unreadCount: number;
     downloadCount: number;
     bookmarkCount: number;
+    bookmarkColors: Array<number>;
     hasDuplicateChapters: boolean;
     meta: Array<{ __typename: 'MangaMetaType'; mangaId: number; key: string; value: string }>;
     source: {
@@ -2265,6 +2292,7 @@ export type MangaScreenFieldsFragment = {
     unreadCount: number;
     downloadCount: number;
     bookmarkCount: number;
+    bookmarkColors: Array<number>;
     hasDuplicateChapters: boolean;
     meta: Array<{ __typename: 'MangaMetaType'; mangaId: number; key: string; value: string }>;
     source: {
@@ -2311,6 +2339,7 @@ export type MangaLibraryDuplicateScreenFieldsFragment = {
     unreadCount: number;
     downloadCount: number;
     bookmarkCount: number;
+    bookmarkColors: Array<number>;
     hasDuplicateChapters: boolean;
     trackRecords: {
         __typename: 'TrackRecordNodeList';
@@ -2350,6 +2379,7 @@ export type RefreshMangaMutation = {
             unreadCount: number;
             downloadCount: number;
             bookmarkCount: number;
+            bookmarkColors: Array<number>;
             hasDuplicateChapters: boolean;
             meta: Array<{ __typename: 'MangaMetaType'; mangaId: number; key: string; value: string }>;
             source: {
@@ -2593,6 +2623,7 @@ export type UpdateMangaDetailsMutation = {
             unreadCount: number;
             downloadCount: number;
             bookmarkCount: number;
+            bookmarkColors: Array<number>;
             hasDuplicateChapters: boolean;
             meta: Array<{ __typename: 'MangaMetaType'; mangaId: number; key: string; value: string }>;
             source: {
@@ -2661,6 +2692,7 @@ export type ResetMangaMetadataToSourceMutation = {
             unreadCount: number;
             downloadCount: number;
             bookmarkCount: number;
+            bookmarkColors: Array<number>;
             hasDuplicateChapters: boolean;
             meta: Array<{ __typename: 'MangaMetaType'; mangaId: number; key: string; value: string }>;
             source: {
@@ -2730,6 +2762,7 @@ export type UploadMangaCoverMutation = {
             unreadCount: number;
             downloadCount: number;
             bookmarkCount: number;
+            bookmarkColors: Array<number>;
             hasDuplicateChapters: boolean;
             meta: Array<{ __typename: 'MangaMetaType'; mangaId: number; key: string; value: string }>;
             source: {
@@ -2840,6 +2873,7 @@ export type GetMangaScreenQuery = {
         unreadCount: number;
         downloadCount: number;
         bookmarkCount: number;
+        bookmarkColors: Array<number>;
         hasDuplicateChapters: boolean;
         meta: Array<{ __typename: 'MangaMetaType'; mangaId: number; key: string; value: string }>;
         source: {
@@ -3068,6 +3102,7 @@ export type GetMangasLibraryQuery = {
             unreadCount: number;
             downloadCount: number;
             bookmarkCount: number;
+            bookmarkColors: Array<number>;
             hasDuplicateChapters: boolean;
             meta: Array<{ __typename: 'MangaMetaType'; mangaId: number; key: string; value: string }>;
             source: {
@@ -3144,6 +3179,7 @@ export type GetMangasDuplicatesQuery = {
             unreadCount: number;
             downloadCount: number;
             bookmarkCount: number;
+            bookmarkColors: Array<number>;
             hasDuplicateChapters: boolean;
             trackRecords: {
                 __typename: 'TrackRecordNodeList';
@@ -3279,6 +3315,7 @@ export type ApplyMetadataMatchMutation = {
             unreadCount: number;
             downloadCount: number;
             bookmarkCount: number;
+            bookmarkColors: Array<number>;
             hasDuplicateChapters: boolean;
             meta: Array<{ __typename: 'MangaMetaType'; mangaId: number; key: string; value: string }>;
             source: {
@@ -3374,6 +3411,7 @@ export type MangaVisibilityChangeFieldsFragment = {
     id: number;
     unreadCount: number;
     bookmarkCount: number;
+    bookmarkColors: Array<number>;
     firstUnreadChapter: { __typename: 'ChapterType'; id: number } | null;
     scanlatorSettings: {
         __typename: 'MangaScanlatorSettingsType';
@@ -3415,6 +3453,7 @@ export type UpdateMangaScanlatorSettingsMutation = {
             id: number;
             unreadCount: number;
             bookmarkCount: number;
+            bookmarkColors: Array<number>;
             firstUnreadChapter: { __typename: 'ChapterType'; id: number } | null;
             scanlatorSettings: {
                 __typename: 'MangaScanlatorSettingsType';
@@ -5481,6 +5520,7 @@ export type UpdaterMangaFieldsFragment = {
         unreadCount: number;
         downloadCount: number;
         bookmarkCount: number;
+        bookmarkColors: Array<number>;
         hasDuplicateChapters: boolean;
         chapters: { __typename: 'ChapterNodeList'; totalCount: number };
         firstUnreadChapter: {
@@ -5542,6 +5582,7 @@ export type UpdaterStatusFieldsFragment = {
             unreadCount: number;
             downloadCount: number;
             bookmarkCount: number;
+            bookmarkColors: Array<number>;
             hasDuplicateChapters: boolean;
             chapters: { __typename: 'ChapterNodeList'; totalCount: number };
             firstUnreadChapter: {
@@ -5595,6 +5636,7 @@ export type UpdaterSubscriptionFieldsFragment = {
             unreadCount: number;
             downloadCount: number;
             bookmarkCount: number;
+            bookmarkColors: Array<number>;
             hasDuplicateChapters: boolean;
             chapters: { __typename: 'ChapterNodeList'; totalCount: number };
             firstUnreadChapter: {
@@ -5657,6 +5699,7 @@ export type UpdateLibraryMutation = {
                     unreadCount: number;
                     downloadCount: number;
                     bookmarkCount: number;
+                    bookmarkColors: Array<number>;
                     hasDuplicateChapters: boolean;
                     chapters: { __typename: 'ChapterNodeList'; totalCount: number };
                     firstUnreadChapter: {
@@ -5729,6 +5772,7 @@ export type GetUpdateStatusQuery = {
                 unreadCount: number;
                 downloadCount: number;
                 bookmarkCount: number;
+                bookmarkColors: Array<number>;
                 hasDuplicateChapters: boolean;
                 chapters: { __typename: 'ChapterNodeList'; totalCount: number };
                 firstUnreadChapter: {
@@ -5801,6 +5845,7 @@ export type UpdaterSubscription = {
                 unreadCount: number;
                 downloadCount: number;
                 bookmarkCount: number;
+                bookmarkColors: Array<number>;
                 hasDuplicateChapters: boolean;
                 chapters: { __typename: 'ChapterNodeList'; totalCount: number };
                 firstUnreadChapter: {

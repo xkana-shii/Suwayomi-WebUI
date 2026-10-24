@@ -6,6 +6,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { BookmarkedFilterWithColors } from '@/features/chapter/bookmark/BookmarkedFilterWithColors.tsx';
 import type { MessageDescriptor } from '@lingui/core';
 import FormLabel from '@mui/material/FormLabel';
 import RadioGroup from '@mui/material/RadioGroup';
@@ -190,6 +191,8 @@ export const LibraryOptionsPanel = ({
             'hasReadChapters',
             'hasDownloadedChapters',
             'hasBookmarkedChapters',
+            'libraryBookmarkColorsIncluded',
+            'libraryBookmarkColorsExcluded',
             'hasDuplicateChapters',
             'hasStatus',
             'hasTrackerBinding',
@@ -236,10 +239,16 @@ export const LibraryOptionsPanel = ({
                                 checked={categoryLibraryOptions.hasDownloadedChapters}
                                 onChange={(c) => updateCategoryLibraryOptions('hasDownloadedChapters', c)}
                             />
-                            <ThreeStateCheckboxInput
-                                label={t`Bookmarked`}
-                                checked={categoryLibraryOptions.hasBookmarkedChapters}
-                                onChange={(c) => updateCategoryLibraryOptions('hasBookmarkedChapters', c)}
+                            {/* fork (Komikku port): bookmark colors refine Bookmarked */}
+                            <BookmarkedFilterWithColors
+                                bookmarked={categoryLibraryOptions.hasBookmarkedChapters}
+                                onBookmarkedChange={(c) => updateCategoryLibraryOptions('hasBookmarkedChapters', c)}
+                                included={categoryLibraryOptions.libraryBookmarkColorsIncluded}
+                                excluded={categoryLibraryOptions.libraryBookmarkColorsExcluded}
+                                onColorsChange={(included, excluded) => {
+                                    updateCategoryLibraryOptions('libraryBookmarkColorsIncluded', included);
+                                    updateCategoryLibraryOptions('libraryBookmarkColorsExcluded', excluded);
+                                }}
                             />
                             <ThreeStateCheckboxInput
                                 label={t`Duplicate chapters`}

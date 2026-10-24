@@ -24,6 +24,8 @@ export const convertSettingsToMetadata = (
     customThemes: JSON.stringify(settings.customThemes),
     migrateSortSettings: JSON.stringify(settings.migrateSortSettings),
     browseLanguages: JSON.stringify(settings.browseLanguages),
+    updatesBookmarkColorsIncluded: JSON.stringify(settings.updatesBookmarkColorsIncluded),
+    updatesBookmarkColorsExcluded: JSON.stringify(settings.updatesBookmarkColorsExcluded),
 });
 
 const getMetadataServerSettingsWithDefaultFallback = (

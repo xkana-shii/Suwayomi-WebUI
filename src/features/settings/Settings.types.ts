@@ -50,6 +50,10 @@ export type MetadataKomikkuPortSettings = {
     lastBookmarkColor: number;
     /** tracker used for metadata autofill when a manga is tracked with several (0 = ask) */
     preferredMetadataTrackerId: number;
+    /** Updates filter: bookmarked (tri-state) and the bookmark colors refining "bookmarked" */
+    updatesBookmarked: NullAndUndefined<boolean>;
+    updatesBookmarkColorsIncluded: number[];
+    updatesBookmarkColorsExcluded: number[];
 };
 
 export interface ISearchSettings {

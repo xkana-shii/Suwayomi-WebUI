@@ -36,6 +36,8 @@ export const MANGA_CHAPTER_STAT_FIELDS = gql`
         unreadCount
         downloadCount
         bookmarkCount
+        # fork (Komikku port): library bookmark color filter
+        bookmarkColors
         hasDuplicateChapters
 
         chapters {

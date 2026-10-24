@@ -130,6 +130,7 @@ export type CategoryNodeListFieldPolicy = {
 };
 export type CategoryTypeKeySpecifier = (
     | 'default'
+    | 'hidden'
     | 'id'
     | 'includeInDownload'
     | 'includeInUpdate'
@@ -141,10 +142,12 @@ export type CategoryTypeKeySpecifier = (
     | 'parentId'
     | 'subtreeMangaCount'
     | 'trackStatus'
+    | 'updateInterval'
     | CategoryTypeKeySpecifier
 )[];
 export type CategoryTypeFieldPolicy = {
     default?: FieldPolicy<any> | FieldReadFunction<any>;
+    hidden?: FieldPolicy<any> | FieldReadFunction<any>;
     id?: FieldPolicy<any> | FieldReadFunction<any>;
     includeInDownload?: FieldPolicy<any> | FieldReadFunction<any>;
     includeInUpdate?: FieldPolicy<any> | FieldReadFunction<any>;
@@ -156,6 +159,7 @@ export type CategoryTypeFieldPolicy = {
     parentId?: FieldPolicy<any> | FieldReadFunction<any>;
     subtreeMangaCount?: FieldPolicy<any> | FieldReadFunction<any>;
     trackStatus?: FieldPolicy<any> | FieldReadFunction<any>;
+    updateInterval?: FieldPolicy<any> | FieldReadFunction<any>;
 };
 export type CategoryUpdateTypeKeySpecifier = ('category' | 'status' | CategoryUpdateTypeKeySpecifier)[];
 export type CategoryUpdateTypeFieldPolicy = {
@@ -1010,6 +1014,7 @@ export type MangaTypeKeySpecifier = (
     | 'age'
     | 'artist'
     | 'author'
+    | 'bookmarkColors'
     | 'bookmarkCount'
     | 'categories'
     | 'chapters'
@@ -1050,6 +1055,7 @@ export type MangaTypeFieldPolicy = {
     age?: FieldPolicy<any> | FieldReadFunction<any>;
     artist?: FieldPolicy<any> | FieldReadFunction<any>;
     author?: FieldPolicy<any> | FieldReadFunction<any>;
+    bookmarkColors?: FieldPolicy<any> | FieldReadFunction<any>;
     bookmarkCount?: FieldPolicy<any> | FieldReadFunction<any>;
     categories?: FieldPolicy<any> | FieldReadFunction<any>;
     chapters?: FieldPolicy<any> | FieldReadFunction<any>;

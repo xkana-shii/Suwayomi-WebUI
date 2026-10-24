@@ -14,6 +14,7 @@ import { LoadingPlaceholder } from '@/base/components/feedback/LoadingPlaceholde
 import { EmptyViewAbsoluteCentered } from '@/base/components/feedback/EmptyViewAbsoluteCentered.tsx';
 import { UpdateChecker } from '@/features/updates/components/UpdateChecker.tsx';
 import { SyncButton } from '@/features/sync/components/SyncButton.tsx';
+import { UpdatesFilterButton, useUpdatesBookmarkFilter } from '@/features/updates/components/UpdatesFilterButton.tsx';
 import { StyledGroupedVirtuoso } from '@/base/components/virtuoso/StyledGroupedVirtuoso.tsx';
 import { StyledGroupHeader } from '@/base/components/virtuoso/StyledGroupHeader.tsx';
 import { StyledGroupItemWrapper } from '@/base/components/virtuoso/StyledGroupItemWrapper.tsx';
@@ -38,10 +39,13 @@ export const Updates: React.FC = () => {
     useAppTitleAndAction(
         t`Updates`,
         <>
+            <UpdatesFilterButton />
             <SyncButton />
             <UpdateChecker />
         </>,
     );
+
+    const updatesBookmarkFilter = useUpdatesBookmarkFilter();
 
     const {
         data: chapterUpdateData,
@@ -49,9 +53,13 @@ export const Updates: React.FC = () => {
         error,
         fetchMore,
         refetch,
-    } = requestManager.useGetRecentlyUpdatedChapters(undefined, {
-        fetchPolicy: 'cache-and-network',
-    });
+    } = requestManager.useGetRecentlyUpdatedChapters(
+        undefined,
+        {
+            fetchPolicy: 'cache-and-network',
+        },
+        updatesBookmarkFilter,
+    );
     const hasNextPage = !!chapterUpdateData?.chapters.pageInfo.hasNextPage;
     const allUpdateEntries = chapterUpdateData?.chapters.nodes ?? STABLE_EMPTY_ARRAY;
 

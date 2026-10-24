@@ -224,6 +224,8 @@ export type CategoryOrderInput = {
 export type CategoryType = {
     __typename?: 'CategoryType';
     default: Scalars['Boolean']['output'];
+    /** Hidden categories keep their manga but are left out of the library tabs */
+    hidden: Scalars['Boolean']['output'];
     id: Scalars['Int']['output'];
     includeInDownload: IncludeOrExclude;
     includeInUpdate: IncludeOrExclude;
@@ -238,6 +240,8 @@ export type CategoryType = {
     subtreeMangaCount: Scalars['Int']['output'];
     /** Smart Category binding: the unified tracker status (see UnifiedTrackStatus) this category follows */
     trackStatus?: Maybe<Scalars['Int']['output']>;
+    /** Automatic library update interval in days; null = the parent's interval or the global schedule */
+    updateInterval?: Maybe<Scalars['Int']['output']>;
 };
 
 export type CategoryUpdateType = {
@@ -1564,6 +1568,8 @@ export type MangaType = {
     age?: Maybe<Scalars['LongString']['output']>;
     artist?: Maybe<Scalars['String']['output']>;
     author?: Maybe<Scalars['String']['output']>;
+    /** Distinct bookmark colors of the user's bookmarked chapters that are not hidden */
+    bookmarkColors: Array<Scalars['Int']['output']>;
     /** @deprecated Use user.bookmarkCount instead */
     bookmarkCount: Scalars['Int']['output'];
     categories: CategoryNodeList;
@@ -4216,7 +4222,11 @@ export type UpdateCategoryOrderPayload = {
 export type UpdateCategoryPatchInput = {
     /** fork: remove the Smart Category binding */
     clearTrackStatus?: InputMaybe<Scalars['Boolean']['input']>;
+    /** fork: follow the parent's interval or the global schedule again */
+    clearUpdateInterval?: InputMaybe<Scalars['Boolean']['input']>;
     default?: InputMaybe<Scalars['Boolean']['input']>;
+    /** fork: hide the category from the library tabs (its manga and settings are kept) */
+    hidden?: InputMaybe<Scalars['Boolean']['input']>;
     includeInDownload?: InputMaybe<IncludeOrExclude>;
     includeInUpdate?: InputMaybe<IncludeOrExclude>;
     /** fork: move to the top level */
@@ -4226,6 +4236,8 @@ export type UpdateCategoryPatchInput = {
     parentId?: InputMaybe<Scalars['Int']['input']>;
     /** fork: Smart Category binding (unified tracker status) */
     trackStatus?: InputMaybe<Scalars['Int']['input']>;
+    /** fork: automatic library update interval in days (1-365) */
+    updateInterval?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UpdateCategoryPayload = {

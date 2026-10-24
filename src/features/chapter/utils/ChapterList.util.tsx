@@ -132,11 +132,12 @@ export function filterChapters<Chapters extends TChapterFilter>(
     return chapters.filter(
         (chp) =>
             visibilityFilter(options, chp, strictVisibility) &&
-            matchesBookmarkColorFilter(
-                { isBookmarked: chp.isBookmarked, bookmarkColor: chp.bookmarkColor ?? 0 },
-                options.bookmarkColorsIncluded ?? [],
-                options.bookmarkColorsExcluded ?? [],
-            ) &&
+            (options.bookmarked !== true ||
+                matchesBookmarkColorFilter(
+                    { isBookmarked: chp.isBookmarked, bookmarkColor: chp.bookmarkColor ?? 0 },
+                    options.bookmarkColorsIncluded ?? [],
+                    options.bookmarkColorsExcluded ?? [],
+                )) &&
             unreadFilter(options.unread, chp) &&
             downloadFilter(options.downloaded, chp) &&
             bookmarkedFilter(options.bookmarked, chp) &&
@@ -154,23 +155,12 @@ export function filterAndSortChapters<Chapters extends TChapterSort & TChapterFi
 }
 
 export const isFilterActive = (options: ChapterListFilterOptions) => {
-    const {
-        unread,
-        downloaded,
-        bookmarked,
-        excludedScanlators,
-        bookmarkColorsIncluded,
-        bookmarkColorsExcluded,
-        hideBlacklistedChapters,
-        showMergedChapters,
-    } = options;
+    const { unread, downloaded, bookmarked, excludedScanlators, hideBlacklistedChapters, showMergedChapters } = options;
     return (
         unread != null ||
         downloaded != null ||
         bookmarked != null ||
         !!excludedScanlators.length ||
-        !!bookmarkColorsIncluded?.length ||
-        !!bookmarkColorsExcluded?.length ||
         hideBlacklistedChapters === false ||
         !!showMergedChapters
     );

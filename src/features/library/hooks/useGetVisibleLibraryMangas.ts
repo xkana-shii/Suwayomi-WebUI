@@ -6,6 +6,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { matchesLibraryBookmarkColorFilter } from '@/features/chapter/bookmark/BookmarkColor.ts';
 import { StringParam, useQueryParam } from 'use-query-params';
 import { useMemo } from 'react';
 import { useMetadataServerSettings } from '@/features/settings/services/ServerSettingsMetadata.ts';
@@ -151,12 +152,15 @@ type TMangaFilterOptions = Pick<
     | 'hasReadChapters'
     | 'hasDownloadedChapters'
     | 'hasBookmarkedChapters'
+    | 'libraryBookmarkColorsIncluded'
+    | 'libraryBookmarkColorsExcluded'
     | 'hasDuplicateChapters'
     | 'hasTrackerBinding'
     | 'hasStatus'
     | 'hasSource'
 >;
 type TMangaFilter = Pick<MangaType, 'bookmarkCount' | 'hasDuplicateChapters'> &
+    Partial<Pick<MangaType, 'bookmarkColors'>> &
     TMangaTrackerFilter &
     MangaStatusInfo &
     MangaSourceIdInfo &
@@ -170,6 +174,8 @@ const filterManga = (
         hasUnreadChapters,
         hasReadChapters,
         hasBookmarkedChapters,
+        libraryBookmarkColorsIncluded = [],
+        libraryBookmarkColorsExcluded = [],
         hasDuplicateChapters,
         hasTrackerBinding,
         hasStatus,
@@ -180,6 +186,13 @@ const filterManga = (
     triStateFilterNumber(hasUnreadChapters, manga.unreadCount) &&
     triStateFilterNumber(hasReadChapters, manga.chapters.totalCount - manga.unreadCount) &&
     triStateFilterNumber(hasBookmarkedChapters, manga.bookmarkCount) &&
+    // fork (Komikku port): a manga passes with an included color and no excluded color among its visible bookmarks
+    (hasBookmarkedChapters !== true ||
+        matchesLibraryBookmarkColorFilter(
+            manga.bookmarkColors ?? [],
+            libraryBookmarkColorsIncluded,
+            libraryBookmarkColorsExcluded,
+        )) &&
     triStateFilterBoolean(hasDuplicateChapters, manga.hasDuplicateChapters) &&
     trackerFilter(hasTrackerBinding, manga) &&
     statusFilter(hasStatus, manga) &&

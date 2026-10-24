@@ -6,13 +6,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { BookmarkedFilterWithColors } from '@/features/chapter/bookmark/BookmarkedFilterWithColors.tsx';
 import type { ComponentProps } from 'react';
-import React, { useState } from 'react';
-import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
-import PaletteOutlinedIcon from '@mui/icons-material/PaletteOutlined';
+import React from 'react';
 import { CheckboxInput } from '@/base/components/inputs/CheckboxInput.tsx';
-import { BookmarkColorFilterDialog } from '@/features/chapter/bookmark/BookmarkColorFilterDialog.tsx';
 import type { MessageDescriptor } from '@lingui/core';
 import RadioGroup from '@mui/material/RadioGroup';
 import { useLingui } from '@lingui/react/macro';
@@ -43,8 +40,6 @@ const TITLES: { [key in 'filter' | 'sort' | 'display']: MessageDescriptor } = {
 
 export const ChapterOptions: React.FC<IProps> = ({ open, onClose, options, updateOption, mangaId, chapters }) => {
     const { t } = useLingui();
-    const [isColorFilterOpen, setIsColorFilterOpen] = useState(false);
-    const colorFilterCount = options.bookmarkColorsIncluded.length + options.bookmarkColorsExcluded.length;
 
     return (
         <OptionsTabs<'filter' | 'sort' | 'display'>
@@ -67,41 +62,15 @@ export const ChapterOptions: React.FC<IProps> = ({ open, onClose, options, updat
                                 checked={options.downloaded}
                                 onChange={(c) => updateOption('downloaded', c)}
                             />
-                            <ThreeStateCheckboxInput
-                                label={t`Bookmarked`}
-                                checked={options.bookmarked}
-                                onChange={(c) => updateOption('bookmarked', c)}
-                            />
-                            {/* fork (Komikku port): bookmark color, blacklist and Smart Scanlator Merge filters */}
-                            <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
-                                <CheckboxInput
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        setIsColorFilterOpen(true);
-                                    }}
-                                    label={
-                                        colorFilterCount
-                                            ? `${t`Bookmark colors`} (${colorFilterCount})`
-                                            : t`Bookmark colors`
-                                    }
-                                    icon={<PaletteOutlinedIcon />}
-                                    checkedIcon={<PaletteOutlinedIcon color="warning" />}
-                                    checked={!!colorFilterCount}
-                                />
-                                <Button size="small" onClick={() => setIsColorFilterOpen(true)}>
-                                    {t`Edit`}
-                                </Button>
-                            </Stack>
-                            <BookmarkColorFilterDialog
-                                open={isColorFilterOpen}
+                            {/* fork (Komikku port): bookmark colors refine Bookmarked */}
+                            <BookmarkedFilterWithColors
+                                bookmarked={options.bookmarked}
+                                onBookmarkedChange={(c) => updateOption('bookmarked', c)}
                                 included={options.bookmarkColorsIncluded}
                                 excluded={options.bookmarkColorsExcluded}
-                                onClose={(filter) => {
-                                    setIsColorFilterOpen(false);
-                                    if (filter) {
-                                        updateOption('bookmarkColorsIncluded', filter.included);
-                                        updateOption('bookmarkColorsExcluded', filter.excluded);
-                                    }
+                                onColorsChange={(included, excluded) => {
+                                    updateOption('bookmarkColorsIncluded', included);
+                                    updateOption('bookmarkColorsExcluded', excluded);
                                 }}
                             />
                             <CheckboxInput

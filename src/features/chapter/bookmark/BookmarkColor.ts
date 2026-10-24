@@ -57,6 +57,14 @@ export const matchesBookmarkColorFilter = (
     return !included.length || (color !== null && included.includes(color));
 };
 
+/**
+ * Komikku's library rule: a manga passes when it has a bookmark in an included color (any color when none is
+ * included) and no bookmark in an excluded color. [colors] are the colors of its bookmarked chapters.
+ */
+export const matchesLibraryBookmarkColorFilter = (colors: number[], included: number[], excluded: number[]): boolean =>
+    !colors.some((color) => excluded.includes(color)) &&
+    (!included.length || colors.some((color) => included.includes(color)));
+
 /** The colors shared by all [chapters] (null when they differ or one is not bookmarked). */
 export const getSharedBookmarkColor = (chapters: ChapterBookmarkColorInfo[]): number | null => {
     const colors = new Set(chapters.map(getChapterBookmarkColor));

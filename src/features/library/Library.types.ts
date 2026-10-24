@@ -43,6 +43,9 @@ export interface LibraryOptions {
     // filter options
     hasDownloadedChapters: NullAndUndefined<boolean>;
     hasBookmarkedChapters: NullAndUndefined<boolean>;
+    // fork (Komikku port): bookmark colors refining hasBookmarkedChapters (include)
+    libraryBookmarkColorsIncluded: number[];
+    libraryBookmarkColorsExcluded: number[];
     hasUnreadChapters: NullAndUndefined<boolean>;
     hasReadChapters: NullAndUndefined<boolean>;
     hasDuplicateChapters: NullAndUndefined<boolean>;

@@ -247,6 +247,7 @@ import type {
     UpdateTrackInput,
     UpdateMangaScanlatorSettingsInput,
     UpdateTrackRecordsUnifiedInput,
+    ChapterFilterInput,
 } from '@/lib/graphql/generated/graphql-base.types.ts';
 import {
     CategoryOrderBy,
@@ -3678,6 +3679,8 @@ export class RequestManager {
     public useGetRecentlyUpdatedChapters(
         initialPages: number = 1,
         options?: QueryHookOptions<GetChaptersUpdatesQuery, GetChaptersUpdatesQueryVariables>,
+        // fork (Komikku port): the Updates bookmark filter, applied by the server so paging stays correct
+        extraFilter: ChapterFilterInput = {},
     ): AbortableApolloUseQueryResponse<GetChaptersUpdatesQuery, GetChaptersUpdatesQueryVariables> {
         const PAGE_SIZE = 150;
         const CACHE_KEY = 'useGetRecentlyUpdatedChapters';
@@ -3689,7 +3692,7 @@ export class RequestManager {
             GET_CHAPTERS_UPDATES,
             {
                 // fork: chapters hidden by the blacklist or Smart Scanlator Merge are not updates
-                filter: { inLibrary: { equalTo: true }, isHidden: { equalTo: false } },
+                filter: { inLibrary: { equalTo: true }, isHidden: { equalTo: false }, ...extraFilter },
                 order: [
                     { by: ChapterOrderBy.FetchedAt, byType: SortOrder.Desc },
                     { by: ChapterOrderBy.SourceOrder, byType: SortOrder.Desc },

@@ -414,6 +414,21 @@ export const APP_METADATA: Record<
     bookmarkColorsIncluded: {
         convert: convertToObject<number[]>,
     },
+    libraryBookmarkColorsIncluded: {
+        convert: convertToObject<number[]>,
+    },
+    libraryBookmarkColorsExcluded: {
+        convert: convertToObject<number[]>,
+    },
+    updatesBookmarked: {
+        convert: convertToBooleanNullAndUndefined,
+    },
+    updatesBookmarkColorsIncluded: {
+        convert: convertToObject<number[]>,
+    },
+    updatesBookmarkColorsExcluded: {
+        convert: convertToObject<number[]>,
+    },
     bookmarkColorsExcluded: {
         convert: convertToObject<number[]>,
     },
@@ -484,6 +499,8 @@ export const GLOBAL_METADATA_KEYS: AppMetadataKeys[] = [
     // filter
     'hasDownloadedChapters',
     'hasBookmarkedChapters',
+    'libraryBookmarkColorsIncluded',
+    'libraryBookmarkColorsExcluded',
     'hasUnreadChapters',
     'hasReadChapters',
     'hasDuplicateChapters',
@@ -567,6 +584,9 @@ export const GLOBAL_METADATA_KEYS: AppMetadataKeys[] = [
     'rememberLastBookmarkColor',
     'lastBookmarkColor',
     'preferredMetadataTrackerId',
+    'updatesBookmarked',
+    'updatesBookmarkColorsIncluded',
+    'updatesBookmarkColorsExcluded',
 ];
 
 /**

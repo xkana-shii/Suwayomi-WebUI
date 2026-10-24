@@ -48,6 +48,8 @@ export const UPDATE_CATEGORY = gql`
                 # fork (Komikku port)
                 parentId
                 trackStatus
+                hidden
+                updateInterval
             }
         }
     }
@@ -71,6 +73,8 @@ export const UPDATE_CATEGORIES = gql`
                 # fork (Komikku port)
                 parentId
                 trackStatus
+                hidden
+                updateInterval
             }
         }
     }

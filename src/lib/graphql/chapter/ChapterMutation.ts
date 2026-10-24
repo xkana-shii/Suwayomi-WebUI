@@ -75,6 +75,7 @@ export const UPDATE_CHAPTER = gql`
                     id
                     unreadCount
                     bookmarkCount
+                    bookmarkColors
                     firstUnreadChapter {
                         id
                     }
@@ -153,6 +154,7 @@ export const UPDATE_CHAPTERS = gql`
                     id
                     unreadCount
                     bookmarkCount
+                    bookmarkColors
                     firstUnreadChapter {
                         id
                     }

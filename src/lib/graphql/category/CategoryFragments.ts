@@ -26,6 +26,8 @@ export const CATEGORY_BASE_FIELDS = gql`
         isDefaultCategory
         parentId
         trackStatus
+        hidden
+        updateInterval
     }
 `;
 

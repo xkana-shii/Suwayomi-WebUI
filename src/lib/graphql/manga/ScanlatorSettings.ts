@@ -51,6 +51,7 @@ const MANGA_VISIBILITY_CHANGE_FIELDS = gql`
         id
         unreadCount
         bookmarkCount
+        bookmarkColors
         firstUnreadChapter {
             id
         }

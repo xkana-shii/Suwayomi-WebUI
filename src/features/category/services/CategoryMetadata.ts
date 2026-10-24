@@ -33,6 +33,8 @@ export const DEFAULT_CATEGORY_METADATA: ICategoryMetadata = {
     // filter options
     hasDownloadedChapters: undefined,
     hasBookmarkedChapters: undefined,
+    libraryBookmarkColorsIncluded: [],
+    libraryBookmarkColorsExcluded: [],
     hasUnreadChapters: undefined,
     hasReadChapters: undefined,
     hasDuplicateChapters: undefined,
@@ -51,6 +53,12 @@ const convertAppMetadataToGqlMetadata = (
     hasTrackerBinding: metadata.hasTrackerBinding ? JSON.stringify(metadata.hasTrackerBinding) : undefined,
     hasStatus: metadata.hasStatus ? JSON.stringify(metadata.hasStatus) : undefined,
     hasSource: metadata.hasSource ? JSON.stringify(metadata.hasSource) : undefined,
+    libraryBookmarkColorsIncluded: metadata.libraryBookmarkColorsIncluded
+        ? JSON.stringify(metadata.libraryBookmarkColorsIncluded)
+        : undefined,
+    libraryBookmarkColorsExcluded: metadata.libraryBookmarkColorsExcluded
+        ? JSON.stringify(metadata.libraryBookmarkColorsExcluded)
+        : undefined,
 });
 
 const getCategoryMetadataWithDefaultValueFallback = (

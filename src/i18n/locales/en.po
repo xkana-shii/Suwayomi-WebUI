@@ -158,6 +158,10 @@ msgstr "{categoryCount, plural, one {# category} other {# categories}}"
 msgid "{childCount} subcategories"
 msgstr "{childCount} subcategories"
 
+#: src/features/chapter/bookmark/BookmarkedFilterWithColors.tsx
+msgid "{colorCount} colors"
+msgstr "{colorCount} colors"
+
 #: src/features/notifications/services/LibraryUpdateNotifier.ts
 msgid "{count, plural, one {# new chapter} other {# new chapters}}"
 msgstr "{count, plural, one {# new chapter} other {# new chapters}}"
@@ -801,7 +805,6 @@ msgid "Bookmark color"
 msgstr "Bookmark color"
 
 #: src/features/chapter/bookmark/BookmarkColorFilterDialog.tsx
-#: src/features/chapter/components/ChapterOptions.tsx
 msgid "Bookmark colors"
 msgstr "Bookmark colors"
 
@@ -809,8 +812,7 @@ msgstr "Bookmark colors"
 msgid "Bookmark selected"
 msgstr "Bookmark selected"
 
-#: src/features/chapter/components/ChapterOptions.tsx
-#: src/features/library/components/LibraryOptionsPanel.tsx
+#: src/features/chapter/bookmark/BookmarkedFilterWithColors.tsx
 msgid "Bookmarked"
 msgstr "Bookmarked"
 
@@ -1870,7 +1872,7 @@ msgstr "Edge"
 
 #: src/features/category/components/CategorySelect.tsx
 #: src/features/category/components/CategorySettingsCard.tsx
-#: src/features/chapter/components/ChapterOptions.tsx
+#: src/features/chapter/bookmark/BookmarkedFilterWithColors.tsx
 #: src/features/manga/components/details/EditMangaMetadataDialog.tsx
 #: src/features/manga/components/details/MangaNotes.tsx
 #: src/features/theme/components/ThemePreview.tsx
@@ -1880,6 +1882,10 @@ msgstr "Edit"
 #: src/features/tracker/components/UnifiedTrackerEditor.tsx
 msgid "Edit all trackers"
 msgstr "Edit all trackers"
+
+#: src/features/chapter/bookmark/BookmarkedFilterWithColors.tsx
+msgid "Edit bookmark colors"
+msgstr "Edit bookmark colors"
 
 #: src/features/category/screens/CategorySettings.tsx
 #: src/features/library/screens/LibrarySettings.tsx
@@ -2093,6 +2099,7 @@ msgstr "Failed to reset metadata"
 #: src/features/theme/AppThemeContext.tsx
 #: src/features/tracker/components/cards/TrackerActiveCard.tsx
 #: src/features/tracker/screens/TrackingSettings.tsx
+#: src/features/updates/components/UpdatesFilterButton.tsx
 msgid "Failed to save changes"
 msgstr "Failed to save changes"
 
@@ -2135,6 +2142,7 @@ msgstr "Filled from {0}. Review the changes and save."
 #: src/features/library/components/LibraryOptionsPanel.tsx
 #: src/features/source/browse/components/SourceOptions.tsx
 #: src/features/source/browse/screens/SourceMangas.tsx
+#: src/features/updates/components/UpdatesFilterButton.tsx
 msgid "Filter"
 msgstr "Filter"
 
