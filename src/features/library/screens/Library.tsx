@@ -6,11 +6,13 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import Stack from '@mui/material/Stack';
+import { CategoryTree } from '@/features/category/CategoryTree.ts';
 import type { ChipProps } from '@mui/material/Chip';
 import Chip from '@mui/material/Chip';
 import Tab from '@mui/material/Tab';
 import { styled, useTheme } from '@mui/material/styles';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useQueryParam, NumberParam, StringParam } from 'use-query-params';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
@@ -80,8 +82,15 @@ export function Library() {
     } = requestManager.useGetCategories<GetCategoriesLibraryQuery, GetCategoriesLibraryQueryVariables>(
         GET_CATEGORIES_LIBRARY,
     );
+    // fork (Komikku port): nested categories, the tabs are the top level categories and hold their whole subtree
+    const categoryTree = useMemo(
+        () => new CategoryTree(categoriesResponse?.categories.nodes ?? STABLE_EMPTY_ARRAY),
+        [categoriesResponse],
+    );
     const tabsData = categoriesResponse?.categories.nodes.filter(
-        (category) => category.id !== 0 || (category.id === 0 && category.mangas.totalCount),
+        (category) =>
+            categoryTree.parentOf(category.id) === null &&
+            (category.id !== 0 || (category.id === 0 && category.mangas.totalCount)),
     );
     const tabs = tabsData ?? STABLE_EMPTY_ARRAY;
 
@@ -97,12 +106,30 @@ export function Library() {
 
     const activeTab: (typeof tabs)[number] | undefined = tabs.find((tab) => tab.id === tabSearchParam) ?? tabs[0];
 
+    // a subcategory chip narrows the tab to that subcategory's subtree
+    const [subcategoryId, setSubcategoryId] = useState<number | null>(null);
+    useEffect(() => setSubcategoryId(null), [activeTab?.id]);
+    const subcategories = useMemo(
+        () => (activeTab ? categoryTree.descendantIds(activeTab.id).map((id) => categoryTree.get(id)!) : []),
+        [categoryTree, activeTab?.id],
+    );
+    const scopeCategoryId = subcategoryId ?? activeTab?.id;
+    const scopeSubcategoryIds = useMemo(
+        () => (scopeCategoryId === undefined ? [] : categoryTree.descendantIds(scopeCategoryId)),
+        [categoryTree, scopeCategoryId],
+    );
+
     const {
         data: categoryMangaResponse,
         error: mangaError,
         loading: mangaLoading,
         refetch: refetchCategoryMangas,
-    } = requestManager.useGetCategoryMangas(activeTab?.id, activeTab?.isDefaultCategory, { skip: !activeTab });
+    } = requestManager.useGetCategoryMangas(
+        scopeCategoryId!,
+        activeTab?.isDefaultCategory,
+        { skip: !activeTab },
+        scopeSubcategoryIds,
+    );
     const categoryMangas = categoryMangaResponse?.mangas.nodes ?? STABLE_EMPTY_ARRAY;
     const {
         visibleMangas: mangas,
@@ -112,8 +139,9 @@ export function Library() {
     } = useGetVisibleLibraryMangas(categoryMangas, activeTab);
 
     const getTabCount = (tab: (typeof tabs)[number]) => {
-        if (mangaLoading || tab !== activeTab || mangas.length === tab.mangas.totalCount) {
-            return tab.mangas.totalCount;
+        const total = tab.subtreeMangaCount;
+        if (mangaLoading || tab !== activeTab || subcategoryId !== null || mangas.length === total) {
+            return total;
         }
 
         // fork: always show the filtered count for the active tab
@@ -185,6 +213,31 @@ export function Library() {
             </SelectionFAB>
         );
     }, [isSelectModeActive, selectedMangas]);
+
+    const subcategoryChips = !!subcategories.length && (
+        <Stack
+            direction="row"
+            sx={{ gap: 1, px: 2, pt: 1, flexWrap: 'wrap' }}
+            role="toolbar"
+            aria-label={t`Subcategories`}
+        >
+            <Chip
+                label={t`All`}
+                color={subcategoryId === null ? 'primary' : 'default'}
+                variant={subcategoryId === null ? 'filled' : 'outlined'}
+                onClick={() => setSubcategoryId(null)}
+            />
+            {subcategories.map((subcategory) => (
+                <Chip
+                    key={subcategory.id}
+                    label={categoryTree.path(subcategory.id).split(' / ').slice(1).join(' / ')}
+                    color={subcategoryId === subcategory.id ? 'primary' : 'default'}
+                    variant={subcategoryId === subcategory.id ? 'filled' : 'outlined'}
+                    onClick={() => setSubcategoryId(subcategory.id)}
+                />
+            ))}
+        </Stack>
+    );
 
     const triggerGlobalSearchButton = useMemo(
         () =>
@@ -282,6 +335,7 @@ export function Library() {
     if (tabs.length === 1) {
         return (
             <>
+                {subcategoryChips}
                 {triggerGlobalSearchButton}
                 <LibraryMangaGrid
                     // the key needs to include filters and query to force a re-render of the virtuoso grid to prevent https://github.com/petyosi/react-virtuoso/issues/1242
@@ -320,6 +374,7 @@ export function Library() {
                     ))}
                 </TabsMenu>
             </OffsetComponent>
+            {subcategoryChips}
             {triggerGlobalSearchButton}
             {tabs.map((tab) => (
                 <TabPanel key={tab.id} index={tab.order} currentIndex={activeTab.order}>

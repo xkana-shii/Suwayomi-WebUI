@@ -19,3 +19,6 @@ export type CategoryDefaultInfo = Pick<CategoryType, 'default' | 'isDefaultCateg
 export type CategoryUpdateInclusionInfo = Pick<CategoryType, 'includeInUpdate'>;
 export type CategoryDownloadInclusionInfo = Pick<CategoryType, 'includeInDownload'>;
 export type CategoryMetadataInfo = CategoryIdInfo & { meta: Pick<CategoryMetaType, 'key' | 'value'>[] };
+
+// fork (Komikku port)
+export type CategoryHierarchyInfo = Pick<CategoryType, 'parentId' | 'trackStatus' | 'order'>;

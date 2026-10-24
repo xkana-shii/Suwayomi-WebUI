@@ -39,6 +39,7 @@ import { AppRoutes } from '@/base/AppRoute.constants.ts';
 import { getErrorMessage } from '@/lib/HelperFunctions.ts';
 import { TypographyMaxLines } from '@/base/components/texts/TypographyMaxLines.tsx';
 import Box from '@mui/material/Box';
+import { CategoryTree, getSmartCategoryStatusLabel } from '@/features/category/CategoryTree.ts';
 
 type BaseProps = AwaitableComponentProps<{ addToCategories?: number[]; removeFromCategories?: number[] }>;
 
@@ -118,6 +119,8 @@ export function CategorySelect(props: CategorySelectProps) {
     const categoriesData = data?.categories.nodes ?? STABLE_EMPTY_ARRAY;
 
     const allCategories = useMemo(() => Categories.getUserCreated(categoriesData), [categoriesData]);
+    // fork (Komikku port): nested categories, depth first and indented
+    const categoryTree = useMemo(() => new CategoryTree(allCategories).flattened(), [allCategories]);
 
     const defaultCategoryIds = useMemo(
         () => (addToLibrary ? Categories.getIds(Categories.getDefaults(allCategories)) : []),
@@ -233,8 +236,9 @@ export function CategorySelect(props: CategorySelectProps) {
                             setSelectionForKey('categoriesToRemove', Categories.getIds(allCategories));
                         }}
                     />
-                    {allCategories.map((category) => (
+                    {categoryTree.map(({ category, depth }) => (
                         <ThreeStateCheckboxInput
+                            sx={{ pl: depth * 3 }}
                             checked={getCategoryCheckedState(
                                 category.id,
                                 categoriesToAdd,
@@ -253,7 +257,10 @@ export function CategorySelect(props: CategorySelectProps) {
                                     handleSelection(category.id, true, { key: 'categoriesToRemove' });
                                 }
                             }}
-                            label={category.name}
+                            label={(() => {
+                                const smartLabel = getSmartCategoryStatusLabel(category.trackStatus);
+                                return smartLabel ? `${category.name} · ${t`Smart`}: ${t(smartLabel)}` : category.name;
+                            })()}
                             key={category.id}
                         />
                     ))}

@@ -6,6 +6,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { CategoryTree } from '@/features/category/CategoryTree.ts';
+import { makeToast } from '@/base/utils/Toast.ts';
 import type { ComponentProps } from 'react';
 import { useMemo, useState } from 'react';
 import Fab from '@mui/material/Fab';
@@ -35,6 +37,25 @@ import { useAppTitle } from '@/features/navigation-bar/hooks/useAppTitle.ts';
 import { CREATE_NEW_CATEGORY_ID } from '@/features/category/Category.constants.ts';
 import { CreateOrEditCategoryDialog } from '@/features/category/components/CreateOrEditCategoryDialog.tsx';
 
+const COLLAPSED_STORAGE_KEY = 'webUI_categorySettingsCollapsed';
+
+// a per-viewer convenience: storage may be unavailable (private mode), the tree then starts expanded
+const readCollapsed = (): Set<number> => {
+    try {
+        return new Set(JSON.parse(localStorage.getItem(COLLAPSED_STORAGE_KEY) ?? '[]') as number[]);
+    } catch {
+        return new Set();
+    }
+};
+
+const writeCollapsed = (collapsed: Set<number>) => {
+    try {
+        localStorage.setItem(COLLAPSED_STORAGE_KEY, JSON.stringify([...collapsed]));
+    } catch {
+        // ignore
+    }
+};
+
 export function CategorySettings() {
     const { t } = useLingui();
     const dndSensors = DndKitUtil.useSensorsForDevice();
@@ -48,6 +69,8 @@ export function CategorySettings() {
     const [reorderCategory, { reset: revertReorder }] = requestManager.useReorderCategory();
 
     const [categoryToEdit, setCategoryToEdit] = useState<number>(CREATE_NEW_CATEGORY_ID);
+    const [newCategoryParentId, setNewCategoryParentId] = useState<number | null>(null);
+    const [collapsed, setCollapsed] = useState<Set<number>>(readCollapsed);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [dndActiveCategory, setDndActiveCategory] = useState<
         ComponentProps<typeof CategorySettingsCard>['category'] | null
@@ -60,6 +83,20 @@ export function CategorySettings() {
         }
         return res;
     }, [data]);
+
+    // fork (Komikku port): nested categories, shown depth first
+    const tree = useMemo(() => new CategoryTree(categories), [categories]);
+    const visibleTree = useMemo(() => tree.flattened(collapsed), [tree, collapsed]);
+    const visibleCategories = useMemo(() => visibleTree.map(({ category }) => category), [visibleTree]);
+
+    const toggleCollapsed = (categoryId: number) => {
+        const next = new Set(collapsed);
+        if (!next.delete(categoryId)) {
+            next.add(categoryId);
+        }
+        setCollapsed(next);
+        writeCollapsed(next);
+    };
 
     const categoryReorder = (list: CategoryIdInfo[], from: number, to: number) => {
         const reorderedCategory = list[from];
@@ -78,14 +115,24 @@ export function CategorySettings() {
             return;
         }
 
+        // categories are reordered among their siblings; moving to another parent is done in the edit dialog
+        if (tree.parentOf(Number(active.id)) !== tree.parentOf(Number(over.id))) {
+            makeToast(
+                t`Categories can only be reordered among their siblings. Use "Edit" to change the parent.`,
+                'info',
+            );
+            return;
+        }
+
         const oldIndex = categories.findIndex((category) => category.id === active.id);
         const newIndex = categories.findIndex((category) => category.id === over.id);
 
         categoryReorder(categories, oldIndex, newIndex);
     };
 
-    const handleDialogOpen = (categoryId?: CategoryIdInfo['id']) => {
+    const handleDialogOpen = (categoryId?: CategoryIdInfo['id'], parentId: number | null = null) => {
         setCategoryToEdit(categoryId ?? CREATE_NEW_CATEGORY_ID);
+        setNewCategoryParentId(parentId);
         setDialogOpen(true);
     };
 
@@ -121,14 +168,22 @@ export function CategorySettings() {
                 onDragAbort={() => setDndActiveCategory(null)}
             >
                 <Box sx={{ paddingBottom: DEFAULT_FULL_FAB_HEIGHT }}>
-                    <SortableContext items={categories} strategy={verticalListSortingStrategy}>
-                        {categories.map((category, index) => (
+                    <SortableContext items={visibleCategories} strategy={verticalListSortingStrategy}>
+                        {visibleTree.map(({ category, depth, childCount }) => (
                             <DndSortableItem
                                 key={category.id}
                                 id={category.id}
                                 isDragging={category.id === dndActiveCategory?.id}
                             >
-                                <CategorySettingsCard category={category} onEdit={() => handleDialogOpen(index)} />
+                                <CategorySettingsCard
+                                    category={category}
+                                    depth={depth}
+                                    childCount={childCount}
+                                    collapsed={collapsed.has(category.id)}
+                                    onToggleCollapsed={() => toggleCollapsed(category.id)}
+                                    onAddSubcategory={() => handleDialogOpen(undefined, category.id)}
+                                    onEdit={() => handleDialogOpen(category.id)}
+                                />
                             </DndSortableItem>
                         ))}
                     </SortableContext>
@@ -151,7 +206,12 @@ export function CategorySettings() {
             </Fab>
 
             {dialogOpen && (
-                <CreateOrEditCategoryDialog category={categories[categoryToEdit]} onClose={handleDialogCancel} />
+                <CreateOrEditCategoryDialog
+                    category={categories.find((category) => category.id === categoryToEdit)}
+                    categories={categories}
+                    initialParentId={newCategoryParentId}
+                    onClose={handleDialogCancel}
+                />
             )}
         </>
     );

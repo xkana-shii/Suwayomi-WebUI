@@ -149,6 +149,10 @@ msgstr "{availableUpdates, plural, one {# update available} other {# updates ava
 msgid "{categoryCount, plural, one {# category} other {# categories}}"
 msgstr "{categoryCount, plural, one {# category} other {# categories}}"
 
+#: src/features/category/components/CategorySettingsCard.tsx
+msgid "{childCount} subcategories"
+msgstr "{childCount} subcategories"
+
 #: src/features/notifications/services/LibraryUpdateNotifier.ts
 msgid "{count, plural, one {# new chapter} other {# new chapters}}"
 msgstr "{count, plural, one {# new chapter} other {# new chapters}}"
@@ -405,6 +409,10 @@ msgstr "{ttl, plural, one {Delete log files that are older than # day} other {De
 msgid "*: Active setting"
 msgstr "*: Active setting"
 
+#: src/features/category/components/CreateOrEditCategoryDialog.tsx
+msgid "A category with this name already exists here"
+msgstr "A category with this name already exists here"
+
 #: src/features/chapter/components/ChapterSettingsSection.tsx
 msgid "A click bookmarks with the color last picked from the color menu"
 msgstr "A click bookmarks with the color last picked from the color menu"
@@ -493,6 +501,10 @@ msgstr "Add notes"
 msgid "Add selected"
 msgstr "Add selected"
 
+#: src/features/category/components/CategorySettingsCard.tsx
+msgid "Add subcategory"
+msgstr "Add subcategory"
+
 #: src/features/manga/components/details/MangaDetails.tsx
 #: src/features/manga/components/MangaBadges.tsx
 #: src/features/reader/overlay/navigation/components/ReaderLibraryButton.tsx
@@ -531,6 +543,7 @@ msgstr "Age rating"
 #: src/features/category/components/CategoriesInclusionSetting.tsx
 #: src/features/chapter/components/actions/ChaptersDownloadActionMenuItems.tsx
 #: src/features/global-search/screens/SearchAll.tsx
+#: src/features/library/screens/Library.tsx
 msgid "All"
 msgstr "All"
 
@@ -944,6 +957,10 @@ msgstr "Cancelled"
 msgid "Categories"
 msgstr "Categories"
 
+#: src/features/category/screens/CategorySettings.tsx
+msgid "Categories can only be reordered among their siblings. Use \"Edit\" to change the parent."
+msgstr "Categories can only be reordered among their siblings. Use \"Edit\" to change the parent."
+
 #: src/features/category/components/CategoriesInclusionSetting.tsx
 #: src/features/migration/components/MigrationOptionsDialog.tsx
 msgid "Category"
@@ -1115,6 +1132,11 @@ msgstr "Close"
 msgid "Cloudflare bypass"
 msgstr "Cloudflare bypass"
 
+#. placeholder {0}: category.name
+#: src/features/category/components/CategorySettingsCard.tsx
+msgid "Collapse {0}"
+msgstr "Collapse {0}"
+
 #: src/features/reader/filters/settings/components/ReaderSettingRGBA.tsx
 msgid "Color filter blend mode"
 msgstr "Color filter blend mode"
@@ -1139,6 +1161,7 @@ msgstr "Compact grid"
 msgid "Compatible"
 msgstr "Compatible"
 
+#: src/features/category/CategoryTree.ts
 #: src/features/manga/Manga.constants.ts
 msgid "Completed"
 msgstr "Completed"
@@ -1813,6 +1836,10 @@ msgstr "Downloads"
 msgid "Drag to prioritize"
 msgstr "Drag to prioritize"
 
+#: src/features/category/CategoryTree.ts
+msgid "Dropped"
+msgstr "Dropped"
+
 #: src/features/theme/Themes.ts
 msgid "Dune"
 msgstr "Dune"
@@ -1984,6 +2011,11 @@ msgstr "Exit to manga page"
 #: src/features/reader/viewer/components/ReaderTransitionPage.tsx
 msgid "Exit to previous page"
 msgstr "Exit to previous page"
+
+#. placeholder {0}: category.name
+#: src/features/category/components/CategorySettingsCard.tsx
+msgid "Expand {0}"
+msgstr "Expand {0}"
 
 #: src/features/browse/screens/Browse.tsx
 msgid "Extension"
@@ -2671,6 +2703,10 @@ msgstr "Library"
 msgid "Library entries"
 msgstr "Library entries"
 
+#: src/features/category/components/CreateOrEditCategoryDialog.tsx
+msgid "Library manga are added and removed automatically by their tracker status. A subcategory only applies to manga in its branch."
+msgstr "Library manga are added and removed automatically by their tracker status. A subcategory only applies to manga in its branch."
+
 #: src/features/manga/Manga.constants.ts
 msgid "Licensed"
 msgstr "Licensed"
@@ -2779,6 +2815,10 @@ msgstr "Manga"
 #: src/features/manga/Manga.constants.ts
 msgid "entry-type-detection-manga"
 msgstr "Manga"
+
+#: src/features/category/components/CreateOrEditCategoryDialog.tsx
+msgid "Manga are added to this category manually"
+msgstr "Manga are added to this category manually"
 
 #: src/features/settings/screens/Appearance.tsx
 msgid "Manga item width"
@@ -3135,6 +3175,10 @@ msgstr "No sources selected"
 msgid "None"
 msgstr "None"
 
+#: src/features/category/components/CreateOrEditCategoryDialog.tsx
+msgid "None (top level)"
+msgstr "None (top level)"
+
 #: src/features/chapter/components/ScanlatorSettingsDialog.tsx
 msgid "Not in the current chapter list"
 msgstr "Not in the current chapter list"
@@ -3194,6 +3238,7 @@ msgstr "Obsolete"
 msgid "OEL"
 msgstr "OEL"
 
+#: src/features/category/components/CreateOrEditCategoryDialog.tsx
 #: src/features/chapter/components/ScanlatorSettingsDialog.tsx
 msgid "Off"
 msgstr "Off"
@@ -3235,6 +3280,10 @@ msgstr "Ok"
 #: src/features/chapter/components/ScanlatorSettingsDialog.tsx
 msgid "On"
 msgstr "On"
+
+#: src/features/category/CategoryTree.ts
+msgid "On hold"
+msgstr "On hold"
 
 #: src/features/tracker/Tracker.constants.ts
 msgid "Oneshot"
@@ -3355,6 +3404,10 @@ msgstr "Page gap"
 msgid "Parallel source requests"
 msgstr "Parallel source requests"
 
+#: src/features/category/components/CreateOrEditCategoryDialog.tsx
+msgid "Parent category"
+msgstr "Parent category"
+
 #: src/base/components/inputs/PasswordTextField.tsx
 #: src/features/settings/screens/ServerSettings.tsx
 msgid "Password"
@@ -3381,6 +3434,10 @@ msgstr "Pin source"
 #: src/features/global-search/screens/SearchAll.tsx
 msgid "Pinned"
 msgstr "Pinned"
+
+#: src/features/category/CategoryTree.ts
+msgid "Plan to read"
+msgstr "Plan to read"
 
 #: src/features/source/browse/screens/SourceMangas.tsx
 msgid "Popular"
@@ -3494,6 +3551,10 @@ msgstr "Reader — Manga {mangaId} Chapter {chapterSourceOrder}"
 #: src/features/reader/settings/layout/components/ReaderSettingWidth.tsx
 msgid "Reader width"
 msgstr "Reader width"
+
+#: src/features/category/CategoryTree.ts
+msgid "Reading"
+msgstr "Reading"
 
 #: src/features/reader/overlay/navigation/desktop/quick-settings/components/ReaderNavBarDesktopReadingDirection.tsx
 #: src/features/reader/settings/layout/components/ReaderSettingReadingDirection.tsx
@@ -3617,6 +3678,10 @@ msgstr "Remove selected from the library"
 #: src/features/library/screens/LibrarySettings.tsx
 msgid "Removed non library manga from categories"
 msgstr "Removed non library manga from categories"
+
+#: src/features/category/CategoryTree.ts
+msgid "Rereading"
+msgstr "Rereading"
 
 #: src/base/components/buttons/ResetButton.tsx
 #: src/base/components/settings/CheckboxListSetting.tsx
@@ -4114,6 +4179,15 @@ msgstr "Skip updating entries"
 msgid "Small"
 msgstr "Small"
 
+#: src/features/category/components/CategorySelect.tsx
+#: src/features/category/components/CategorySettingsCard.tsx
+msgid "Smart"
+msgstr "Smart"
+
+#: src/features/category/components/CreateOrEditCategoryDialog.tsx
+msgid "Smart Category"
+msgstr "Smart Category"
+
 #: src/features/chapter/components/ChapterSettingsSection.tsx
 #: src/features/chapter/components/ScanlatorSettingsDialog.tsx
 msgid "Smart Scanlator Merge"
@@ -4261,6 +4335,10 @@ msgstr "Stop the running Suwayomi-Server process from the WebUI"
 #: src/features/reader/settings/layout/components/ReaderSettingStretchPage.tsx
 msgid "Stretch small pages"
 msgstr "Stretch small pages"
+
+#: src/features/library/screens/Library.tsx
+msgid "Subcategories"
+msgstr "Subcategories"
 
 #: src/features/category/components/CreateOrEditCategoryDialog.tsx
 #: src/features/source/browse/components/SourceOptions.tsx
@@ -4927,6 +5005,11 @@ msgstr "Ying & Yang"
 #: src/features/category/components/CategorySettingsCard.tsx
 msgid "You are about to delete category \"{0}\""
 msgstr "You are about to delete category \"{0}\""
+
+#. placeholder {0}: category.name
+#: src/features/category/components/CategorySettingsCard.tsx
+msgid "You are about to delete category \"{0}\". Its subcategories move up one level."
+msgstr "You are about to delete category \"{0}\". Its subcategories move up one level."
 
 #. placeholder {0}: manga.title
 #: src/features/manga/hooks/useManageMangaLibraryState.tsx

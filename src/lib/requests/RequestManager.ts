@@ -3229,6 +3229,8 @@ export class RequestManager {
         id: number,
         isDefault: boolean,
         options?: QueryHookOptions<GetMangasLibraryQuery, GetMangasLibraryQueryVariables>,
+        // fork (Komikku port): subcategories are included, each manga once (nested categories)
+        subcategoryIds: number[] = [],
     ): AbortableApolloUseQueryResponse<GetMangasLibraryQuery, GetMangasLibraryQueryVariables> {
         return this.useGetMangas(
             GET_MANGAS_LIBRARY,
@@ -3237,7 +3239,7 @@ export class RequestManager {
                     inLibrary: { equalTo: true },
                     categoryId: {
                         isNull: isDefault,
-                        in: isDefault ? undefined : [id],
+                        in: isDefault ? undefined : [id, ...subcategoryIds],
                     },
                 },
             },

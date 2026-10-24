@@ -45,6 +45,9 @@ export const UPDATE_CATEGORY = gql`
                 includeInUpdate @include(if: $getIncludeInUpdate)
                 includeInDownload @include(if: $getIncludeInDownload)
                 name @include(if: $getName)
+                # fork (Komikku port)
+                parentId
+                trackStatus
             }
         }
     }
@@ -65,6 +68,9 @@ export const UPDATE_CATEGORIES = gql`
                 includeInUpdate @include(if: $getIncludeInUpdate)
                 includeInDownload @include(if: $getIncludeInDownload)
                 name @include(if: $getName)
+                # fork (Komikku port)
+                parentId
+                trackStatus
             }
         }
     }
