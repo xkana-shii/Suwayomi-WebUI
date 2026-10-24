@@ -250,11 +250,21 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
 
     // fork (Komikku port): fill the editor from a tracker; existing tags stay first, nothing is saved yet
     const fillFromTracker = (metadata: TrackerMangaMetadata) => {
-        if (metadata.title) {setTitle(metadata.title);}
-        if (metadata.author) {setAuthor(metadata.author);}
-        if (metadata.artist) {setArtist(metadata.artist);}
-        if (metadata.description) {setDescription(metadata.description);}
-        if (metadata.status) {setStatus(metadata.status);}
+        if (metadata.title) {
+            setTitle(metadata.title);
+        }
+        if (metadata.author) {
+            setAuthor(metadata.author);
+        }
+        if (metadata.artist) {
+            setArtist(metadata.artist);
+        }
+        if (metadata.description) {
+            setDescription(metadata.description);
+        }
+        if (metadata.status) {
+            setStatus(metadata.status);
+        }
         if (metadata.genre.length) {
             const seen = new Set<string>();
             setGenre(
@@ -262,7 +272,9 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
                     .map((tag) => tag.trim())
                     .filter((tag) => {
                         const key = tag.toLowerCase();
-                        if (!tag || seen.has(key)) {return false;}
+                        if (!tag || seen.has(key)) {
+                            return false;
+                        }
                         seen.add(key);
                         return true;
                     }),
