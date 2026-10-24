@@ -6,6 +6,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { useMetadataServerSettings } from '@/features/settings/services/ServerSettingsMetadata.ts';
 import Warning from '@mui/icons-material/Warning';
 import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
@@ -30,6 +31,18 @@ import { STABLE_EMPTY_OBJECT } from '@/base/Base.constants.ts';
 import { useAppTitleAndAction } from '@/features/navigation-bar/hooks/useAppTitleAndAction.ts';
 import type { MangaLocationState } from '@/features/manga/Manga.types.ts';
 
+/**
+ * fork (Komikku port): manga refreshed because their page was opened, by id. Module level, so remounts (tab switches,
+ * returning from the reader, dialogs) and rerenders do not refresh the same entry again within [OPEN_REFRESH_INTERVAL].
+ */
+const openRefreshedAt = new Map<string, number>();
+const OPEN_REFRESH_INTERVAL = 10 * 60 * 1000;
+
+const shouldRefreshOnOpen = (mangaId: string): boolean => {
+    const last = openRefreshedAt.get(mangaId);
+    return last === undefined || Date.now() - last > OPEN_REFRESH_INTERVAL;
+};
+
 export const Manga: React.FC = () => {
     const { t } = useLingui();
     const { id } = useParams<{ id: string }>();
@@ -51,17 +64,25 @@ export const Manga: React.FC = () => {
 
     const error = mangaError ?? refreshError;
 
+    const {
+        settings: { autoRefreshOpenedManga },
+        loading: areSettingsLoading,
+    } = useMetadataServerSettings();
+
     useEffect(() => {
-        if (manga == null) {
+        if (manga == null || areSettingsLoading) {
             return;
         }
 
-        const doFetch = !autofetchedRef.current && !manga.initialized;
+        // the saved data is shown right away, the refresh runs in the background
+        const doFetch =
+            !autofetchedRef.current && (!manga.initialized || (autoRefreshOpenedManga && shouldRefreshOnOpen(id)));
         if (doFetch) {
             autofetchedRef.current = true;
+            openRefreshedAt.set(id, Date.now());
             refresh();
         }
-    }, [manga]);
+    }, [manga, areSettingsLoading, autoRefreshOpenedManga]);
 
     useAppTitleAndAction(
         manga?.title ?? t`Manga`,
@@ -81,7 +102,7 @@ export const Manga: React.FC = () => {
                         </>
                     }
                 >
-                    <IconButton onClick={() => refetch()}>
+                    <IconButton aria-label={t`Retry`} onClick={() => (refreshError ? refresh() : refetch())}>
                         <Warning color="error" />
                     </IconButton>
                 </CustomTooltip>

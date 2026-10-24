@@ -405,6 +405,10 @@ msgstr "{ttl, plural, one {Delete log files that are older than # day} other {De
 msgid "*: Active setting"
 msgstr "*: Active setting"
 
+#: src/features/chapter/components/ChapterSettingsSection.tsx
+msgid "A click bookmarks with the color last picked from the color menu"
+msgstr "A click bookmarks with the color last picked from the color menu"
+
 #: src/features/manga/services/Mangas.ts
 msgid "A migration is already in progress"
 msgstr "A migration is already in progress"
@@ -1019,6 +1023,7 @@ msgid "Chapter transition warning"
 msgstr "Chapter transition warning"
 
 #: src/features/backup/Backup.constants.ts
+#: src/features/chapter/components/ChapterSettingsSection.tsx
 msgid "Chapters"
 msgstr "Chapters"
 
@@ -1588,6 +1593,10 @@ msgstr "Default"
 msgid "Default (Suwayomi)"
 msgstr "Default (Suwayomi)"
 
+#: src/features/chapter/components/ChapterSettingsSection.tsx
+msgid "Default bookmark color"
+msgstr "Default bookmark color"
+
 #: src/features/category/components/CreateOrEditCategoryDialog.tsx
 msgid "Default category when adding new manga to the library"
 msgstr "Default category when adding new manga to the library"
@@ -2017,6 +2026,7 @@ msgstr "Failed to reset metadata"
 #: src/features/category/components/CreateOrEditCategoryDialog.tsx
 #: src/features/chapter/components/buttons/ChapterDownloadButton.tsx
 #: src/features/chapter/components/ChapterList.tsx
+#: src/features/chapter/components/ChapterSettingsSection.tsx
 #: src/features/device/screens/DeviceSetting.tsx
 #: src/features/downloads/components/DownloadAheadSetting.tsx
 #: src/features/downloads/screens/DownloadSettings.tsx
@@ -3525,6 +3535,10 @@ msgstr "Red"
 msgid "Refresh"
 msgstr "Refresh"
 
+#: src/features/chapter/components/ChapterSettingsSection.tsx
+msgid "Refresh opened entries"
+msgstr "Refresh opened entries"
+
 #: src/features/tracker/Tracker.constants.ts
 msgid "Releasing"
 msgstr "Releasing"
@@ -3532,6 +3546,10 @@ msgstr "Releasing"
 #: src/features/manga/components/MangaToolbarMenu.tsx
 msgid "Reload data from source"
 msgstr "Reload data from source"
+
+#: src/features/chapter/components/ChapterSettingsSection.tsx
+msgid "Remember the last bookmark color"
+msgstr "Remember the last bookmark color"
 
 #: src/features/app-updates/components/VersionUpdateInfoDialog.tsx
 msgid "Remind later"
@@ -3654,6 +3672,7 @@ msgstr "Resume"
 #: src/base/components/SpinnerImage.tsx
 #: src/features/chapter/components/buttons/ChapterDownloadRetryButton.tsx
 #: src/features/manga/hooks/useManageMangaLibraryState.tsx
+#: src/features/manga/screens/Manga.tsx
 #: src/features/migration/components/migration-entry/MigrationDestinationEntry.tsx
 msgid "Retry"
 msgstr "Retry"
@@ -4006,6 +4025,10 @@ msgstr "Show more"
 msgid "Show number of items"
 msgstr "Show number of items"
 
+#: src/features/chapter/components/ChapterSettingsSection.tsx
+msgid "Show one release per chapter number, chosen by each manga's scanlator order and range rules. A manga can override this in its scanlator settings."
+msgstr "Show one release per chapter number, chosen by each manga's scanlator order and range rules. A manga can override this in its scanlator settings."
+
 #: src/features/settings/screens/ServerSettings.tsx
 msgid "Show only downloaded chapters"
 msgstr "Show only downloaded chapters"
@@ -4091,6 +4114,7 @@ msgstr "Skip updating entries"
 msgid "Small"
 msgstr "Small"
 
+#: src/features/chapter/components/ChapterSettingsSection.tsx
 #: src/features/chapter/components/ScanlatorSettingsDialog.tsx
 msgid "Smart Scanlator Merge"
 msgstr "Smart Scanlator Merge"
@@ -4713,6 +4737,10 @@ msgstr "Update progress after manually marking as read"
 msgid "Update progress after reading"
 msgstr "Update progress after reading"
 
+#: src/features/chapter/components/ChapterSettingsSection.tsx
+msgid "Update the details and chapters of a manga in the background when its page is opened. The saved data is shown right away."
+msgstr "Update the details and chapters of a manga in the background when its page is opened. The saved data is shown right away."
+
 #: src/features/app-updates/components/ServerUpdateChecker.tsx
 #: src/features/app-updates/components/WebUIUpdateChecker.tsx
 msgid "Updated version"
@@ -4764,6 +4792,10 @@ msgstr "Use the latest released version."
 #: src/features/settings/Settings.constants.ts
 msgid "Use the version that was delivered with the server release"
 msgstr "Use the version that was delivered with the server release"
+
+#: src/features/chapter/components/ChapterSettingsSection.tsx
+msgid "Used when bookmarking with a click. Hold or right click a bookmark button to pick another color."
+msgstr "Used when bookmarking with a click. Hold or right click a bookmark button to pick another color."
 
 #: src/features/backup/Backup.constants.ts
 msgid "User settings"

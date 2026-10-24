@@ -6,6 +6,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { ChapterSettingsSection } from '@/features/chapter/components/ChapterSettingsSection.tsx';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -467,6 +468,8 @@ export function LibrarySettings() {
                     />
                 </ListItem>
             </List>
+
+            <ChapterSettingsSection />
 
             <GlobalUpdateSettings
                 serverSettings={serverSettings.data!.settings}

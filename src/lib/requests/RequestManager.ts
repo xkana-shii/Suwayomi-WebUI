@@ -216,6 +216,10 @@ import type {
     TrackerUpdateUnifiedMutationVariables,
     UpdateMangaScanlatorSettingsMutation,
     UpdateMangaScanlatorSettingsMutationVariables,
+    GetUserSettingsKomikkuPortQuery,
+    GetUserSettingsKomikkuPortQueryVariables,
+    SetUserSettingsSmartScanlatorMergeMutation,
+    SetUserSettingsSmartScanlatorMergeMutationVariables,
 } from '@/lib/graphql/generated/graphql.ts';
 import type {
     CreateBackupInput,
@@ -254,6 +258,10 @@ import {
     SortOrder,
 } from '@/lib/graphql/generated/graphql-base.types.ts';
 import { GET_GLOBAL_METADATAS } from '@/lib/graphql/metadata/GlobalMetadataQuery.ts';
+import {
+    GET_USER_SETTINGS_KOMIKKU_PORT,
+    SET_USER_SETTINGS_SMART_SCANLATOR_MERGE,
+} from '@/lib/graphql/settings/UserSettings.ts';
 import {
     COPY_FILLERMARKS_TO_BLACKLIST,
     GET_MANGA_SCANLATOR_SETTINGS,
@@ -4105,6 +4113,28 @@ export class RequestManager {
     }
 
     // fork (Komikku port): Smart Scanlator Merge, chapter blacklist and tracker features
+
+    public useGetKomikkuPortUserSettings(
+        options?: QueryHookOptions<GetUserSettingsKomikkuPortQuery, GetUserSettingsKomikkuPortQueryVariables>,
+    ): AbortableApolloUseQueryResponse<GetUserSettingsKomikkuPortQuery, GetUserSettingsKomikkuPortQueryVariables> {
+        return this.doRequest(GQLMethod.USE_QUERY, GET_USER_SETTINGS_KOMIKKU_PORT, undefined, options);
+    }
+
+    /** the server recomputes the visibility of all chapters of the user, so cached chapter flags are refetched */
+    public setSmartScanlatorMerge(
+        smartScanlatorMerge: boolean,
+        options?: MutationOptions<
+            SetUserSettingsSmartScanlatorMergeMutation,
+            SetUserSettingsSmartScanlatorMergeMutationVariables
+        >,
+    ): AbortableApolloMutationResponse<SetUserSettingsSmartScanlatorMergeMutation> {
+        const result = this.doRequest<
+            SetUserSettingsSmartScanlatorMergeMutation,
+            SetUserSettingsSmartScanlatorMergeMutationVariables
+        >(GQLMethod.MUTATION, SET_USER_SETTINGS_SMART_SCANLATOR_MERGE, { smartScanlatorMerge }, options);
+        result.response.then(() => this.graphQLClient.client.refetchQueries({ include: 'active' })).catch(() => {});
+        return result;
+    }
 
     public useGetMangaScanlatorSettings(
         mangaId: number,

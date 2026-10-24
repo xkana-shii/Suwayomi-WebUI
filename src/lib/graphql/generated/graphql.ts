@@ -4200,6 +4200,25 @@ export type GetServerSettingsQuery = {
     };
 };
 
+export type GetUserSettingsKomikkuPortQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetUserSettingsKomikkuPortQuery = {
+    __typename: 'Query';
+    userSettings: { __typename: 'UserSettingsType'; smartScanlatorMerge: boolean };
+};
+
+export type SetUserSettingsSmartScanlatorMergeMutationVariables = Exact<{
+    smartScanlatorMerge: boolean;
+}>;
+
+export type SetUserSettingsSmartScanlatorMergeMutation = {
+    __typename: 'Mutation';
+    setUserSettings: {
+        __typename: 'SetUserSettingsPayload';
+        userSettings: { __typename: 'UserSettingsType'; smartScanlatorMerge: boolean };
+    };
+};
+
 export type SourceMetaFieldsFragment = { __typename: 'SourceMetaType'; sourceId: string; key: string; value: string };
 
 export type SourceBaseFieldsFragment = {
