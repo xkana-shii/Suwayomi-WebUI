@@ -206,6 +206,16 @@ import type {
     WebuiUpdateSubscriptionVariables,
     WebviewClearCacheCookiesMutation,
     WebviewClearCacheCookiesMutationVariables,
+    CopyFillermarksToBlacklistMutation,
+    CopyFillermarksToBlacklistMutationVariables,
+    GetMangaScanlatorSettingsQuery,
+    GetMangaScanlatorSettingsQueryVariables,
+    GetTrackerMangaMetadataQuery,
+    GetTrackerMangaMetadataQueryVariables,
+    TrackerUpdateUnifiedMutation,
+    TrackerUpdateUnifiedMutationVariables,
+    UpdateMangaScanlatorSettingsMutation,
+    UpdateMangaScanlatorSettingsMutationVariables,
 } from '@/lib/graphql/generated/graphql.ts';
 import type {
     CreateBackupInput,
@@ -231,6 +241,8 @@ import type {
     UpdateMangaCategoriesPatchInput,
     UpdateMangaPatchInput,
     UpdateTrackInput,
+    UpdateMangaScanlatorSettingsInput,
+    UpdateTrackRecordsUnifiedInput,
 } from '@/lib/graphql/generated/graphql-base.types.ts';
 import {
     CategoryOrderBy,
@@ -242,6 +254,11 @@ import {
     SortOrder,
 } from '@/lib/graphql/generated/graphql-base.types.ts';
 import { GET_GLOBAL_METADATAS } from '@/lib/graphql/metadata/GlobalMetadataQuery.ts';
+import {
+    COPY_FILLERMARKS_TO_BLACKLIST,
+    GET_MANGA_SCANLATOR_SETTINGS,
+    UPDATE_MANGA_SCANLATOR_SETTINGS,
+} from '@/lib/graphql/manga/ScanlatorSettings.ts';
 import { UPDATE_GLOBAL_METADATA } from '@/lib/graphql/metadata/GlobalMetadataMutation.ts';
 import {
     CHECK_FOR_SERVER_UPDATES,
@@ -333,7 +350,7 @@ import { GET_DOWNLOAD_STATUS } from '@/lib/graphql/download/DownloaderQuery.ts';
 import { defaultPromiseErrorHandler } from '@/lib/DefaultPromiseErrorHandler.ts';
 import type { QueuePriority } from '@/lib/Queue.ts';
 import { SourceAwareQueue } from '@/lib/SourceAwareQueue.ts';
-import { TRACKER_SEARCH } from '@/lib/graphql/tracker/TrackerQuery.ts';
+import { GET_TRACKER_MANGA_METADATA, TRACKER_SEARCH } from '@/lib/graphql/tracker/TrackerQuery.ts';
 import {
     TRACK_BIND_TRACK_RECORD,
     TRACKER_BIND,
@@ -343,6 +360,7 @@ import {
     TRACKER_LOGOUT,
     TRACKER_UNBIND,
     TRACKER_UPDATE_BIND,
+    TRACKER_UPDATE_UNIFIED,
 } from '@/lib/graphql/tracker/TrackerMutation.ts';
 import { ControlledPromise } from '@/lib/ControlledPromise.ts';
 import { DOWNLOAD_STATUS_FIELDS } from '@/lib/graphql/download/DownloadFragments.ts';
@@ -2903,6 +2921,7 @@ export class RequestManager {
                 input: { id, patch: updatePatch },
                 getBookmarked: patch.isBookmarked != null,
                 getFillermarked: patch.isFillermarked != null,
+                getVisibility: patch.bookmarkColor != null || patch.isBlacklisted != null,
                 getRead: patch.isRead != null,
                 getLastPageRead: patch.lastPageRead != null,
                 chapterIdToDelete,
@@ -3080,6 +3099,7 @@ export class RequestManager {
                 input: { ids, patch: updatePatch },
                 getBookmarked: patch.isBookmarked != null,
                 getFillermarked: patch.isFillermarked != null,
+                getVisibility: patch.bookmarkColor != null || patch.isBlacklisted != null,
                 getRead: patch.isRead != null,
                 getLastPageRead: patch.lastPageRead != null,
                 chapterIdsToDelete,
@@ -3657,7 +3677,8 @@ export class RequestManager {
         const result = this.useGetChapters<GetChaptersUpdatesQuery, GetChaptersUpdatesQueryVariables>(
             GET_CHAPTERS_UPDATES,
             {
-                filter: { inLibrary: { equalTo: true } },
+                // fork: chapters hidden by the blacklist or Smart Scanlator Merge are not updates
+                filter: { inLibrary: { equalTo: true }, isHidden: { equalTo: false } },
                 order: [
                     { by: ChapterOrderBy.FetchedAt, byType: SortOrder.Desc },
                     { by: ChapterOrderBy.SourceOrder, byType: SortOrder.Desc },
@@ -4080,6 +4101,49 @@ export class RequestManager {
             TRACKER_FETCH_BIND,
             { recordId },
             options,
+        );
+    }
+
+    // fork (Komikku port): Smart Scanlator Merge, chapter blacklist and tracker features
+
+    public useGetMangaScanlatorSettings(
+        mangaId: number,
+        options?: QueryHookOptions<GetMangaScanlatorSettingsQuery, GetMangaScanlatorSettingsQueryVariables>,
+    ): AbortableApolloUseQueryResponse<GetMangaScanlatorSettingsQuery, GetMangaScanlatorSettingsQueryVariables> {
+        return this.doRequest(GQLMethod.USE_QUERY, GET_MANGA_SCANLATOR_SETTINGS, { id: mangaId }, options);
+    }
+
+    public updateMangaScanlatorSettings(
+        input: UpdateMangaScanlatorSettingsInput,
+        options?: MutationOptions<UpdateMangaScanlatorSettingsMutation, UpdateMangaScanlatorSettingsMutationVariables>,
+    ): AbortableApolloMutationResponse<UpdateMangaScanlatorSettingsMutation> {
+        return this.doRequest(GQLMethod.MUTATION, UPDATE_MANGA_SCANLATOR_SETTINGS, { input }, options);
+    }
+
+    public copyFillermarksToBlacklist(
+        mangaId: number,
+        options?: MutationOptions<CopyFillermarksToBlacklistMutation, CopyFillermarksToBlacklistMutationVariables>,
+    ): AbortableApolloMutationResponse<CopyFillermarksToBlacklistMutation> {
+        return this.doRequest(GQLMethod.MUTATION, COPY_FILLERMARKS_TO_BLACKLIST, { input: { mangaId } }, options);
+    }
+
+    public updateTrackRecordsUnified(
+        input: UpdateTrackRecordsUnifiedInput,
+        options?: MutationOptions<TrackerUpdateUnifiedMutation, TrackerUpdateUnifiedMutationVariables>,
+    ): AbortableApolloMutationResponse<TrackerUpdateUnifiedMutation> {
+        return this.doRequest(GQLMethod.MUTATION, TRACKER_UPDATE_UNIFIED, { input }, options);
+    }
+
+    public getTrackerMangaMetadata(
+        mangaId: number,
+        trackerId: number,
+        options?: QueryOptions<GetTrackerMangaMetadataQueryVariables, GetTrackerMangaMetadataQuery>,
+    ): AbortabaleApolloQueryResponse<GetTrackerMangaMetadataQuery> {
+        return this.doRequest(
+            GQLMethod.QUERY,
+            GET_TRACKER_MANGA_METADATA,
+            { mangaId, trackerId },
+            { fetchPolicy: 'no-cache', ...options },
         );
     }
 

@@ -24,6 +24,8 @@ export const CATEGORY_BASE_FIELDS = gql`
         default
         order
         isDefaultCategory
+        parentId
+        trackStatus
     }
 `;
 
@@ -40,6 +42,7 @@ export const CATEGORY_LIBRARY_FIELDS = gql`
         mangas {
             totalCount
         }
+        subtreeMangaCount
     }
 `;
 

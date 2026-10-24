@@ -16,6 +16,7 @@ export const TRACKER_BASE_FIELDS = gql`
         icon
         isLoggedIn
         isTokenExpired
+        supportsMangaMetadata
     }
 `;
 

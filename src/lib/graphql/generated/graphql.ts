@@ -101,15 +101,20 @@ export type CategoryBaseFieldsFragment = {
     default: boolean;
     order: number;
     isDefaultCategory: boolean;
+    parentId: number | null;
+    trackStatus: number | null;
 };
 
 export type CategoryLibraryFieldsFragment = {
     __typename: 'CategoryType';
+    subtreeMangaCount: number;
     id: number;
     name: string;
     default: boolean;
     order: number;
     isDefaultCategory: boolean;
+    parentId: number | null;
+    trackStatus: number | null;
     meta: Array<{ __typename: 'CategoryMetaType'; categoryId: number; key: string; value: string }>;
     mangas: { __typename: 'MangaNodeList'; totalCount: number };
 };
@@ -123,6 +128,8 @@ export type CategorySettingFieldsFragment = {
     default: boolean;
     order: number;
     isDefaultCategory: boolean;
+    parentId: number | null;
+    trackStatus: number | null;
 };
 
 export type CreateCategoryMutationVariables = Exact<{
@@ -142,6 +149,8 @@ export type CreateCategoryMutation = {
             default: boolean;
             order: number;
             isDefaultCategory: boolean;
+            parentId: number | null;
+            trackStatus: number | null;
         };
     } | null;
 };
@@ -270,6 +279,8 @@ export type GetCategoriesBaseQuery = {
             default: boolean;
             order: number;
             isDefaultCategory: boolean;
+            parentId: number | null;
+            trackStatus: number | null;
         }>;
         pageInfo: {
             __typename: 'PageInfo';
@@ -299,11 +310,14 @@ export type GetCategoriesLibraryQuery = {
         totalCount: number;
         nodes: Array<{
             __typename: 'CategoryType';
+            subtreeMangaCount: number;
             id: number;
             name: string;
             default: boolean;
             order: number;
             isDefaultCategory: boolean;
+            parentId: number | null;
+            trackStatus: number | null;
             meta: Array<{ __typename: 'CategoryMetaType'; categoryId: number; key: string; value: string }>;
             mangas: { __typename: 'MangaNodeList'; totalCount: number };
         }>;
@@ -342,6 +356,8 @@ export type GetCategoriesSettingsQuery = {
             default: boolean;
             order: number;
             isDefaultCategory: boolean;
+            parentId: number | null;
+            trackStatus: number | null;
         }>;
         pageInfo: {
             __typename: 'PageInfo';
@@ -463,6 +479,9 @@ export type ChapterStateFieldsFragment = {
     isDownloaded: boolean;
     isBookmarked: boolean;
     isFillermarked: boolean;
+    bookmarkColor: number;
+    isBlacklisted: boolean;
+    isMergeHidden: boolean;
 };
 
 export type ChapterReaderFieldsFragment = {
@@ -481,6 +500,9 @@ export type ChapterReaderFieldsFragment = {
     isDownloaded: boolean;
     isBookmarked: boolean;
     isFillermarked: boolean;
+    bookmarkColor: number;
+    isBlacklisted: boolean;
+    isMergeHidden: boolean;
 };
 
 export type ChapterListFieldsFragment = {
@@ -499,6 +521,9 @@ export type ChapterListFieldsFragment = {
     isDownloaded: boolean;
     isBookmarked: boolean;
     isFillermarked: boolean;
+    bookmarkColor: number;
+    isBlacklisted: boolean;
+    isMergeHidden: boolean;
 };
 
 export type ChapterUpdateListFieldsFragment = {
@@ -517,6 +542,9 @@ export type ChapterUpdateListFieldsFragment = {
     isDownloaded: boolean;
     isBookmarked: boolean;
     isFillermarked: boolean;
+    bookmarkColor: number;
+    isBlacklisted: boolean;
+    isMergeHidden: boolean;
     manga: {
         __typename: 'MangaType';
         id: number;
@@ -551,6 +579,9 @@ export type ChapterHistoryListFieldsFragment = {
     isDownloaded: boolean;
     isBookmarked: boolean;
     isFillermarked: boolean;
+    bookmarkColor: number;
+    isBlacklisted: boolean;
+    isMergeHidden: boolean;
     manga: {
         __typename: 'MangaType';
         id: number;
@@ -591,6 +622,7 @@ export type GetChapterPagesFetchMutation = {
 export type UpdateChapterMutationVariables = Exact<{
     input: Types.UpdateChapterInput;
     getBookmarked: boolean;
+    getVisibility: boolean;
     getFillermarked: boolean;
     getRead: boolean;
     getLastPageRead: boolean;
@@ -612,6 +644,9 @@ export type UpdateChapterMutation = {
             isRead?: boolean;
             lastReadAt?: string;
             lastPageRead?: number;
+            bookmarkColor?: number;
+            isBlacklisted?: boolean;
+            isMergeHidden?: boolean;
             manga?: {
                 __typename: 'MangaType';
                 id: number;
@@ -621,6 +656,15 @@ export type UpdateChapterMutation = {
                 lastReadChapter: { __typename: 'ChapterType'; id: number } | null;
                 latestReadChapter: { __typename: 'ChapterType'; id: number } | null;
                 firstUnreadChapter: { __typename: 'ChapterType'; id: number } | null;
+                chapters: {
+                    __typename: 'ChapterNodeList';
+                    nodes: Array<{
+                        __typename: 'ChapterType';
+                        id: number;
+                        isBlacklisted: boolean;
+                        isMergeHidden: boolean;
+                    }>;
+                };
             };
         };
     } | null;
@@ -657,6 +701,7 @@ export type UpdateChapterMutation = {
 export type UpdateChaptersMutationVariables = Exact<{
     input: Types.UpdateChaptersInput;
     getBookmarked: boolean;
+    getVisibility: boolean;
     getFillermarked: boolean;
     getRead: boolean;
     getLastPageRead: boolean;
@@ -678,6 +723,9 @@ export type UpdateChaptersMutation = {
             isRead?: boolean;
             lastReadAt?: string;
             lastPageRead?: number;
+            bookmarkColor?: number;
+            isBlacklisted?: boolean;
+            isMergeHidden?: boolean;
             manga?: {
                 __typename: 'MangaType';
                 id: number;
@@ -687,6 +735,15 @@ export type UpdateChaptersMutation = {
                 lastReadChapter: { __typename: 'ChapterType'; id: number } | null;
                 latestReadChapter: { __typename: 'ChapterType'; id: number } | null;
                 firstUnreadChapter: { __typename: 'ChapterType'; id: number } | null;
+                chapters: {
+                    __typename: 'ChapterNodeList';
+                    nodes: Array<{
+                        __typename: 'ChapterType';
+                        id: number;
+                        isBlacklisted: boolean;
+                        isMergeHidden: boolean;
+                    }>;
+                };
             };
         }>;
     } | null;
@@ -783,6 +840,9 @@ export type GetChaptersReaderQuery = {
             isDownloaded: boolean;
             isBookmarked: boolean;
             isFillermarked: boolean;
+            bookmarkColor: number;
+            isBlacklisted: boolean;
+            isMergeHidden: boolean;
         }>;
         pageInfo: {
             __typename: 'PageInfo';
@@ -826,6 +886,9 @@ export type GetChaptersMangaQuery = {
             isDownloaded: boolean;
             isBookmarked: boolean;
             isFillermarked: boolean;
+            bookmarkColor: number;
+            isBlacklisted: boolean;
+            isMergeHidden: boolean;
         }>;
         pageInfo: {
             __typename: 'PageInfo';
@@ -870,6 +933,9 @@ export type GetChaptersUpdatesQuery = {
             isDownloaded: boolean;
             isBookmarked: boolean;
             isFillermarked: boolean;
+            bookmarkColor: number;
+            isBlacklisted: boolean;
+            isMergeHidden: boolean;
             manga: {
                 __typename: 'MangaType';
                 id: number;
@@ -929,6 +995,9 @@ export type GetChaptersHistoryQuery = {
             isDownloaded: boolean;
             isBookmarked: boolean;
             isFillermarked: boolean;
+            bookmarkColor: number;
+            isBlacklisted: boolean;
+            isMergeHidden: boolean;
             manga: {
                 __typename: 'MangaType';
                 id: number;
@@ -982,6 +1051,9 @@ export type GetMangasChapterIdsWithStateQuery = {
             isDownloaded: boolean;
             isBookmarked: boolean;
             isFillermarked: boolean;
+            bookmarkColor: number;
+            isBlacklisted: boolean;
+            isMergeHidden: boolean;
         }>;
         pageInfo: {
             __typename: 'PageInfo';
@@ -2353,6 +2425,9 @@ export type RefreshMangaMutation = {
             isDownloaded: boolean;
             isBookmarked: boolean;
             isFillermarked: boolean;
+            bookmarkColor: number;
+            isBlacklisted: boolean;
+            isMergeHidden: boolean;
         }>;
     } | null;
 };
@@ -3274,6 +3349,175 @@ export type ApplyMetadataMatchMutation = {
             chapters: { __typename: 'ChapterNodeList'; totalCount: number };
         };
     } | null;
+};
+
+export type MangaScanlatorSettingsFieldsFragment = {
+    __typename: 'MangaScanlatorSettingsType';
+    mangaId: number;
+    scanlatorPriority: Array<string>;
+    smartMergeMode: Types.SmartMergeMode;
+    smartMergeEnabled: boolean;
+    scanlatorRangeRules: Array<{ __typename: 'ScanlatorRangeRuleType'; from: number; to: number; scanlator: string }>;
+    blacklistedChapters: Array<{
+        __typename: 'BlacklistEntryType';
+        key: string;
+        chapterIds: Array<number>;
+        chapterNames: Array<string>;
+        chapterNumber: number | null;
+        scanlator: string | null;
+    }>;
+};
+
+export type GetMangaScanlatorSettingsQueryVariables = Exact<{
+    id: number;
+}>;
+
+export type GetMangaScanlatorSettingsQuery = {
+    __typename: 'Query';
+    manga: {
+        __typename: 'MangaType';
+        id: number;
+        scanlatorSettings: {
+            __typename: 'MangaScanlatorSettingsType';
+            mangaId: number;
+            scanlatorPriority: Array<string>;
+            smartMergeMode: Types.SmartMergeMode;
+            smartMergeEnabled: boolean;
+            scanlatorRangeRules: Array<{
+                __typename: 'ScanlatorRangeRuleType';
+                from: number;
+                to: number;
+                scanlator: string;
+            }>;
+            blacklistedChapters: Array<{
+                __typename: 'BlacklistEntryType';
+                key: string;
+                chapterIds: Array<number>;
+                chapterNames: Array<string>;
+                chapterNumber: number | null;
+                scanlator: string | null;
+            }>;
+        };
+    };
+};
+
+export type MangaVisibilityChangeFieldsFragment = {
+    __typename: 'MangaType';
+    id: number;
+    unreadCount: number;
+    bookmarkCount: number;
+    firstUnreadChapter: { __typename: 'ChapterType'; id: number } | null;
+    scanlatorSettings: {
+        __typename: 'MangaScanlatorSettingsType';
+        mangaId: number;
+        scanlatorPriority: Array<string>;
+        smartMergeMode: Types.SmartMergeMode;
+        smartMergeEnabled: boolean;
+        scanlatorRangeRules: Array<{
+            __typename: 'ScanlatorRangeRuleType';
+            from: number;
+            to: number;
+            scanlator: string;
+        }>;
+        blacklistedChapters: Array<{
+            __typename: 'BlacklistEntryType';
+            key: string;
+            chapterIds: Array<number>;
+            chapterNames: Array<string>;
+            chapterNumber: number | null;
+            scanlator: string | null;
+        }>;
+    };
+    chapters: {
+        __typename: 'ChapterNodeList';
+        nodes: Array<{ __typename: 'ChapterType'; id: number; isBlacklisted: boolean; isMergeHidden: boolean }>;
+    };
+};
+
+export type UpdateMangaScanlatorSettingsMutationVariables = Exact<{
+    input: Types.UpdateMangaScanlatorSettingsInput;
+}>;
+
+export type UpdateMangaScanlatorSettingsMutation = {
+    __typename: 'Mutation';
+    updateMangaScanlatorSettings: {
+        __typename: 'UpdateMangaScanlatorSettingsPayload';
+        manga: {
+            __typename: 'MangaType';
+            id: number;
+            unreadCount: number;
+            bookmarkCount: number;
+            firstUnreadChapter: { __typename: 'ChapterType'; id: number } | null;
+            scanlatorSettings: {
+                __typename: 'MangaScanlatorSettingsType';
+                mangaId: number;
+                scanlatorPriority: Array<string>;
+                smartMergeMode: Types.SmartMergeMode;
+                smartMergeEnabled: boolean;
+                scanlatorRangeRules: Array<{
+                    __typename: 'ScanlatorRangeRuleType';
+                    from: number;
+                    to: number;
+                    scanlator: string;
+                }>;
+                blacklistedChapters: Array<{
+                    __typename: 'BlacklistEntryType';
+                    key: string;
+                    chapterIds: Array<number>;
+                    chapterNames: Array<string>;
+                    chapterNumber: number | null;
+                    scanlator: string | null;
+                }>;
+            };
+            chapters: {
+                __typename: 'ChapterNodeList';
+                nodes: Array<{ __typename: 'ChapterType'; id: number; isBlacklisted: boolean; isMergeHidden: boolean }>;
+            };
+        };
+    };
+};
+
+export type CopyFillermarksToBlacklistMutationVariables = Exact<{
+    input: Types.CopyFillermarksToBlacklistInput;
+}>;
+
+export type CopyFillermarksToBlacklistMutation = {
+    __typename: 'Mutation';
+    copyFillermarksToBlacklist: {
+        __typename: 'UpdateMangaScanlatorSettingsPayload';
+        manga: {
+            __typename: 'MangaType';
+            id: number;
+            unreadCount: number;
+            bookmarkCount: number;
+            firstUnreadChapter: { __typename: 'ChapterType'; id: number } | null;
+            scanlatorSettings: {
+                __typename: 'MangaScanlatorSettingsType';
+                mangaId: number;
+                scanlatorPriority: Array<string>;
+                smartMergeMode: Types.SmartMergeMode;
+                smartMergeEnabled: boolean;
+                scanlatorRangeRules: Array<{
+                    __typename: 'ScanlatorRangeRuleType';
+                    from: number;
+                    to: number;
+                    scanlator: string;
+                }>;
+                blacklistedChapters: Array<{
+                    __typename: 'BlacklistEntryType';
+                    key: string;
+                    chapterIds: Array<number>;
+                    chapterNames: Array<string>;
+                    chapterNumber: number | null;
+                    scanlator: string | null;
+                }>;
+            };
+            chapters: {
+                __typename: 'ChapterNodeList';
+                nodes: Array<{ __typename: 'ChapterType'; id: number; isBlacklisted: boolean; isMergeHidden: boolean }>;
+            };
+        };
+    };
 };
 
 export type UpdateGlobalMetadataMutationVariables = Exact<{
@@ -4798,6 +5042,7 @@ export type TrackerBaseFieldsFragment = {
     icon: string;
     isLoggedIn: boolean;
     isTokenExpired: boolean;
+    supportsMangaMetadata: boolean;
 };
 
 export type TrackerSettingFieldsFragment = {
@@ -4808,6 +5053,7 @@ export type TrackerSettingFieldsFragment = {
     icon: string;
     isLoggedIn: boolean;
     isTokenExpired: boolean;
+    supportsMangaMetadata: boolean;
 };
 
 export type TrackerBindFieldsFragment = {
@@ -4820,6 +5066,7 @@ export type TrackerBindFieldsFragment = {
     name: string;
     isLoggedIn: boolean;
     isTokenExpired: boolean;
+    supportsMangaMetadata: boolean;
     statuses: Array<{ __typename: 'TrackStatusType'; name: string; value: number }>;
     trackRecords: {
         __typename: 'TrackRecordNodeList';
@@ -4890,6 +5137,7 @@ export type TrackerLoginOauthMutation = {
             icon: string;
             isLoggedIn: boolean;
             isTokenExpired: boolean;
+            supportsMangaMetadata: boolean;
         };
     };
 };
@@ -4911,6 +5159,7 @@ export type TrackerLoginCredentialsMutation = {
             icon: string;
             isLoggedIn: boolean;
             isTokenExpired: boolean;
+            supportsMangaMetadata: boolean;
         };
     };
 };
@@ -4931,6 +5180,7 @@ export type TrackerLogoutMutation = {
             icon: string;
             isLoggedIn: boolean;
             isTokenExpired: boolean;
+            supportsMangaMetadata: boolean;
         };
     };
 };
@@ -5094,6 +5344,40 @@ export type TrackerFetchBindMutation = {
     };
 };
 
+export type TrackerUpdateUnifiedMutationVariables = Exact<{
+    input: Types.UpdateTrackRecordsUnifiedInput;
+}>;
+
+export type TrackerUpdateUnifiedMutation = {
+    __typename: 'Mutation';
+    updateTrackRecordsUnified: {
+        __typename: 'UpdateTrackRecordsUnifiedPayload';
+        results: Array<{
+            __typename: 'UnifiedTrackEditResultType';
+            recordId: number;
+            trackerId: number;
+            outcome: Types.Outcome;
+            messages: Array<string>;
+        }>;
+        trackRecords: Array<{
+            __typename: 'TrackRecordType';
+            id: number;
+            remoteId: string;
+            trackerId: number;
+            remoteUrl: string;
+            title: string;
+            status: number;
+            lastChapterRead: number;
+            totalChapters: number;
+            score: number;
+            displayScore: string;
+            startDate: string;
+            finishDate: string;
+            private: boolean;
+        }>;
+    };
+};
+
 export type GetTrackersSettingsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetTrackersSettingsQuery = {
@@ -5116,6 +5400,7 @@ export type GetTrackersSettingsQuery = {
             icon: string;
             isLoggedIn: boolean;
             isTokenExpired: boolean;
+            supportsMangaMetadata: boolean;
         }>;
     };
 };
@@ -5144,6 +5429,7 @@ export type GetTrackersBindQuery = {
             name: string;
             isLoggedIn: boolean;
             isTokenExpired: boolean;
+            supportsMangaMetadata: boolean;
             statuses: Array<{ __typename: 'TrackStatusType'; name: string; value: number }>;
             trackRecords: {
                 __typename: 'TrackRecordNodeList';
@@ -5191,6 +5477,26 @@ export type TrackerSearchQuery = {
             score: number;
             totalChapters: number;
         }>;
+    };
+};
+
+export type GetTrackerMangaMetadataQueryVariables = Exact<{
+    mangaId: number;
+    trackerId: number;
+}>;
+
+export type GetTrackerMangaMetadataQuery = {
+    __typename: 'Query';
+    trackerMangaMetadata: {
+        __typename: 'TrackerMangaMetadataType';
+        trackerId: number;
+        title: string | null;
+        author: string | null;
+        artist: string | null;
+        description: string | null;
+        genre: Array<string>;
+        status: Types.MangaStatus | null;
+        thumbnailUrl: string | null;
     };
 };
 

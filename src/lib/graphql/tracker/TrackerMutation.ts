@@ -144,3 +144,22 @@ export const TRACKER_FETCH_BIND = gql`
         }
     }
 `;
+
+// fork (Komikku port): one edit for every tracker of a manga
+export const TRACKER_UPDATE_UNIFIED = gql`
+    ${TRACK_RECORD_BIND_FIELDS}
+
+    mutation TRACKER_UPDATE_UNIFIED($input: UpdateTrackRecordsUnifiedInput!) {
+        updateTrackRecordsUnified(input: $input) {
+            results {
+                recordId
+                trackerId
+                outcome
+                messages
+            }
+            trackRecords {
+                ...TRACK_RECORD_BIND_FIELDS
+            }
+        }
+    }
+`;

@@ -56,3 +56,19 @@ export const TRACKER_SEARCH = gql`
         }
     }
 `;
+
+// fork (Komikku port): metadata of a tracker binding, to fill the metadata editor
+export const GET_TRACKER_MANGA_METADATA = gql`
+    query GET_TRACKER_MANGA_METADATA($mangaId: Int!, $trackerId: Int!) {
+        trackerMangaMetadata(mangaId: $mangaId, trackerId: $trackerId) {
+            trackerId
+            title
+            author
+            artist
+            description
+            genre
+            status
+            thumbnailUrl
+        }
+    }
+`;

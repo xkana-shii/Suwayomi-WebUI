@@ -82,6 +82,21 @@ export type BindTrackRecordPayloadFieldPolicy = {
     clientMutationId?: FieldPolicy<any> | FieldReadFunction<any>;
     trackRecord?: FieldPolicy<any> | FieldReadFunction<any>;
 };
+export type BlacklistEntryTypeKeySpecifier = (
+    | 'chapterIds'
+    | 'chapterNames'
+    | 'chapterNumber'
+    | 'key'
+    | 'scanlator'
+    | BlacklistEntryTypeKeySpecifier
+)[];
+export type BlacklistEntryTypeFieldPolicy = {
+    chapterIds?: FieldPolicy<any> | FieldReadFunction<any>;
+    chapterNames?: FieldPolicy<any> | FieldReadFunction<any>;
+    chapterNumber?: FieldPolicy<any> | FieldReadFunction<any>;
+    key?: FieldPolicy<any> | FieldReadFunction<any>;
+    scanlator?: FieldPolicy<any> | FieldReadFunction<any>;
+};
 export type CategoryEdgeKeySpecifier = ('cursor' | 'node' | CategoryEdgeKeySpecifier)[];
 export type CategoryEdgeFieldPolicy = {
     cursor?: FieldPolicy<any> | FieldReadFunction<any>;
@@ -123,6 +138,9 @@ export type CategoryTypeKeySpecifier = (
     | 'meta'
     | 'name'
     | 'order'
+    | 'parentId'
+    | 'subtreeMangaCount'
+    | 'trackStatus'
     | CategoryTypeKeySpecifier
 )[];
 export type CategoryTypeFieldPolicy = {
@@ -135,6 +153,9 @@ export type CategoryTypeFieldPolicy = {
     meta?: FieldPolicy<any> | FieldReadFunction<any>;
     name?: FieldPolicy<any> | FieldReadFunction<any>;
     order?: FieldPolicy<any> | FieldReadFunction<any>;
+    parentId?: FieldPolicy<any> | FieldReadFunction<any>;
+    subtreeMangaCount?: FieldPolicy<any> | FieldReadFunction<any>;
+    trackStatus?: FieldPolicy<any> | FieldReadFunction<any>;
 };
 export type CategoryUpdateTypeKeySpecifier = ('category' | 'status' | CategoryUpdateTypeKeySpecifier)[];
 export type CategoryUpdateTypeFieldPolicy = {
@@ -167,12 +188,16 @@ export type ChapterNodeListFieldPolicy = {
     totalCount?: FieldPolicy<any> | FieldReadFunction<any>;
 };
 export type ChapterTypeKeySpecifier = (
+    | 'bookmarkColor'
     | 'chapterNumber'
     | 'fetchedAt'
     | 'id'
+    | 'isBlacklisted'
     | 'isBookmarked'
     | 'isDownloaded'
     | 'isFillermarked'
+    | 'isHidden'
+    | 'isMergeHidden'
     | 'isRead'
     | 'lastPageRead'
     | 'lastReadAt'
@@ -190,12 +215,16 @@ export type ChapterTypeKeySpecifier = (
     | ChapterTypeKeySpecifier
 )[];
 export type ChapterTypeFieldPolicy = {
+    bookmarkColor?: FieldPolicy<any> | FieldReadFunction<any>;
     chapterNumber?: FieldPolicy<any> | FieldReadFunction<any>;
     fetchedAt?: FieldPolicy<any> | FieldReadFunction<any>;
     id?: FieldPolicy<any> | FieldReadFunction<any>;
+    isBlacklisted?: FieldPolicy<any> | FieldReadFunction<any>;
     isBookmarked?: FieldPolicy<any> | FieldReadFunction<any>;
     isDownloaded?: FieldPolicy<any> | FieldReadFunction<any>;
     isFillermarked?: FieldPolicy<any> | FieldReadFunction<any>;
+    isHidden?: FieldPolicy<any> | FieldReadFunction<any>;
+    isMergeHidden?: FieldPolicy<any> | FieldReadFunction<any>;
     isRead?: FieldPolicy<any> | FieldReadFunction<any>;
     lastPageRead?: FieldPolicy<any> | FieldReadFunction<any>;
     lastReadAt?: FieldPolicy<any> | FieldReadFunction<any>;
@@ -212,20 +241,26 @@ export type ChapterTypeFieldPolicy = {
     user?: FieldPolicy<any> | FieldReadFunction<any>;
 };
 export type ChapterUserTypeKeySpecifier = (
+    | 'bookmarkColor'
     | 'chapterId'
+    | 'isBlacklisted'
     | 'isBookmarked'
     | 'isDownloaded'
     | 'isFillermarked'
+    | 'isMergeHidden'
     | 'isRead'
     | 'lastPageRead'
     | 'lastReadAt'
     | ChapterUserTypeKeySpecifier
 )[];
 export type ChapterUserTypeFieldPolicy = {
+    bookmarkColor?: FieldPolicy<any> | FieldReadFunction<any>;
     chapterId?: FieldPolicy<any> | FieldReadFunction<any>;
+    isBlacklisted?: FieldPolicy<any> | FieldReadFunction<any>;
     isBookmarked?: FieldPolicy<any> | FieldReadFunction<any>;
     isDownloaded?: FieldPolicy<any> | FieldReadFunction<any>;
     isFillermarked?: FieldPolicy<any> | FieldReadFunction<any>;
+    isMergeHidden?: FieldPolicy<any> | FieldReadFunction<any>;
     isRead?: FieldPolicy<any> | FieldReadFunction<any>;
     lastPageRead?: FieldPolicy<any> | FieldReadFunction<any>;
     lastReadAt?: FieldPolicy<any> | FieldReadFunction<any>;
@@ -958,6 +993,23 @@ export type MangaNodeListFieldPolicy = {
     pageInfo?: FieldPolicy<any> | FieldReadFunction<any>;
     totalCount?: FieldPolicy<any> | FieldReadFunction<any>;
 };
+export type MangaScanlatorSettingsTypeKeySpecifier = (
+    | 'blacklistedChapters'
+    | 'mangaId'
+    | 'scanlatorPriority'
+    | 'scanlatorRangeRules'
+    | 'smartMergeEnabled'
+    | 'smartMergeMode'
+    | MangaScanlatorSettingsTypeKeySpecifier
+)[];
+export type MangaScanlatorSettingsTypeFieldPolicy = {
+    blacklistedChapters?: FieldPolicy<any> | FieldReadFunction<any>;
+    mangaId?: FieldPolicy<any> | FieldReadFunction<any>;
+    scanlatorPriority?: FieldPolicy<any> | FieldReadFunction<any>;
+    scanlatorRangeRules?: FieldPolicy<any> | FieldReadFunction<any>;
+    smartMergeEnabled?: FieldPolicy<any> | FieldReadFunction<any>;
+    smartMergeMode?: FieldPolicy<any> | FieldReadFunction<any>;
+};
 export type MangaTypeKeySpecifier = (
     | 'age'
     | 'artist'
@@ -985,6 +1037,7 @@ export type MangaTypeKeySpecifier = (
     | 'latestUploadedChapter'
     | 'meta'
     | 'realUrl'
+    | 'scanlatorSettings'
     | 'source'
     | 'sourceId'
     | 'status'
@@ -1025,6 +1078,7 @@ export type MangaTypeFieldPolicy = {
     latestUploadedChapter?: FieldPolicy<any> | FieldReadFunction<any>;
     meta?: FieldPolicy<any> | FieldReadFunction<any>;
     realUrl?: FieldPolicy<any> | FieldReadFunction<any>;
+    scanlatorSettings?: FieldPolicy<any> | FieldReadFunction<any>;
     source?: FieldPolicy<any> | FieldReadFunction<any>;
     sourceId?: FieldPolicy<any> | FieldReadFunction<any>;
     status?: FieldPolicy<any> | FieldReadFunction<any>;
@@ -1131,6 +1185,7 @@ export type MutationKeySpecifier = (
     | 'clearDatabase'
     | 'clearDownloader'
     | 'connectKoSyncAccount'
+    | 'copyFillermarksToBlacklist'
     | 'createBackup'
     | 'createBackupAsync'
     | 'createCategory'
@@ -1215,11 +1270,13 @@ export type MutationKeySpecifier = (
     | 'updateManga'
     | 'updateMangaCategories'
     | 'updateMangaDetails'
+    | 'updateMangaScanlatorSettings'
     | 'updateMangas'
     | 'updateMangasCategories'
     | 'updateSourcePreference'
     | 'updateStop'
     | 'updateTrack'
+    | 'updateTrackRecordsUnified'
     | 'updateUser'
     | 'updateWebUI'
     | 'uploadMangaCover'
@@ -1235,6 +1292,7 @@ export type MutationFieldPolicy = {
     clearDatabase?: FieldPolicy<any> | FieldReadFunction<any>;
     clearDownloader?: FieldPolicy<any> | FieldReadFunction<any>;
     connectKoSyncAccount?: FieldPolicy<any> | FieldReadFunction<any>;
+    copyFillermarksToBlacklist?: FieldPolicy<any> | FieldReadFunction<any>;
     createBackup?: FieldPolicy<any> | FieldReadFunction<any>;
     createBackupAsync?: FieldPolicy<any> | FieldReadFunction<any>;
     createCategory?: FieldPolicy<any> | FieldReadFunction<any>;
@@ -1319,11 +1377,13 @@ export type MutationFieldPolicy = {
     updateManga?: FieldPolicy<any> | FieldReadFunction<any>;
     updateMangaCategories?: FieldPolicy<any> | FieldReadFunction<any>;
     updateMangaDetails?: FieldPolicy<any> | FieldReadFunction<any>;
+    updateMangaScanlatorSettings?: FieldPolicy<any> | FieldReadFunction<any>;
     updateMangas?: FieldPolicy<any> | FieldReadFunction<any>;
     updateMangasCategories?: FieldPolicy<any> | FieldReadFunction<any>;
     updateSourcePreference?: FieldPolicy<any> | FieldReadFunction<any>;
     updateStop?: FieldPolicy<any> | FieldReadFunction<any>;
     updateTrack?: FieldPolicy<any> | FieldReadFunction<any>;
+    updateTrackRecordsUnified?: FieldPolicy<any> | FieldReadFunction<any>;
     updateUser?: FieldPolicy<any> | FieldReadFunction<any>;
     updateWebUI?: FieldPolicy<any> | FieldReadFunction<any>;
     uploadMangaCover?: FieldPolicy<any> | FieldReadFunction<any>;
@@ -1583,6 +1643,7 @@ export type PartialUserSettingsTypeKeySpecifier = (
     | 'opdsSkipChapterMetadataFeed'
     | 'opdsUseBinaryFileSizes'
     | 'serveConversions'
+    | 'smartScanlatorMerge'
     | 'syncDataCategories'
     | 'syncDataChapters'
     | 'syncDataHistory'
@@ -1617,6 +1678,7 @@ export type PartialUserSettingsTypeFieldPolicy = {
     opdsSkipChapterMetadataFeed?: FieldPolicy<any> | FieldReadFunction<any>;
     opdsUseBinaryFileSizes?: FieldPolicy<any> | FieldReadFunction<any>;
     serveConversions?: FieldPolicy<any> | FieldReadFunction<any>;
+    smartScanlatorMerge?: FieldPolicy<any> | FieldReadFunction<any>;
     syncDataCategories?: FieldPolicy<any> | FieldReadFunction<any>;
     syncDataChapters?: FieldPolicy<any> | FieldReadFunction<any>;
     syncDataHistory?: FieldPolicy<any> | FieldReadFunction<any>;
@@ -1689,6 +1751,7 @@ export type QueryKeySpecifier = (
     | 'trackRecord'
     | 'trackRecords'
     | 'tracker'
+    | 'trackerMangaMetadata'
     | 'trackers'
     | 'updateStatus'
     | 'user'
@@ -1730,6 +1793,7 @@ export type QueryFieldPolicy = {
     trackRecord?: FieldPolicy<any> | FieldReadFunction<any>;
     trackRecords?: FieldPolicy<any> | FieldReadFunction<any>;
     tracker?: FieldPolicy<any> | FieldReadFunction<any>;
+    trackerMangaMetadata?: FieldPolicy<any> | FieldReadFunction<any>;
     trackers?: FieldPolicy<any> | FieldReadFunction<any>;
     updateStatus?: FieldPolicy<any> | FieldReadFunction<any>;
     user?: FieldPolicy<any> | FieldReadFunction<any>;
@@ -1828,6 +1892,12 @@ export type RestoreBackupPayloadFieldPolicy = {
 export type RevokeUserCodePayloadKeySpecifier = ('clientMutationId' | RevokeUserCodePayloadKeySpecifier)[];
 export type RevokeUserCodePayloadFieldPolicy = {
     clientMutationId?: FieldPolicy<any> | FieldReadFunction<any>;
+};
+export type ScanlatorRangeRuleTypeKeySpecifier = ('from' | 'scanlator' | 'to' | ScanlatorRangeRuleTypeKeySpecifier)[];
+export type ScanlatorRangeRuleTypeFieldPolicy = {
+    from?: FieldPolicy<any> | FieldReadFunction<any>;
+    scanlator?: FieldPolicy<any> | FieldReadFunction<any>;
+    to?: FieldPolicy<any> | FieldReadFunction<any>;
 };
 export type SearchMetadataProviderPayloadKeySpecifier = (
     | 'clientMutationId'
@@ -2689,6 +2759,27 @@ export type TrackerEdgeFieldPolicy = {
     cursor?: FieldPolicy<any> | FieldReadFunction<any>;
     node?: FieldPolicy<any> | FieldReadFunction<any>;
 };
+export type TrackerMangaMetadataTypeKeySpecifier = (
+    | 'artist'
+    | 'author'
+    | 'description'
+    | 'genre'
+    | 'status'
+    | 'thumbnailUrl'
+    | 'title'
+    | 'trackerId'
+    | TrackerMangaMetadataTypeKeySpecifier
+)[];
+export type TrackerMangaMetadataTypeFieldPolicy = {
+    artist?: FieldPolicy<any> | FieldReadFunction<any>;
+    author?: FieldPolicy<any> | FieldReadFunction<any>;
+    description?: FieldPolicy<any> | FieldReadFunction<any>;
+    genre?: FieldPolicy<any> | FieldReadFunction<any>;
+    status?: FieldPolicy<any> | FieldReadFunction<any>;
+    thumbnailUrl?: FieldPolicy<any> | FieldReadFunction<any>;
+    title?: FieldPolicy<any> | FieldReadFunction<any>;
+    trackerId?: FieldPolicy<any> | FieldReadFunction<any>;
+};
 export type TrackerNodeListKeySpecifier = (
     | 'edges'
     | 'nodes'
@@ -2711,6 +2802,7 @@ export type TrackerTypeKeySpecifier = (
     | 'name'
     | 'scores'
     | 'statuses'
+    | 'supportsMangaMetadata'
     | 'supportsPrivateTracking'
     | 'supportsReadingDates'
     | 'supportsTrackDeletion'
@@ -2726,6 +2818,7 @@ export type TrackerTypeFieldPolicy = {
     name?: FieldPolicy<any> | FieldReadFunction<any>;
     scores?: FieldPolicy<any> | FieldReadFunction<any>;
     statuses?: FieldPolicy<any> | FieldReadFunction<any>;
+    supportsMangaMetadata?: FieldPolicy<any> | FieldReadFunction<any>;
     supportsPrivateTracking?: FieldPolicy<any> | FieldReadFunction<any>;
     supportsReadingDates?: FieldPolicy<any> | FieldReadFunction<any>;
     supportsTrackDeletion?: FieldPolicy<any> | FieldReadFunction<any>;
@@ -2740,6 +2833,19 @@ export type UnbindTrackPayloadKeySpecifier = ('clientMutationId' | 'trackRecord'
 export type UnbindTrackPayloadFieldPolicy = {
     clientMutationId?: FieldPolicy<any> | FieldReadFunction<any>;
     trackRecord?: FieldPolicy<any> | FieldReadFunction<any>;
+};
+export type UnifiedTrackEditResultTypeKeySpecifier = (
+    | 'messages'
+    | 'outcome'
+    | 'recordId'
+    | 'trackerId'
+    | UnifiedTrackEditResultTypeKeySpecifier
+)[];
+export type UnifiedTrackEditResultTypeFieldPolicy = {
+    messages?: FieldPolicy<any> | FieldReadFunction<any>;
+    outcome?: FieldPolicy<any> | FieldReadFunction<any>;
+    recordId?: FieldPolicy<any> | FieldReadFunction<any>;
+    trackerId?: FieldPolicy<any> | FieldReadFunction<any>;
 };
 export type UpdateCategoriesPayloadKeySpecifier = (
     | 'categories'
@@ -2842,6 +2948,17 @@ export type UpdateMangaPayloadFieldPolicy = {
     clientMutationId?: FieldPolicy<any> | FieldReadFunction<any>;
     manga?: FieldPolicy<any> | FieldReadFunction<any>;
 };
+export type UpdateMangaScanlatorSettingsPayloadKeySpecifier = (
+    | 'clientMutationId'
+    | 'manga'
+    | 'scanlatorSettings'
+    | UpdateMangaScanlatorSettingsPayloadKeySpecifier
+)[];
+export type UpdateMangaScanlatorSettingsPayloadFieldPolicy = {
+    clientMutationId?: FieldPolicy<any> | FieldReadFunction<any>;
+    manga?: FieldPolicy<any> | FieldReadFunction<any>;
+    scanlatorSettings?: FieldPolicy<any> | FieldReadFunction<any>;
+};
 export type UpdateMangasCategoriesPayloadKeySpecifier = (
     | 'clientMutationId'
     | 'mangas'
@@ -2904,6 +3021,17 @@ export type UpdateTrackPayloadKeySpecifier = ('clientMutationId' | 'trackRecord'
 export type UpdateTrackPayloadFieldPolicy = {
     clientMutationId?: FieldPolicy<any> | FieldReadFunction<any>;
     trackRecord?: FieldPolicy<any> | FieldReadFunction<any>;
+};
+export type UpdateTrackRecordsUnifiedPayloadKeySpecifier = (
+    | 'clientMutationId'
+    | 'results'
+    | 'trackRecords'
+    | UpdateTrackRecordsUnifiedPayloadKeySpecifier
+)[];
+export type UpdateTrackRecordsUnifiedPayloadFieldPolicy = {
+    clientMutationId?: FieldPolicy<any> | FieldReadFunction<any>;
+    results?: FieldPolicy<any> | FieldReadFunction<any>;
+    trackRecords?: FieldPolicy<any> | FieldReadFunction<any>;
 };
 export type UpdateUserPayloadKeySpecifier = ('clientMutationId' | 'user' | UpdateUserPayloadKeySpecifier)[];
 export type UpdateUserPayloadFieldPolicy = {
@@ -3002,6 +3130,7 @@ export type UserSettingsKeySpecifier = (
     | 'opdsSkipChapterMetadataFeed'
     | 'opdsUseBinaryFileSizes'
     | 'serveConversions'
+    | 'smartScanlatorMerge'
     | 'syncDataCategories'
     | 'syncDataChapters'
     | 'syncDataHistory'
@@ -3036,6 +3165,7 @@ export type UserSettingsFieldPolicy = {
     opdsSkipChapterMetadataFeed?: FieldPolicy<any> | FieldReadFunction<any>;
     opdsUseBinaryFileSizes?: FieldPolicy<any> | FieldReadFunction<any>;
     serveConversions?: FieldPolicy<any> | FieldReadFunction<any>;
+    smartScanlatorMerge?: FieldPolicy<any> | FieldReadFunction<any>;
     syncDataCategories?: FieldPolicy<any> | FieldReadFunction<any>;
     syncDataChapters?: FieldPolicy<any> | FieldReadFunction<any>;
     syncDataHistory?: FieldPolicy<any> | FieldReadFunction<any>;
@@ -3069,6 +3199,7 @@ export type UserSettingsTypeKeySpecifier = (
     | 'opdsSkipChapterMetadataFeed'
     | 'opdsUseBinaryFileSizes'
     | 'serveConversions'
+    | 'smartScanlatorMerge'
     | 'syncDataCategories'
     | 'syncDataChapters'
     | 'syncDataHistory'
@@ -3103,6 +3234,7 @@ export type UserSettingsTypeFieldPolicy = {
     opdsSkipChapterMetadataFeed?: FieldPolicy<any> | FieldReadFunction<any>;
     opdsUseBinaryFileSizes?: FieldPolicy<any> | FieldReadFunction<any>;
     serveConversions?: FieldPolicy<any> | FieldReadFunction<any>;
+    smartScanlatorMerge?: FieldPolicy<any> | FieldReadFunction<any>;
     syncDataCategories?: FieldPolicy<any> | FieldReadFunction<any>;
     syncDataChapters?: FieldPolicy<any> | FieldReadFunction<any>;
     syncDataHistory?: FieldPolicy<any> | FieldReadFunction<any>;
@@ -3199,6 +3331,10 @@ export type StrictTypedTypePolicies = {
     BindTrackRecordPayload?: Omit<TypePolicy, 'fields' | 'keyFields'> & {
         keyFields?: false | BindTrackRecordPayloadKeySpecifier | (() => undefined | BindTrackRecordPayloadKeySpecifier);
         fields?: BindTrackRecordPayloadFieldPolicy;
+    };
+    BlacklistEntryType?: Omit<TypePolicy, 'fields' | 'keyFields'> & {
+        keyFields?: false | BlacklistEntryTypeKeySpecifier | (() => undefined | BlacklistEntryTypeKeySpecifier);
+        fields?: BlacklistEntryTypeFieldPolicy;
     };
     CategoryEdge?: Omit<TypePolicy, 'fields' | 'keyFields'> & {
         keyFields?: false | CategoryEdgeKeySpecifier | (() => undefined | CategoryEdgeKeySpecifier);
@@ -3617,6 +3753,13 @@ export type StrictTypedTypePolicies = {
         keyFields?: false | MangaNodeListKeySpecifier | (() => undefined | MangaNodeListKeySpecifier);
         fields?: MangaNodeListFieldPolicy;
     };
+    MangaScanlatorSettingsType?: Omit<TypePolicy, 'fields' | 'keyFields'> & {
+        keyFields?:
+            | false
+            | MangaScanlatorSettingsTypeKeySpecifier
+            | (() => undefined | MangaScanlatorSettingsTypeKeySpecifier);
+        fields?: MangaScanlatorSettingsTypeFieldPolicy;
+    };
     MangaType?: Omit<TypePolicy, 'fields' | 'keyFields'> & {
         keyFields?: false | MangaTypeKeySpecifier | (() => undefined | MangaTypeKeySpecifier);
         fields?: MangaTypeFieldPolicy;
@@ -3761,6 +3904,10 @@ export type StrictTypedTypePolicies = {
     RevokeUserCodePayload?: Omit<TypePolicy, 'fields' | 'keyFields'> & {
         keyFields?: false | RevokeUserCodePayloadKeySpecifier | (() => undefined | RevokeUserCodePayloadKeySpecifier);
         fields?: RevokeUserCodePayloadFieldPolicy;
+    };
+    ScanlatorRangeRuleType?: Omit<TypePolicy, 'fields' | 'keyFields'> & {
+        keyFields?: false | ScanlatorRangeRuleTypeKeySpecifier | (() => undefined | ScanlatorRangeRuleTypeKeySpecifier);
+        fields?: ScanlatorRangeRuleTypeFieldPolicy;
     };
     SearchMetadataProviderPayload?: Omit<TypePolicy, 'fields' | 'keyFields'> & {
         keyFields?:
@@ -3960,6 +4107,13 @@ export type StrictTypedTypePolicies = {
         keyFields?: false | TrackerEdgeKeySpecifier | (() => undefined | TrackerEdgeKeySpecifier);
         fields?: TrackerEdgeFieldPolicy;
     };
+    TrackerMangaMetadataType?: Omit<TypePolicy, 'fields' | 'keyFields'> & {
+        keyFields?:
+            | false
+            | TrackerMangaMetadataTypeKeySpecifier
+            | (() => undefined | TrackerMangaMetadataTypeKeySpecifier);
+        fields?: TrackerMangaMetadataTypeFieldPolicy;
+    };
     TrackerNodeList?: Omit<TypePolicy, 'fields' | 'keyFields'> & {
         keyFields?: false | TrackerNodeListKeySpecifier | (() => undefined | TrackerNodeListKeySpecifier);
         fields?: TrackerNodeListFieldPolicy;
@@ -3975,6 +4129,13 @@ export type StrictTypedTypePolicies = {
     UnbindTrackPayload?: Omit<TypePolicy, 'fields' | 'keyFields'> & {
         keyFields?: false | UnbindTrackPayloadKeySpecifier | (() => undefined | UnbindTrackPayloadKeySpecifier);
         fields?: UnbindTrackPayloadFieldPolicy;
+    };
+    UnifiedTrackEditResultType?: Omit<TypePolicy, 'fields' | 'keyFields'> & {
+        keyFields?:
+            | false
+            | UnifiedTrackEditResultTypeKeySpecifier
+            | (() => undefined | UnifiedTrackEditResultTypeKeySpecifier);
+        fields?: UnifiedTrackEditResultTypeFieldPolicy;
     };
     UpdateCategoriesPayload?: Omit<TypePolicy, 'fields' | 'keyFields'> & {
         keyFields?:
@@ -4049,6 +4210,13 @@ export type StrictTypedTypePolicies = {
         keyFields?: false | UpdateMangaPayloadKeySpecifier | (() => undefined | UpdateMangaPayloadKeySpecifier);
         fields?: UpdateMangaPayloadFieldPolicy;
     };
+    UpdateMangaScanlatorSettingsPayload?: Omit<TypePolicy, 'fields' | 'keyFields'> & {
+        keyFields?:
+            | false
+            | UpdateMangaScanlatorSettingsPayloadKeySpecifier
+            | (() => undefined | UpdateMangaScanlatorSettingsPayloadKeySpecifier);
+        fields?: UpdateMangaScanlatorSettingsPayloadFieldPolicy;
+    };
     UpdateMangasCategoriesPayload?: Omit<TypePolicy, 'fields' | 'keyFields'> & {
         keyFields?:
             | false
@@ -4089,6 +4257,13 @@ export type StrictTypedTypePolicies = {
     UpdateTrackPayload?: Omit<TypePolicy, 'fields' | 'keyFields'> & {
         keyFields?: false | UpdateTrackPayloadKeySpecifier | (() => undefined | UpdateTrackPayloadKeySpecifier);
         fields?: UpdateTrackPayloadFieldPolicy;
+    };
+    UpdateTrackRecordsUnifiedPayload?: Omit<TypePolicy, 'fields' | 'keyFields'> & {
+        keyFields?:
+            | false
+            | UpdateTrackRecordsUnifiedPayloadKeySpecifier
+            | (() => undefined | UpdateTrackRecordsUnifiedPayloadKeySpecifier);
+        fields?: UpdateTrackRecordsUnifiedPayloadFieldPolicy;
     };
     UpdateUserPayload?: Omit<TypePolicy, 'fields' | 'keyFields'> & {
         keyFields?: false | UpdateUserPayloadKeySpecifier | (() => undefined | UpdateUserPayloadKeySpecifier);

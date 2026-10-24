@@ -34,6 +34,7 @@ export const UPDATE_CHAPTER = gql`
     mutation UPDATE_CHAPTER(
         $input: UpdateChapterInput!
         $getBookmarked: Boolean!
+        $getVisibility: Boolean!
         $getFillermarked: Boolean!
         $getRead: Boolean!
         $getLastPageRead: Boolean!
@@ -71,6 +72,26 @@ export const UPDATE_CHAPTER = gql`
                     id
                     fillermarkCount
                 }
+                # fork: bookmark colors and the blacklist; blacklisting can change which duplicates Smart Merge shows
+                bookmarkColor @include(if: $getVisibility)
+                isBookmarked @include(if: $getVisibility)
+                isBlacklisted @include(if: $getVisibility)
+                isMergeHidden @include(if: $getVisibility)
+                manga @include(if: $getVisibility) {
+                    id
+                    unreadCount
+                    bookmarkCount
+                    firstUnreadChapter {
+                        id
+                    }
+                    chapters {
+                        nodes {
+                            id
+                            isBlacklisted
+                            isMergeHidden
+                        }
+                    }
+                }
             }
         }
         deleteDownloadedChapter(input: { id: $chapterIdToDelete }) @include(if: $deleteChapter) {
@@ -97,6 +118,7 @@ export const UPDATE_CHAPTERS = gql`
     mutation UPDATE_CHAPTERS(
         $input: UpdateChaptersInput!
         $getBookmarked: Boolean!
+        $getVisibility: Boolean!
         $getFillermarked: Boolean!
         $getRead: Boolean!
         $getLastPageRead: Boolean!
@@ -133,6 +155,26 @@ export const UPDATE_CHAPTERS = gql`
                 manga @include(if: $getFillermarked) {
                     id
                     fillermarkCount
+                }
+                # fork: bookmark colors and the blacklist; blacklisting can change which duplicates Smart Merge shows
+                bookmarkColor @include(if: $getVisibility)
+                isBookmarked @include(if: $getVisibility)
+                isBlacklisted @include(if: $getVisibility)
+                isMergeHidden @include(if: $getVisibility)
+                manga @include(if: $getVisibility) {
+                    id
+                    unreadCount
+                    bookmarkCount
+                    firstUnreadChapter {
+                        id
+                    }
+                    chapters {
+                        nodes {
+                            id
+                            isBlacklisted
+                            isMergeHidden
+                        }
+                    }
                 }
             }
         }

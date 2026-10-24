@@ -128,6 +128,18 @@ export type BindTrackRecordPayload = {
     trackRecord: TrackRecordType;
 };
 
+export type BlacklistEntryType = {
+    __typename?: 'BlacklistEntryType';
+    /** Current chapters the entry hides (empty when the chapter is gone from the source) */
+    chapterIds: Array<Scalars['Int']['output']>;
+    chapterNames: Array<Scalars['String']['output']>;
+    /** Number and scanlator recorded in the key, to describe entries without a current chapter */
+    chapterNumber?: Maybe<Scalars['Float']['output']>;
+    /** The stored key; pass it to updateMangaScanlatorSettings.removeBlacklistEntries */
+    key: Scalars['String']['output'];
+    scanlator?: Maybe<Scalars['String']['output']>;
+};
+
 export type BooleanFilterInput = {
     distinctFrom?: InputMaybe<Scalars['Boolean']['input']>;
     distinctFromAll?: InputMaybe<Array<Scalars['Boolean']['input']>>;
@@ -220,6 +232,12 @@ export type CategoryType = {
     meta: Array<CategoryMetaType>;
     name: Scalars['String']['output'];
     order: Scalars['Int']['output'];
+    /** The parent category; null for top level categories */
+    parentId?: Maybe<Scalars['Int']['output']>;
+    /** fork: library manga in this category or any of its subcategories, each counted once */
+    subtreeMangaCount: Scalars['Int']['output'];
+    /** Smart Category binding: the unified tracker status (see UnifiedTrackStatus) this category follows */
+    trackStatus?: Maybe<Scalars['Int']['output']>;
 };
 
 export type CategoryUpdateType = {
@@ -235,12 +253,15 @@ export enum CbzMediaType {
 }
 
 export type ChapterConditionInput = {
+    bookmarkColor?: InputMaybe<Scalars['Int']['input']>;
     chapterNumber?: InputMaybe<Scalars['Float']['input']>;
     fetchedAt?: InputMaybe<Scalars['LongString']['input']>;
     id?: InputMaybe<Scalars['Int']['input']>;
+    isBlacklisted?: InputMaybe<Scalars['Boolean']['input']>;
     isBookmarked?: InputMaybe<Scalars['Boolean']['input']>;
     isDownloaded?: InputMaybe<Scalars['Boolean']['input']>;
     isFillermarked?: InputMaybe<Scalars['Boolean']['input']>;
+    isMergeHidden?: InputMaybe<Scalars['Boolean']['input']>;
     isRead?: InputMaybe<Scalars['Boolean']['input']>;
     lastPageRead?: InputMaybe<Scalars['Int']['input']>;
     lastReadAt?: InputMaybe<Scalars['LongString']['input']>;
@@ -267,13 +288,18 @@ export type ChapterEdge = Edge & {
 
 export type ChapterFilterInput = {
     and?: InputMaybe<Array<ChapterFilterInput>>;
+    bookmarkColor?: InputMaybe<IntFilterInput>;
     chapterNumber?: InputMaybe<DoubleFilterInput>;
     fetchedAt?: InputMaybe<LongFilterInput>;
     id?: InputMaybe<IntFilterInput>;
     inLibrary?: InputMaybe<BooleanFilterInput>;
+    isBlacklisted?: InputMaybe<BooleanFilterInput>;
     isBookmarked?: InputMaybe<BooleanFilterInput>;
     isDownloaded?: InputMaybe<BooleanFilterInput>;
     isFillermarked?: InputMaybe<BooleanFilterInput>;
+    /** Hidden by the chapter blacklist or Smart Scanlator Merge */
+    isHidden?: InputMaybe<BooleanFilterInput>;
+    isMergeHidden?: InputMaybe<BooleanFilterInput>;
     isRead?: InputMaybe<BooleanFilterInput>;
     lastPageRead?: InputMaybe<IntFilterInput>;
     lastReadAt?: InputMaybe<LongFilterInput>;
@@ -328,14 +354,18 @@ export type ChapterOrderInput = {
 
 export type ChapterType = {
     __typename?: 'ChapterType';
+    bookmarkColor: Scalars['Int']['output'];
     chapterNumber: Scalars['Float']['output'];
     fetchedAt: Scalars['LongString']['output'];
     id: Scalars['Int']['output'];
+    isBlacklisted: Scalars['Boolean']['output'];
     /** @deprecated Use user.isBookmarked instead */
     isBookmarked: Scalars['Boolean']['output'];
     /** @deprecated Use user.isDownloaded instead */
     isDownloaded: Scalars['Boolean']['output'];
     isFillermarked: Scalars['Boolean']['output'];
+    isHidden: Scalars['Boolean']['output'];
+    isMergeHidden: Scalars['Boolean']['output'];
     /** @deprecated Use user.isRead instead */
     isRead: Scalars['Boolean']['output'];
     /** @deprecated Use user.lastPageRead instead */
@@ -357,10 +387,13 @@ export type ChapterType = {
 
 export type ChapterUserType = {
     __typename?: 'ChapterUserType';
+    bookmarkColor: Scalars['Int']['output'];
     chapterId: Scalars['Int']['output'];
+    isBlacklisted: Scalars['Boolean']['output'];
     isBookmarked: Scalars['Boolean']['output'];
     isDownloaded: Scalars['Boolean']['output'];
     isFillermarked: Scalars['Boolean']['output'];
+    isMergeHidden: Scalars['Boolean']['output'];
     isRead: Scalars['Boolean']['output'];
     lastPageRead: Scalars['Int']['output'];
     lastReadAt: Scalars['LongString']['output'];
@@ -467,6 +500,11 @@ export type ContentWarningFilterInput = {
     notIn?: InputMaybe<Array<ContentWarning>>;
 };
 
+export type CopyFillermarksToBlacklistInput = {
+    clientMutationId?: InputMaybe<Scalars['String']['input']>;
+    mangaId: Scalars['Int']['input'];
+};
+
 export type CreateBackupAsyncPayload = {
     __typename?: 'CreateBackupAsyncPayload';
     clientMutationId?: Maybe<Scalars['String']['output']>;
@@ -504,6 +542,10 @@ export type CreateCategoryInput = {
     includeInUpdate?: InputMaybe<IncludeOrExclude>;
     name: Scalars['String']['input'];
     order?: InputMaybe<Scalars['Int']['input']>;
+    /** fork: create as a subcategory of this category */
+    parentId?: InputMaybe<Scalars['Int']['input']>;
+    /** fork: Smart Category binding (unified tracker status) */
+    trackStatus?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type CreateCategoryPayload = {
@@ -1485,6 +1527,19 @@ export type MangaOrderInput = {
     byType?: InputMaybe<SortOrder>;
 };
 
+/** fork (Komikku port): the user's scanlator rules of a manga */
+export type MangaScanlatorSettingsType = {
+    __typename?: 'MangaScanlatorSettingsType';
+    blacklistedChapters: Array<BlacklistEntryType>;
+    mangaId: Scalars['Int']['output'];
+    /** The saved priority narrowed to the manga's scanlators, followed by new scanlators alphabetically */
+    scanlatorPriority: Array<Scalars['String']['output']>;
+    scanlatorRangeRules: Array<ScanlatorRangeRuleType>;
+    /** Whether Smart Scanlator Merge applies to this manga (its mode or the global setting) */
+    smartMergeEnabled: Scalars['Boolean']['output'];
+    smartMergeMode: SmartMergeMode;
+};
+
 export enum MangaStatus {
     Cancelled = 'CANCELLED',
     Completed = 'COMPLETED',
@@ -1548,6 +1603,7 @@ export type MangaType = {
     latestUploadedChapter?: Maybe<ChapterType>;
     meta: Array<MangaMetaType>;
     realUrl?: Maybe<Scalars['String']['output']>;
+    scanlatorSettings: MangaScanlatorSettingsType;
     source?: Maybe<SourceType>;
     sourceId: Scalars['LongString']['output'];
     status: MangaStatus;
@@ -1657,6 +1713,7 @@ export type Mutation = {
     clearDatabase?: Maybe<ClearDatabasePayload>;
     clearDownloader?: Maybe<ClearDownloaderPayload>;
     connectKoSyncAccount: KoSyncConnectPayload;
+    copyFillermarksToBlacklist: UpdateMangaScanlatorSettingsPayload;
     createBackup: CreateBackupPayload;
     createBackupAsync: CreateBackupAsyncPayload;
     createCategory?: Maybe<CreateCategoryPayload>;
@@ -1748,11 +1805,13 @@ export type Mutation = {
     updateManga?: Maybe<UpdateMangaPayload>;
     updateMangaCategories?: Maybe<UpdateMangaCategoriesPayload>;
     updateMangaDetails?: Maybe<UpdateMangaDetailsPayload>;
+    updateMangaScanlatorSettings: UpdateMangaScanlatorSettingsPayload;
     updateMangas?: Maybe<UpdateMangasPayload>;
     updateMangasCategories?: Maybe<UpdateMangasCategoriesPayload>;
     updateSourcePreference?: Maybe<UpdateSourcePreferencePayload>;
     updateStop: UpdateStopPayload;
     updateTrack: UpdateTrackPayload;
+    updateTrackRecordsUnified: UpdateTrackRecordsUnifiedPayload;
     updateUser: UpdateUserPayload;
     updateWebUI?: Maybe<WebUiUpdatePayload>;
     uploadMangaCover?: Maybe<UploadMangaCoverPayload>;
@@ -1792,6 +1851,10 @@ export type MutationClearDownloaderArgs = {
 
 export type MutationConnectKoSyncAccountArgs = {
     input: ConnectKoSyncAccountInput;
+};
+
+export type MutationCopyFillermarksToBlacklistArgs = {
+    input: CopyFillermarksToBlacklistInput;
 };
 
 export type MutationCreateBackupArgs = {
@@ -2126,6 +2189,10 @@ export type MutationUpdateMangaDetailsArgs = {
     input: UpdateMangaDetailsInput;
 };
 
+export type MutationUpdateMangaScanlatorSettingsArgs = {
+    input: UpdateMangaScanlatorSettingsInput;
+};
+
 export type MutationUpdateMangasArgs = {
     input: UpdateMangasInput;
 };
@@ -2144,6 +2211,10 @@ export type MutationUpdateStopArgs = {
 
 export type MutationUpdateTrackArgs = {
     input: UpdateTrackInput;
+};
+
+export type MutationUpdateTrackRecordsUnifiedArgs = {
+    input: UpdateTrackRecordsUnifiedInput;
 };
 
 export type MutationUpdateUserArgs = {
@@ -2199,6 +2270,12 @@ export type OsInfo = {
     name: Scalars['String']['output'];
     version: Scalars['String']['output'];
 };
+
+export enum Outcome {
+    Failed = 'FAILED',
+    Skipped = 'SKIPPED',
+    Updated = 'UPDATED',
+}
 
 export type PageInfo = {
     __typename?: 'PageInfo';
@@ -2539,6 +2616,7 @@ export type PartialUserSettingsType = UserSettings & {
     opdsSkipChapterMetadataFeed?: Maybe<Scalars['Boolean']['output']>;
     opdsUseBinaryFileSizes?: Maybe<Scalars['Boolean']['output']>;
     serveConversions?: Maybe<Array<SettingsDownloadConversionType>>;
+    smartScanlatorMerge?: Maybe<Scalars['Boolean']['output']>;
     syncDataCategories?: Maybe<Scalars['Boolean']['output']>;
     syncDataChapters?: Maybe<Scalars['Boolean']['output']>;
     syncDataHistory?: Maybe<Scalars['Boolean']['output']>;
@@ -2573,6 +2651,7 @@ export type PartialUserSettingsTypeInput = {
     opdsSkipChapterMetadataFeed?: InputMaybe<Scalars['Boolean']['input']>;
     opdsUseBinaryFileSizes?: InputMaybe<Scalars['Boolean']['input']>;
     serveConversions?: InputMaybe<Array<SettingsDownloadConversionTypeInput>>;
+    smartScanlatorMerge?: InputMaybe<Scalars['Boolean']['input']>;
     syncDataCategories?: InputMaybe<Scalars['Boolean']['input']>;
     syncDataChapters?: InputMaybe<Scalars['Boolean']['input']>;
     syncDataHistory?: InputMaybe<Scalars['Boolean']['input']>;
@@ -2671,6 +2750,8 @@ export type Query = {
     trackRecord: TrackRecordType;
     trackRecords: TrackRecordNodeList;
     tracker: TrackerType;
+    /** fork (Komikku port): the manga metadata of the manga's binding with the tracker, to fill the metadata editor. Nothing is saved. */
+    trackerMangaMetadata: TrackerMangaMetadataType;
     trackers: TrackerNodeList;
     /** @deprecated Replaced with libraryUpdateStatus, replace with libraryUpdateStatus */
     updateStatus: UpdateStatus;
@@ -2830,6 +2911,11 @@ export type QueryTrackRecordsArgs = {
 
 export type QueryTrackerArgs = {
     id: Scalars['Int']['input'];
+};
+
+export type QueryTrackerMangaMetadataArgs = {
+    mangaId: Scalars['Int']['input'];
+    trackerId: Scalars['Int']['input'];
 };
 
 export type QueryTrackersArgs = {
@@ -3000,6 +3086,19 @@ export type RevokeUserCodeInput = {
 export type RevokeUserCodePayload = {
     __typename?: 'RevokeUserCodePayload';
     clientMutationId?: Maybe<Scalars['String']['output']>;
+};
+
+export type ScanlatorRangeRuleInput = {
+    from: Scalars['Float']['input'];
+    scanlator: Scalars['String']['input'];
+    to: Scalars['Float']['input'];
+};
+
+export type ScanlatorRangeRuleType = {
+    __typename?: 'ScanlatorRangeRuleType';
+    from: Scalars['Float']['output'];
+    scanlator: Scalars['String']['output'];
+    to: Scalars['Float']['output'];
 };
 
 export type SearchMetadataProviderInput = {
@@ -3551,6 +3650,12 @@ export type ShutdownServerPayload = {
     success: Scalars['Boolean']['output'];
 };
 
+export enum SmartMergeMode {
+    Disabled = 'DISABLED',
+    Enabled = 'ENABLED',
+    Global = 'GLOBAL',
+}
+
 export type SortFilter = {
     __typename?: 'SortFilter';
     default?: Maybe<SortSelection>;
@@ -3990,6 +4095,19 @@ export type TrackerEdge = Edge & {
     node: TrackerType;
 };
 
+export type TrackerMangaMetadataType = {
+    __typename?: 'TrackerMangaMetadataType';
+    artist?: Maybe<Scalars['String']['output']>;
+    author?: Maybe<Scalars['String']['output']>;
+    description?: Maybe<Scalars['String']['output']>;
+    /** Trimmed, without blank and case-insensitive duplicate tags */
+    genre: Array<Scalars['String']['output']>;
+    status?: Maybe<MangaStatus>;
+    thumbnailUrl?: Maybe<Scalars['String']['output']>;
+    title?: Maybe<Scalars['String']['output']>;
+    trackerId: Scalars['Int']['output'];
+};
+
 export type TrackerNodeList = NodeList & {
     __typename?: 'TrackerNodeList';
     edges: Array<TrackerEdge>;
@@ -4019,6 +4137,8 @@ export type TrackerType = {
     name: Scalars['String']['output'];
     scores: Array<Scalars['String']['output']>;
     statuses: Array<TrackStatusType>;
+    /** fork: the tracker can provide manga metadata (see trackerMangaMetadata) */
+    supportsMangaMetadata: Scalars['Boolean']['output'];
     supportsPrivateTracking: Scalars['Boolean']['output'];
     supportsReadingDates: Scalars['Boolean']['output'];
     supportsTrackDeletion: Scalars['Boolean']['output'];
@@ -4049,6 +4169,24 @@ export type UnbindTrackPayload = {
     clientMutationId?: Maybe<Scalars['String']['output']>;
     trackRecord?: Maybe<TrackRecordType>;
 };
+
+export type UnifiedTrackEditResultType = {
+    __typename?: 'UnifiedTrackEditResultType';
+    messages: Array<Scalars['String']['output']>;
+    outcome: Outcome;
+    recordId: Scalars['Int']['output'];
+    trackerId: Scalars['Int']['output'];
+};
+
+export enum UnifiedTrackStatus {
+    Completed = 'COMPLETED',
+    Dropped = 'DROPPED',
+    Other = 'OTHER',
+    Paused = 'PAUSED',
+    PlanToRead = 'PLAN_TO_READ',
+    Reading = 'READING',
+    Repeating = 'REPEATING',
+}
 
 export type UpdateCategoriesInput = {
     clientMutationId?: InputMaybe<Scalars['String']['input']>;
@@ -4092,10 +4230,18 @@ export type UpdateCategoryOrderPayload = {
 };
 
 export type UpdateCategoryPatchInput = {
+    /** fork: remove the Smart Category binding */
+    clearTrackStatus?: InputMaybe<Scalars['Boolean']['input']>;
     default?: InputMaybe<Scalars['Boolean']['input']>;
     includeInDownload?: InputMaybe<IncludeOrExclude>;
     includeInUpdate?: InputMaybe<IncludeOrExclude>;
+    /** fork: move to the top level */
+    moveToTopLevel?: InputMaybe<Scalars['Boolean']['input']>;
     name?: InputMaybe<Scalars['String']['input']>;
+    /** fork: move below this category */
+    parentId?: InputMaybe<Scalars['Int']['input']>;
+    /** fork: Smart Category binding (unified tracker status) */
+    trackStatus?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type UpdateCategoryPayload = {
@@ -4111,6 +4257,10 @@ export type UpdateChapterInput = {
 };
 
 export type UpdateChapterPatchInput = {
+    /** fork: sets the bookmark with this color (0 = default color, see BookmarkColor) */
+    bookmarkColor?: InputMaybe<Scalars['Int']['input']>;
+    /** fork: adds the chapters to (or removes them from) the chapter blacklist of their manga */
+    isBlacklisted?: InputMaybe<Scalars['Boolean']['input']>;
     isBookmarked?: InputMaybe<Scalars['Boolean']['input']>;
     isFillermarked?: InputMaybe<Scalars['Boolean']['input']>;
     isRead?: InputMaybe<Scalars['Boolean']['input']>;
@@ -4241,6 +4391,25 @@ export type UpdateMangaPayload = {
     manga: MangaType;
 };
 
+export type UpdateMangaScanlatorSettingsInput = {
+    clientMutationId?: InputMaybe<Scalars['String']['input']>;
+    mangaId: Scalars['Int']['input'];
+    /** Keys of BlacklistEntryType to remove */
+    removeBlacklistEntries?: InputMaybe<Array<Scalars['String']['input']>>;
+    /** The order of the scanlators shown to the user, most preferred first. Saved scanlators that are not part of the list (e.g. currently without chapters) keep their position. */
+    scanlatorPriority?: InputMaybe<Array<Scalars['String']['input']>>;
+    /** Replaces the range rules; on overlap the later rule wins */
+    scanlatorRangeRules?: InputMaybe<Array<ScanlatorRangeRuleInput>>;
+    smartMergeMode?: InputMaybe<SmartMergeMode>;
+};
+
+export type UpdateMangaScanlatorSettingsPayload = {
+    __typename?: 'UpdateMangaScanlatorSettingsPayload';
+    clientMutationId?: Maybe<Scalars['String']['output']>;
+    manga: MangaType;
+    scanlatorSettings: MangaScanlatorSettingsType;
+};
+
 export type UpdateMangasCategoriesInput = {
     clientMutationId?: InputMaybe<Scalars['String']['input']>;
     ids: Array<Scalars['Int']['input']>;
@@ -4341,6 +4510,27 @@ export type UpdateTrackPayload = {
     __typename?: 'UpdateTrackPayload';
     clientMutationId?: Maybe<Scalars['String']['output']>;
     trackRecord?: Maybe<TrackRecordType>;
+};
+
+export type UpdateTrackRecordsUnifiedInput = {
+    clientMutationId?: InputMaybe<Scalars['String']['input']>;
+    /** Skipped for trackers without reading dates */
+    finishDate?: InputMaybe<Scalars['LongString']['input']>;
+    lastChapterRead?: InputMaybe<Scalars['Float']['input']>;
+    mangaId: Scalars['Int']['input'];
+    /** 0-10, converted to the closest score of each tracker's scale */
+    score?: InputMaybe<Scalars['Float']['input']>;
+    /** Skipped for trackers without reading dates */
+    startDate?: InputMaybe<Scalars['LongString']['input']>;
+    /** Translated to each tracker's status; trackers without an equivalent are skipped */
+    status?: InputMaybe<UnifiedTrackStatus>;
+};
+
+export type UpdateTrackRecordsUnifiedPayload = {
+    __typename?: 'UpdateTrackRecordsUnifiedPayload';
+    clientMutationId?: Maybe<Scalars['String']['output']>;
+    results: Array<UnifiedTrackEditResultType>;
+    trackRecords: Array<TrackRecordType>;
 };
 
 export type UpdateUserInput = {
@@ -4489,6 +4679,7 @@ export type UserSettings = {
     opdsSkipChapterMetadataFeed?: Maybe<Scalars['Boolean']['output']>;
     opdsUseBinaryFileSizes?: Maybe<Scalars['Boolean']['output']>;
     serveConversions?: Maybe<Array<SettingsDownloadConversion>>;
+    smartScanlatorMerge?: Maybe<Scalars['Boolean']['output']>;
     syncDataCategories?: Maybe<Scalars['Boolean']['output']>;
     syncDataChapters?: Maybe<Scalars['Boolean']['output']>;
     syncDataHistory?: Maybe<Scalars['Boolean']['output']>;
@@ -4524,6 +4715,7 @@ export type UserSettingsType = UserSettings & {
     opdsSkipChapterMetadataFeed: Scalars['Boolean']['output'];
     opdsUseBinaryFileSizes: Scalars['Boolean']['output'];
     serveConversions: Array<SettingsDownloadConversionType>;
+    smartScanlatorMerge: Scalars['Boolean']['output'];
     syncDataCategories: Scalars['Boolean']['output'];
     syncDataChapters: Scalars['Boolean']['output'];
     syncDataHistory: Scalars['Boolean']['output'];
