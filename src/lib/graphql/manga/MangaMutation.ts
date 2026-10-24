@@ -62,7 +62,6 @@ export const GET_MANGA_TO_MIGRATE_TO_FETCH = gql`
                 isRead
                 isDownloaded
                 isBookmarked
-                isFillermarked
             }
         }
     }

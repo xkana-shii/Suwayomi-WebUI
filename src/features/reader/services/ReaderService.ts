@@ -210,12 +210,7 @@ export class ReaderService {
 
     static useUpdateChapter(): (patch: UpdateChapterPatchInput) => void {
         const {
-            settings: {
-                deleteChaptersWhileReading,
-                deleteChaptersWithBookmark,
-                deleteChaptersWithFillermark,
-                updateProgressAfterReading,
-            },
+            settings: { deleteChaptersWhileReading, deleteChaptersWithBookmark, updateProgressAfterReading },
         } = useMetadataServerSettings();
 
         return useCallback(
@@ -246,7 +241,6 @@ export class ReaderService {
                         patch,
                         deleteChaptersWhileReading,
                         deleteChaptersWithBookmark,
-                        deleteChaptersWithFillermark,
                         shouldSkipDupChapters,
                     );
 
@@ -263,10 +257,7 @@ export class ReaderService {
                                 (patch.lastPageRead !== undefined &&
                                     patch.lastPageRead !== chapterUpToDateData.lastPageRead) ||
                                 (patch.isBookmarked !== undefined &&
-                                    patch.isBookmarked !== chapterUpToDateData.isBookmarked) ||
-                                // -------- fillermark logic, analogue to bookmark --------
-                                (patch.isFillermarked !== undefined &&
-                                    patch.isFillermarked !== chapterUpToDateData.isFillermarked)
+                                    patch.isBookmarked !== chapterUpToDateData.isBookmarked)
                             );
                         });
                     if (!isUpdateRequired) {

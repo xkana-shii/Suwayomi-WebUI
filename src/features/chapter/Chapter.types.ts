@@ -15,7 +15,6 @@ export interface ChapterListFilterOptions {
     unread: NullAndUndefined<boolean>;
     downloaded: NullAndUndefined<boolean>;
     bookmarked: NullAndUndefined<boolean>;
-    fillermarked: NullAndUndefined<boolean>;
     excludedScanlators: string[];
     // fork (Komikku port)
     /** bookmark colors a chapter needs one of (empty = any) */
@@ -47,8 +46,6 @@ export type ChapterAction =
     | 'delete'
     | 'bookmark'
     | 'unbookmark'
-    | 'fillermark'
-    | 'unfillermark'
     | 'blacklist'
     | 'unblacklist'
     | 'mark_as_read'
@@ -63,8 +60,6 @@ export type ChapterMangaInfo = Pick<ChapterType, 'mangaId'>;
 export type ChapterDownloadInfo = Pick<ChapterType, 'isDownloaded'>;
 
 export type ChapterBookmarkInfo = Pick<ChapterType, 'isBookmarked'>;
-
-export type ChapterFillermarkInfo = Pick<ChapterType, 'isFillermarked'>;
 
 // fork (Komikku port)
 export type ChapterBookmarkColorInfo = Pick<ChapterType, 'isBookmarked' | 'bookmarkColor'>;

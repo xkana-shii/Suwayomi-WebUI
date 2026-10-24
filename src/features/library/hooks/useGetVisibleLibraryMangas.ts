@@ -151,13 +151,12 @@ type TMangaFilterOptions = Pick<
     | 'hasReadChapters'
     | 'hasDownloadedChapters'
     | 'hasBookmarkedChapters'
-    | 'hasFillermarkedChapters'
     | 'hasDuplicateChapters'
     | 'hasTrackerBinding'
     | 'hasStatus'
     | 'hasSource'
 >;
-type TMangaFilter = Pick<MangaType, 'bookmarkCount' | 'fillermarkCount' | 'hasDuplicateChapters'> &
+type TMangaFilter = Pick<MangaType, 'bookmarkCount' | 'hasDuplicateChapters'> &
     TMangaTrackerFilter &
     MangaStatusInfo &
     MangaSourceIdInfo &
@@ -171,7 +170,6 @@ const filterManga = (
         hasUnreadChapters,
         hasReadChapters,
         hasBookmarkedChapters,
-        hasFillermarkedChapters,
         hasDuplicateChapters,
         hasTrackerBinding,
         hasStatus,
@@ -182,7 +180,6 @@ const filterManga = (
     triStateFilterNumber(hasUnreadChapters, manga.unreadCount) &&
     triStateFilterNumber(hasReadChapters, manga.chapters.totalCount - manga.unreadCount) &&
     triStateFilterNumber(hasBookmarkedChapters, manga.bookmarkCount) &&
-    triStateFilterNumber(hasFillermarkedChapters, manga.fillermarkCount) &&
     triStateFilterBoolean(hasDuplicateChapters, manga.hasDuplicateChapters) &&
     trackerFilter(hasTrackerBinding, manga) &&
     statusFilter(hasStatus, manga) &&
@@ -339,7 +336,6 @@ export const useGetVisibleLibraryMangas = <Manga extends MangaIdInfo & TMangasFi
         hasReadChapters,
         hasDownloadedChapters,
         hasBookmarkedChapters,
-        hasFillermarkedChapters,
         hasTrackerBinding,
         hasDuplicateChapters,
         hasStatus,
@@ -371,7 +367,6 @@ export const useGetVisibleLibraryMangas = <Manga extends MangaIdInfo & TMangasFi
             hasReadChapters,
             hasDownloadedChapters,
             hasBookmarkedChapters,
-            hasFillermarkedChapters,
             hasTrackerBinding,
             hasDuplicateChapters,
             hasStatus,
@@ -406,7 +401,6 @@ export const useGetVisibleLibraryMangas = <Manga extends MangaIdInfo & TMangasFi
             hasReadChapters != null ||
             hasDownloadedChapters != null ||
             hasBookmarkedChapters != null ||
-            hasFillermarkedChapters != null ||
             !!query ||
             isATrackFilterActive ||
             isASourceFilterActive) &&

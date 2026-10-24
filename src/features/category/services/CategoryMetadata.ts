@@ -33,7 +33,6 @@ export const DEFAULT_CATEGORY_METADATA: ICategoryMetadata = {
     // filter options
     hasDownloadedChapters: undefined,
     hasBookmarkedChapters: undefined,
-    hasFillermarkedChapters: undefined,
     hasUnreadChapters: undefined,
     hasReadChapters: undefined,
     hasDuplicateChapters: undefined,

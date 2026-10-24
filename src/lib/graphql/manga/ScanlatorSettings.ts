@@ -78,15 +78,3 @@ export const UPDATE_MANGA_SCANLATOR_SETTINGS = gql`
         }
     }
 `;
-
-export const COPY_FILLERMARKS_TO_BLACKLIST = gql`
-    ${MANGA_VISIBILITY_CHANGE_FIELDS}
-
-    mutation COPY_FILLERMARKS_TO_BLACKLIST($input: CopyFillermarksToBlacklistInput!) {
-        copyFillermarksToBlacklist(input: $input) {
-            manga {
-                ...MANGA_VISIBILITY_CHANGE_FIELDS
-            }
-        }
-    }
-`;

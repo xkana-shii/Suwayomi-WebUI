@@ -14,8 +14,6 @@ import RemoveDone from '@mui/icons-material/RemoveDone';
 import Done from '@mui/icons-material/Done';
 import BookmarkRemove from '@mui/icons-material/BookmarkRemove';
 import BookmarkAdd from '@mui/icons-material/BookmarkAdd';
-import Visibility from '@mui/icons-material/Visibility';
-import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import DoneAll from '@mui/icons-material/DoneAll';
 import type { ComponentProps } from 'react';
 import { useMemo } from 'react';
@@ -43,7 +41,6 @@ import type {
     ChapterMangaInfo,
     ChapterReadInfo,
     ChapterRealUrlInfo,
-    ChapterFillermarkInfo,
     ChapterBookmarkColorInfo,
     ChapterVisibilityInfo,
 } from '@/features/chapter/Chapter.types.ts';
@@ -62,7 +59,6 @@ type TChapter = ChapterIdInfo &
     ChapterBookmarkInfo &
     ChapterReadInfo &
     ChapterRealUrlInfo &
-    ChapterFillermarkInfo &
     ChapterBookmarkColorInfo &
     Partial<ChapterVisibilityInfo>;
 
@@ -91,7 +87,7 @@ export const ChapterActionMenuItems = ({
     const { t } = useLingui();
 
     const isSingleMode = !!chapter;
-    const { isDownloaded, isRead, isBookmarked, isFillermarked, isBlacklisted } = chapter ?? STABLE_EMPTY_OBJECT;
+    const { isDownloaded, isRead, isBookmarked, isBlacklisted } = chapter ?? STABLE_EMPTY_OBJECT;
 
     const mangaChaptersResponse = requestManager.useGetMangaChapters<GetChaptersMangaQuery>(
         GET_CHAPTERS_MANGA,
@@ -119,8 +115,6 @@ export const ChapterActionMenuItems = ({
         bookmarkedChapters,
         unreadChapters,
         readChapters,
-        unfillermarkedChapters,
-        fillermarkedChapters,
         unblacklistedChapters,
         blacklistedChapters,
     } = useMemo(
@@ -132,8 +126,6 @@ export const ChapterActionMenuItems = ({
             bookmarkedChapters: Chapters.getBookmarked(selectedChapters),
             unreadChapters: Chapters.getNonRead(selectedChapters),
             readChapters: Chapters.getRead(selectedChapters),
-            unfillermarkedChapters: Chapters.getNonFillermarked ? Chapters.getNonFillermarked(selectedChapters) : [],
-            fillermarkedChapters: Chapters.getFillermarked ? Chapters.getFillermarked(selectedChapters) : [],
             unblacklistedChapters: selectedChapters.filter((selectedChapter) => !selectedChapter.isBlacklisted),
             blacklistedChapters: selectedChapters.filter((selectedChapter) => !!selectedChapter.isBlacklisted),
         }),
@@ -281,22 +273,6 @@ export const ChapterActionMenuItems = ({
             )}
             {addBookmarkControl.menu}
             {changeBookmarkControl.menu}
-            {shouldShowMenuItem && shouldShowMenuItem(!isFillermarked) && (
-                <MenuItem
-                    Icon={VisibilityOff}
-                    disabled={isMenuItemDisabled(!unfillermarkedChapters.length)}
-                    onClick={() => performAction('fillermark', unfillermarkedChapters)}
-                    title={getMenuItemTitle('fillermark', unfillermarkedChapters.length)}
-                />
-            )}
-            {shouldShowMenuItem && shouldShowMenuItem(isFillermarked) && (
-                <MenuItem
-                    Icon={Visibility}
-                    disabled={isMenuItemDisabled(!fillermarkedChapters.length)}
-                    onClick={() => performAction('unfillermark', fillermarkedChapters)}
-                    title={getMenuItemTitle('unfillermark', fillermarkedChapters.length)}
-                />
-            )}
             {shouldShowMenuItem(!isBlacklisted) && (
                 <MenuItem
                     Icon={Block}

@@ -206,8 +206,6 @@ import type {
     WebuiUpdateSubscriptionVariables,
     WebviewClearCacheCookiesMutation,
     WebviewClearCacheCookiesMutationVariables,
-    CopyFillermarksToBlacklistMutation,
-    CopyFillermarksToBlacklistMutationVariables,
     GetMangaScanlatorSettingsQuery,
     GetMangaScanlatorSettingsQueryVariables,
     GetTrackerMangaMetadataQuery,
@@ -265,7 +263,6 @@ import {
     SET_USER_SETTINGS_SMART_SCANLATOR_MERGE,
 } from '@/lib/graphql/settings/UserSettings.ts';
 import {
-    COPY_FILLERMARKS_TO_BLACKLIST,
     GET_MANGA_SCANLATOR_SETTINGS,
     UPDATE_MANGA_SCANLATOR_SETTINGS,
 } from '@/lib/graphql/manga/ScanlatorSettings.ts';
@@ -2934,7 +2931,6 @@ export class RequestManager {
             {
                 input: { id, patch: updatePatch },
                 getBookmarked: patch.isBookmarked != null,
-                getFillermarked: patch.isFillermarked != null,
                 getVisibility: patch.bookmarkColor != null || patch.isBlacklisted != null,
                 getRead: patch.isRead != null,
                 getLastPageRead: patch.lastPageRead != null,
@@ -3112,7 +3108,6 @@ export class RequestManager {
             {
                 input: { ids, patch: updatePatch },
                 getBookmarked: patch.isBookmarked != null,
-                getFillermarked: patch.isFillermarked != null,
                 getVisibility: patch.bookmarkColor != null || patch.isBlacklisted != null,
                 getRead: patch.isRead != null,
                 getLastPageRead: patch.lastPageRead != null,
@@ -4156,13 +4151,6 @@ export class RequestManager {
         options?: MutationOptions<UpdateMangaScanlatorSettingsMutation, UpdateMangaScanlatorSettingsMutationVariables>,
     ): AbortableApolloMutationResponse<UpdateMangaScanlatorSettingsMutation> {
         return this.doRequest(GQLMethod.MUTATION, UPDATE_MANGA_SCANLATOR_SETTINGS, { input }, options);
-    }
-
-    public copyFillermarksToBlacklist(
-        mangaId: number,
-        options?: MutationOptions<CopyFillermarksToBlacklistMutation, CopyFillermarksToBlacklistMutationVariables>,
-    ): AbortableApolloMutationResponse<CopyFillermarksToBlacklistMutation> {
-        return this.doRequest(GQLMethod.MUTATION, COPY_FILLERMARKS_TO_BLACKLIST, { input: { mangaId } }, options);
     }
 
     public updateTrackRecordsUnified(

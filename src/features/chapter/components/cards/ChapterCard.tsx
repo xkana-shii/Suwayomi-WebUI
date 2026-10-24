@@ -6,7 +6,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CardActionArea from '@mui/material/CardActionArea';
 import Checkbox from '@mui/material/Checkbox';
@@ -39,7 +38,6 @@ import type {
     ChapterNumberInfo,
     ChapterReadInfo,
     ChapterScanlatorInfo,
-    ChapterFillermarkInfo,
     ChapterSourceOrderInfo,
     ChapterBookmarkColorInfo,
     ChapterVisibilityInfo,
@@ -60,7 +58,6 @@ type TChapter = ChapterIdInfo &
     ChapterBookmarkInfo &
     ChapterNumberInfo &
     ChapterScanlatorInfo &
-    ChapterFillermarkInfo &
     ChapterNameInfo &
     ChapterSourceOrderInfo &
     ChapterBookmarkColorInfo &
@@ -196,13 +193,6 @@ export const ChapterCard = memo((props: IProps) => {
                                                         mode === 'reader' && isActiveChapter
                                                             ? theme.palette.secondary.main
                                                             : undefined
-                                                    }
-                                                />
-                                            )}
-                                            {chapter.isFillermarked && (
-                                                <VisibilityIcon
-                                                    color={
-                                                        mode === 'reader' && isActiveChapter ? 'secondary' : 'primary'
                                                     }
                                                 />
                                             )}

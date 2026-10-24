@@ -10,7 +10,6 @@ import { useMemo } from 'react';
 import type { ChapterType } from '@/lib/graphql/generated/graphql-base.types.ts';
 import type {
     ChapterBookmarkInfo,
-    ChapterFillermarkInfo,
     ChapterDownloadInfo,
     ChapterListFilterOptions,
     ChapterListFilterSortOptions,
@@ -65,19 +64,6 @@ function bookmarkedFilter(
     }
 }
 
-function fillermarkedFilter(
-    fillermarked: NullAndUndefined<boolean>,
-    { isFillermarked: chapterFillermarked }: ChapterFillermarkInfo,
-) {
-    switch (fillermarked) {
-        case true:
-            return chapterFillermarked;
-        case false:
-            return !chapterFillermarked;
-        default:
-            return true;
-    }
-}
 function scanlatorFilter(excludedScanlators: string[], { scanlator }: ChapterScanlatorInfo): boolean {
     return !scanlator || !excludedScanlators.includes(scanlator);
 }
@@ -137,7 +123,6 @@ type TChapterFilter = ChapterReadInfo &
     ChapterDownloadInfo &
     ChapterBookmarkInfo &
     ChapterScanlatorInfo &
-    ChapterFillermarkInfo &
     Partial<ChapterBookmarkColorInfo & ChapterVisibilityInfo>;
 export function filterChapters<Chapters extends TChapterFilter>(
     chapters: Chapters[],
@@ -155,7 +140,6 @@ export function filterChapters<Chapters extends TChapterFilter>(
             unreadFilter(options.unread, chp) &&
             downloadFilter(options.downloaded, chp) &&
             bookmarkedFilter(options.bookmarked, chp) &&
-            fillermarkedFilter(options.fillermarked, chp) &&
             scanlatorFilter(options.excludedScanlators, chp),
     );
 }
@@ -174,7 +158,6 @@ export const isFilterActive = (options: ChapterListFilterOptions) => {
         unread,
         downloaded,
         bookmarked,
-        fillermarked,
         excludedScanlators,
         bookmarkColorsIncluded,
         bookmarkColorsExcluded,
@@ -185,7 +168,6 @@ export const isFilterActive = (options: ChapterListFilterOptions) => {
         unread != null ||
         downloaded != null ||
         bookmarked != null ||
-        fillermarked != null ||
         !!excludedScanlators.length ||
         !!bookmarkColorsIncluded?.length ||
         !!bookmarkColorsExcluded?.length ||
@@ -199,7 +181,6 @@ export const useChapterListOptions = (manga: MangaIdInfo & GqlMetaHolder): Chapt
         unread,
         downloaded,
         bookmarked,
-        fillermarked,
         reverse,
         sortBy,
         showChapterNumber,
@@ -215,7 +196,6 @@ export const useChapterListOptions = (manga: MangaIdInfo & GqlMetaHolder): Chapt
             unread,
             downloaded,
             bookmarked,
-            fillermarked,
             reverse,
             sortBy,
             showChapterNumber,
@@ -229,7 +209,6 @@ export const useChapterListOptions = (manga: MangaIdInfo & GqlMetaHolder): Chapt
             unread,
             downloaded,
             bookmarked,
-            fillermarked,
             reverse,
             sortBy,
             showChapterNumber,

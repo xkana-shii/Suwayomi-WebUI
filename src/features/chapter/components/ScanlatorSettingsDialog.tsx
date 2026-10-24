@@ -47,7 +47,7 @@ import type { ChapterListOptions } from '@/features/chapter/Chapter.types.ts';
 import type { updateChapterListOptions } from '@/features/chapter/utils/ChapterList.util.tsx';
 import type { ChapterType } from '@/lib/graphql/generated/graphql-base.types.ts';
 
-type DialogChapter = Pick<ChapterType, 'id' | 'name' | 'scanlator' | 'chapterNumber' | 'isFillermarked'>;
+type DialogChapter = Pick<ChapterType, 'id' | 'name' | 'scanlator' | 'chapterNumber'>;
 
 type RangeRule = { from: number; to: number; scanlator: string };
 
@@ -181,15 +181,7 @@ export const ScanlatorSettingsDialog = ({
             .catch((e) => makeToast(t`Scanlator settings were not saved`, 'error', getErrorMessage(e)));
     };
 
-    const copyFillermarks = () => {
-        scanlatorSettingsWriter
-            .enqueue(() => requestManager.copyFillermarksToBlacklist(mangaId).response)
-            .then(() => makeToast(t`Fillermarked chapters blacklisted`, 'success'))
-            .catch((e) => makeToast(t`Scanlator settings were not saved`, 'error', getErrorMessage(e)));
-    };
-
     const blacklist = settings?.blacklistedChapters ?? [];
-    const hasFillermarks = chapters.some((chapter) => chapter.isFillermarked);
 
     const renderScanlators = (current: Draft) => {
         const isMergeActive =
@@ -432,11 +424,6 @@ export const ScanlatorSettingsDialog = ({
             <Typography variant="caption" color="text.secondary">
                 {t`Blacklisted chapters are hidden everywhere: chapter list, reader, Updates, unread counts and downloads. Revealed chapters are marked in the chapter list and stay out of reading and downloads. Blacklist chapters from their menu or a selection.`}
             </Typography>
-            {hasFillermarks && (
-                <Button variant="outlined" onClick={copyFillermarks} sx={{ alignSelf: 'flex-start' }}>
-                    {t`Blacklist fillermarked chapters`}
-                </Button>
-            )}
             <List dense>
                 {blacklist.map((entry) => {
                     const isMissing = !entry.chapterIds.length;

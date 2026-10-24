@@ -260,7 +260,6 @@ export type ChapterConditionInput = {
     isBlacklisted?: InputMaybe<Scalars['Boolean']['input']>;
     isBookmarked?: InputMaybe<Scalars['Boolean']['input']>;
     isDownloaded?: InputMaybe<Scalars['Boolean']['input']>;
-    isFillermarked?: InputMaybe<Scalars['Boolean']['input']>;
     isMergeHidden?: InputMaybe<Scalars['Boolean']['input']>;
     isRead?: InputMaybe<Scalars['Boolean']['input']>;
     lastPageRead?: InputMaybe<Scalars['Int']['input']>;
@@ -296,7 +295,6 @@ export type ChapterFilterInput = {
     isBlacklisted?: InputMaybe<BooleanFilterInput>;
     isBookmarked?: InputMaybe<BooleanFilterInput>;
     isDownloaded?: InputMaybe<BooleanFilterInput>;
-    isFillermarked?: InputMaybe<BooleanFilterInput>;
     /** Hidden by the chapter blacklist or Smart Scanlator Merge */
     isHidden?: InputMaybe<BooleanFilterInput>;
     isMergeHidden?: InputMaybe<BooleanFilterInput>;
@@ -363,7 +361,6 @@ export type ChapterType = {
     isBookmarked: Scalars['Boolean']['output'];
     /** @deprecated Use user.isDownloaded instead */
     isDownloaded: Scalars['Boolean']['output'];
-    isFillermarked: Scalars['Boolean']['output'];
     isHidden: Scalars['Boolean']['output'];
     isMergeHidden: Scalars['Boolean']['output'];
     /** @deprecated Use user.isRead instead */
@@ -392,7 +389,6 @@ export type ChapterUserType = {
     isBlacklisted: Scalars['Boolean']['output'];
     isBookmarked: Scalars['Boolean']['output'];
     isDownloaded: Scalars['Boolean']['output'];
-    isFillermarked: Scalars['Boolean']['output'];
     isMergeHidden: Scalars['Boolean']['output'];
     isRead: Scalars['Boolean']['output'];
     lastPageRead: Scalars['Int']['output'];
@@ -498,11 +494,6 @@ export type ContentWarningFilterInput = {
     notEqualToAll?: InputMaybe<Array<ContentWarning>>;
     notEqualToAny?: InputMaybe<Array<ContentWarning>>;
     notIn?: InputMaybe<Array<ContentWarning>>;
-};
-
-export type CopyFillermarksToBlacklistInput = {
-    clientMutationId?: InputMaybe<Scalars['String']['input']>;
-    mangaId: Scalars['Int']['input'];
 };
 
 export type CreateBackupAsyncPayload = {
@@ -1582,7 +1573,6 @@ export type MangaType = {
     description?: Maybe<Scalars['String']['output']>;
     /** @deprecated Use user.downloadCount instead */
     downloadCount: Scalars['Int']['output'];
-    fillermarkCount: Scalars['Int']['output'];
     /** @deprecated Use user.firstUnreadChapter instead */
     firstUnreadChapter?: Maybe<ChapterType>;
     genre: Array<Scalars['String']['output']>;
@@ -1628,7 +1618,6 @@ export type MangaUserType = {
     __typename?: 'MangaUserType';
     bookmarkCount: Scalars['Int']['output'];
     downloadCount: Scalars['Int']['output'];
-    fillermarkCount: Scalars['Int']['output'];
     firstUnreadChapter?: Maybe<ChapterType>;
     inLibrary: Scalars['Boolean']['output'];
     inLibraryAt: Scalars['LongString']['output'];
@@ -1713,7 +1702,6 @@ export type Mutation = {
     clearDatabase?: Maybe<ClearDatabasePayload>;
     clearDownloader?: Maybe<ClearDownloaderPayload>;
     connectKoSyncAccount: KoSyncConnectPayload;
-    copyFillermarksToBlacklist: UpdateMangaScanlatorSettingsPayload;
     createBackup: CreateBackupPayload;
     createBackupAsync: CreateBackupAsyncPayload;
     createCategory?: Maybe<CreateCategoryPayload>;
@@ -1851,10 +1839,6 @@ export type MutationClearDownloaderArgs = {
 
 export type MutationConnectKoSyncAccountArgs = {
     input: ConnectKoSyncAccountInput;
-};
-
-export type MutationCopyFillermarksToBlacklistArgs = {
-    input: CopyFillermarksToBlacklistInput;
 };
 
 export type MutationCreateBackupArgs = {
@@ -4262,7 +4246,6 @@ export type UpdateChapterPatchInput = {
     /** fork: adds the chapters to (or removes them from) the chapter blacklist of their manga */
     isBlacklisted?: InputMaybe<Scalars['Boolean']['input']>;
     isBookmarked?: InputMaybe<Scalars['Boolean']['input']>;
-    isFillermarked?: InputMaybe<Scalars['Boolean']['input']>;
     isRead?: InputMaybe<Scalars['Boolean']['input']>;
     lastPageRead?: InputMaybe<Scalars['Int']['input']>;
 };

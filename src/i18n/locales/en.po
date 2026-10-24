@@ -187,14 +187,6 @@ msgid "{count, plural, one {Chapter deleted} other {# chapters deleted}}"
 msgstr "{count, plural, one {Chapter deleted} other {# chapters deleted}}"
 
 #: src/features/chapter/Chapter.constants.ts
-msgid "{count, plural, one {Chapter fillermark removed} other {# chapter fillermarks removed}}"
-msgstr "{count, plural, one {Chapter fillermark removed} other {# chapter fillermarks removed}}"
-
-#: src/features/chapter/Chapter.constants.ts
-msgid "{count, plural, one {Chapter fillermarked} other {# chapters fillermarked}}"
-msgstr "{count, plural, one {Chapter fillermarked} other {# chapters fillermarked}}"
-
-#: src/features/chapter/Chapter.constants.ts
 msgid "{count, plural, one {Chapter marked as read} other {# chapters marked as read}}"
 msgstr "{count, plural, one {Chapter marked as read} other {# chapters marked as read}}"
 
@@ -230,10 +222,6 @@ msgstr "{count, plural, one {Could not change the categories of the manga} other
 msgid "{count, plural, one {Could not delete the chapter} other {Could not delete chapters}}"
 msgstr "{count, plural, one {Could not delete the chapter} other {Could not delete chapters}}"
 
-#: src/features/chapter/Chapter.constants.ts
-msgid "{count, plural, one {Could not fillermark the chapter} other {Could not fillermark chapters}}"
-msgstr "{count, plural, one {Could not fillermark the chapter} other {Could not fillermark chapters}}"
-
 #: src/features/extension/Extensions.constants.ts
 msgid "{count, plural, one {Could not install the extension} other {Could not install the extensions}}"
 msgstr "{count, plural, one {Could not install the extension} other {Could not install the extensions}}"
@@ -257,10 +245,6 @@ msgstr "{count, plural, one {Could not remove the bookmark} other {Could not rem
 #: src/features/chapter/Chapter.constants.ts
 msgid "{count, plural, one {Could not remove the chapter from the blacklist} other {Could not remove chapters from the blacklist}}"
 msgstr "{count, plural, one {Could not remove the chapter from the blacklist} other {Could not remove chapters from the blacklist}}"
-
-#: src/features/chapter/Chapter.constants.ts
-msgid "{count, plural, one {Could not remove the fillermark} other {Could not remove the fillermarks}}"
-msgstr "{count, plural, one {Could not remove the fillermark} other {Could not remove the fillermarks}}"
 
 #: src/features/extension/Extensions.constants.ts
 msgid "{count, plural, one {Could not uninstall the extension} other {Could not uninstall the extensions}}"
@@ -351,10 +335,6 @@ msgstr "{count, plural, one {You are about to remove one bookmark} other {You ar
 #: src/features/manga/Manga.constants.ts
 msgid "{count, plural, one {You are about to remove one entry from your library} other {You are about to remove # entries from your library}}"
 msgstr "{count, plural, one {You are about to remove one entry from your library} other {You are about to remove # entries from your library}}"
-
-#: src/features/chapter/Chapter.constants.ts
-msgid "{count, plural, one {You are about to remove one fillermark} other {You are about to remove # fillermarks}}"
-msgstr "{count, plural, one {You are about to remove one fillermark} other {You are about to remove # fillermarks}}"
 
 #: src/features/navigation-bar/NavigationBar.constants.ts
 msgid "{count} remaining"
@@ -490,10 +470,6 @@ msgstr "Add bookmark"
 msgid "Add extension store"
 msgstr "Add extension store"
 
-#: src/features/chapter/Chapter.constants.ts
-msgid "Add fillermark"
-msgstr "Add fillermark"
-
 #: src/features/manga/components/details/EditMangaMetadataDialog.tsx
 msgid "Add genre"
 msgstr "Add genre"
@@ -555,10 +531,6 @@ msgstr "All"
 #: src/features/downloads/screens/DownloadSettings.tsx
 msgid "Allow deleting bookmarked chapters"
 msgstr "Allow deleting bookmarked chapters"
-
-#: src/features/downloads/screens/DownloadSettings.tsx
-msgid "Allow deleting fillermarked chapters"
-msgstr "Allow deleting fillermarked chapters"
 
 #: src/features/reader/filters/settings/components/ReaderSettingRGBA.tsx
 msgid "Alpha"
@@ -806,10 +778,6 @@ msgstr "Blacklist"
 #: src/features/chapter/Chapter.constants.ts
 msgid "Blacklist chapter"
 msgstr "Blacklist chapter"
-
-#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
-msgid "Blacklist fillermarked chapters"
-msgstr "Blacklist fillermarked chapters"
 
 #: src/features/chapter/Chapter.constants.ts
 msgid "Blacklist selected"
@@ -2162,19 +2130,6 @@ msgstr "Fill the fields from a tracker. Hold or right click to choose the tracke
 #: src/features/tracker/components/TrackerAutofillButton.tsx
 msgid "Filled from {0}. Review the changes and save."
 msgstr "Filled from {0}. Review the changes and save."
-
-#: src/features/chapter/Chapter.constants.ts
-msgid "Fillermark selected"
-msgstr "Fillermark selected"
-
-#: src/features/chapter/components/ChapterOptions.tsx
-#: src/features/library/components/LibraryOptionsPanel.tsx
-msgid "Fillermarked"
-msgstr "Fillermarked"
-
-#: src/features/chapter/components/ScanlatorSettingsDialog.tsx
-msgid "Fillermarked chapters blacklisted"
-msgstr "Fillermarked chapters blacklisted"
 
 #: src/features/chapter/components/ChapterOptions.tsx
 #: src/features/library/components/LibraryOptionsPanel.tsx
@@ -3692,14 +3647,6 @@ msgstr "Remove bookmark"
 #: src/features/chapter/Chapter.constants.ts
 msgid "Remove bookmarks from selected"
 msgstr "Remove bookmarks from selected"
-
-#: src/features/chapter/Chapter.constants.ts
-msgid "Remove fillermark"
-msgstr "Remove fillermark"
-
-#: src/features/chapter/Chapter.constants.ts
-msgid "Remove fillermarks from selected"
-msgstr "Remove fillermarks from selected"
 
 #: src/features/chapter/Chapter.constants.ts
 #: src/features/chapter/components/ScanlatorSettingsDialog.tsx

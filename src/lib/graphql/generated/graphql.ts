@@ -404,7 +404,6 @@ export type GetCategoryMangasQuery = {
                 unreadCount: number;
                 downloadCount: number;
                 bookmarkCount: number;
-                fillermarkCount: number;
                 hasDuplicateChapters: boolean;
                 meta: Array<{ __typename: 'MangaMetaType'; mangaId: number; key: string; value: string }>;
                 source: {
@@ -482,7 +481,6 @@ export type ChapterStateFieldsFragment = {
     isRead: boolean;
     isDownloaded: boolean;
     isBookmarked: boolean;
-    isFillermarked: boolean;
     bookmarkColor: number;
     isBlacklisted: boolean;
     isMergeHidden: boolean;
@@ -503,7 +501,6 @@ export type ChapterReaderFieldsFragment = {
     isRead: boolean;
     isDownloaded: boolean;
     isBookmarked: boolean;
-    isFillermarked: boolean;
     bookmarkColor: number;
     isBlacklisted: boolean;
     isMergeHidden: boolean;
@@ -524,7 +521,6 @@ export type ChapterListFieldsFragment = {
     isRead: boolean;
     isDownloaded: boolean;
     isBookmarked: boolean;
-    isFillermarked: boolean;
     bookmarkColor: number;
     isBlacklisted: boolean;
     isMergeHidden: boolean;
@@ -545,7 +541,6 @@ export type ChapterUpdateListFieldsFragment = {
     isRead: boolean;
     isDownloaded: boolean;
     isBookmarked: boolean;
-    isFillermarked: boolean;
     bookmarkColor: number;
     isBlacklisted: boolean;
     isMergeHidden: boolean;
@@ -561,7 +556,6 @@ export type ChapterUpdateListFieldsFragment = {
         unreadCount: number;
         downloadCount: number;
         bookmarkCount: number;
-        fillermarkCount: number;
         hasDuplicateChapters: boolean;
         chapters: { __typename: 'ChapterNodeList'; totalCount: number };
     };
@@ -582,7 +576,6 @@ export type ChapterHistoryListFieldsFragment = {
     isRead: boolean;
     isDownloaded: boolean;
     isBookmarked: boolean;
-    isFillermarked: boolean;
     bookmarkColor: number;
     isBlacklisted: boolean;
     isMergeHidden: boolean;
@@ -598,7 +591,6 @@ export type ChapterHistoryListFieldsFragment = {
         unreadCount: number;
         downloadCount: number;
         bookmarkCount: number;
-        fillermarkCount: number;
         hasDuplicateChapters: boolean;
         chapters: { __typename: 'ChapterNodeList'; totalCount: number };
     };
@@ -627,7 +619,6 @@ export type UpdateChapterMutationVariables = Exact<{
     input: Types.UpdateChapterInput;
     getBookmarked: boolean;
     getVisibility: boolean;
-    getFillermarked: boolean;
     getRead: boolean;
     getLastPageRead: boolean;
     chapterIdToDelete: number;
@@ -644,7 +635,6 @@ export type UpdateChapterMutation = {
             __typename: 'ChapterType';
             id: number;
             isBookmarked?: boolean;
-            isFillermarked?: boolean;
             isRead?: boolean;
             lastReadAt?: string;
             lastPageRead?: number;
@@ -656,7 +646,6 @@ export type UpdateChapterMutation = {
                 id: number;
                 unreadCount: number;
                 bookmarkCount: number;
-                fillermarkCount: number;
                 lastReadChapter: { __typename: 'ChapterType'; id: number } | null;
                 latestReadChapter: { __typename: 'ChapterType'; id: number } | null;
                 firstUnreadChapter: { __typename: 'ChapterType'; id: number } | null;
@@ -706,7 +695,6 @@ export type UpdateChaptersMutationVariables = Exact<{
     input: Types.UpdateChaptersInput;
     getBookmarked: boolean;
     getVisibility: boolean;
-    getFillermarked: boolean;
     getRead: boolean;
     getLastPageRead: boolean;
     chapterIdsToDelete: Array<number> | number;
@@ -723,7 +711,6 @@ export type UpdateChaptersMutation = {
             __typename: 'ChapterType';
             id: number;
             isBookmarked?: boolean;
-            isFillermarked?: boolean;
             isRead?: boolean;
             lastReadAt?: string;
             lastPageRead?: number;
@@ -735,7 +722,6 @@ export type UpdateChaptersMutation = {
                 id: number;
                 unreadCount: number;
                 bookmarkCount: number;
-                fillermarkCount: number;
                 lastReadChapter: { __typename: 'ChapterType'; id: number } | null;
                 latestReadChapter: { __typename: 'ChapterType'; id: number } | null;
                 firstUnreadChapter: { __typename: 'ChapterType'; id: number } | null;
@@ -843,7 +829,6 @@ export type GetChaptersReaderQuery = {
             isRead: boolean;
             isDownloaded: boolean;
             isBookmarked: boolean;
-            isFillermarked: boolean;
             bookmarkColor: number;
             isBlacklisted: boolean;
             isMergeHidden: boolean;
@@ -889,7 +874,6 @@ export type GetChaptersMangaQuery = {
             isRead: boolean;
             isDownloaded: boolean;
             isBookmarked: boolean;
-            isFillermarked: boolean;
             bookmarkColor: number;
             isBlacklisted: boolean;
             isMergeHidden: boolean;
@@ -936,7 +920,6 @@ export type GetChaptersUpdatesQuery = {
             isRead: boolean;
             isDownloaded: boolean;
             isBookmarked: boolean;
-            isFillermarked: boolean;
             bookmarkColor: number;
             isBlacklisted: boolean;
             isMergeHidden: boolean;
@@ -952,7 +935,6 @@ export type GetChaptersUpdatesQuery = {
                 unreadCount: number;
                 downloadCount: number;
                 bookmarkCount: number;
-                fillermarkCount: number;
                 hasDuplicateChapters: boolean;
                 chapters: { __typename: 'ChapterNodeList'; totalCount: number };
             };
@@ -998,7 +980,6 @@ export type GetChaptersHistoryQuery = {
             isRead: boolean;
             isDownloaded: boolean;
             isBookmarked: boolean;
-            isFillermarked: boolean;
             bookmarkColor: number;
             isBlacklisted: boolean;
             isMergeHidden: boolean;
@@ -1014,7 +995,6 @@ export type GetChaptersHistoryQuery = {
                 unreadCount: number;
                 downloadCount: number;
                 bookmarkCount: number;
-                fillermarkCount: number;
                 hasDuplicateChapters: boolean;
                 chapters: { __typename: 'ChapterNodeList'; totalCount: number };
             };
@@ -1054,7 +1034,6 @@ export type GetMangasChapterIdsWithStateQuery = {
             isRead: boolean;
             isDownloaded: boolean;
             isBookmarked: boolean;
-            isFillermarked: boolean;
             bookmarkColor: number;
             isBlacklisted: boolean;
             isMergeHidden: boolean;
@@ -2139,7 +2118,6 @@ export type MangaChapterStatFieldsFragment = {
     unreadCount: number;
     downloadCount: number;
     bookmarkCount: number;
-    fillermarkCount: number;
     hasDuplicateChapters: boolean;
     chapters: { __typename: 'ChapterNodeList'; totalCount: number };
 };
@@ -2205,7 +2183,6 @@ export type MangaLibraryFieldsFragment = {
     unreadCount: number;
     downloadCount: number;
     bookmarkCount: number;
-    fillermarkCount: number;
     hasDuplicateChapters: boolean;
     meta: Array<{ __typename: 'MangaMetaType'; mangaId: number; key: string; value: string }>;
     source: {
@@ -2288,7 +2265,6 @@ export type MangaScreenFieldsFragment = {
     unreadCount: number;
     downloadCount: number;
     bookmarkCount: number;
-    fillermarkCount: number;
     hasDuplicateChapters: boolean;
     meta: Array<{ __typename: 'MangaMetaType'; mangaId: number; key: string; value: string }>;
     source: {
@@ -2335,7 +2311,6 @@ export type MangaLibraryDuplicateScreenFieldsFragment = {
     unreadCount: number;
     downloadCount: number;
     bookmarkCount: number;
-    fillermarkCount: number;
     hasDuplicateChapters: boolean;
     trackRecords: {
         __typename: 'TrackRecordNodeList';
@@ -2375,7 +2350,6 @@ export type RefreshMangaMutation = {
             unreadCount: number;
             downloadCount: number;
             bookmarkCount: number;
-            fillermarkCount: number;
             hasDuplicateChapters: boolean;
             meta: Array<{ __typename: 'MangaMetaType'; mangaId: number; key: string; value: string }>;
             source: {
@@ -2428,7 +2402,6 @@ export type RefreshMangaMutation = {
             isRead: boolean;
             isDownloaded: boolean;
             isBookmarked: boolean;
-            isFillermarked: boolean;
             bookmarkColor: number;
             isBlacklisted: boolean;
             isMergeHidden: boolean;
@@ -2465,7 +2438,6 @@ export type GetMangaToMigrateToFetchMutation = {
             isRead: boolean;
             isDownloaded: boolean;
             isBookmarked: boolean;
-            isFillermarked: boolean;
             manga: { __typename: 'MangaType'; id: number };
         }>;
     } | null;
@@ -2621,7 +2593,6 @@ export type UpdateMangaDetailsMutation = {
             unreadCount: number;
             downloadCount: number;
             bookmarkCount: number;
-            fillermarkCount: number;
             hasDuplicateChapters: boolean;
             meta: Array<{ __typename: 'MangaMetaType'; mangaId: number; key: string; value: string }>;
             source: {
@@ -2690,7 +2661,6 @@ export type ResetMangaMetadataToSourceMutation = {
             unreadCount: number;
             downloadCount: number;
             bookmarkCount: number;
-            fillermarkCount: number;
             hasDuplicateChapters: boolean;
             meta: Array<{ __typename: 'MangaMetaType'; mangaId: number; key: string; value: string }>;
             source: {
@@ -2760,7 +2730,6 @@ export type UploadMangaCoverMutation = {
             unreadCount: number;
             downloadCount: number;
             bookmarkCount: number;
-            fillermarkCount: number;
             hasDuplicateChapters: boolean;
             meta: Array<{ __typename: 'MangaMetaType'; mangaId: number; key: string; value: string }>;
             source: {
@@ -2871,7 +2840,6 @@ export type GetMangaScreenQuery = {
         unreadCount: number;
         downloadCount: number;
         bookmarkCount: number;
-        fillermarkCount: number;
         hasDuplicateChapters: boolean;
         meta: Array<{ __typename: 'MangaMetaType'; mangaId: number; key: string; value: string }>;
         source: {
@@ -3010,7 +2978,6 @@ export type GetMangaToMigrateQuery = {
                 isRead: boolean;
                 isDownloaded: boolean;
                 isBookmarked: boolean;
-                isFillermarked: boolean;
                 manga: { __typename: 'MangaType'; id: number };
                 meta?: Array<{ __typename: 'ChapterMetaType'; chapterId: number; key: string; value: string }>;
             }>;
@@ -3101,7 +3068,6 @@ export type GetMangasLibraryQuery = {
             unreadCount: number;
             downloadCount: number;
             bookmarkCount: number;
-            fillermarkCount: number;
             hasDuplicateChapters: boolean;
             meta: Array<{ __typename: 'MangaMetaType'; mangaId: number; key: string; value: string }>;
             source: {
@@ -3178,7 +3144,6 @@ export type GetMangasDuplicatesQuery = {
             unreadCount: number;
             downloadCount: number;
             bookmarkCount: number;
-            fillermarkCount: number;
             hasDuplicateChapters: boolean;
             trackRecords: {
                 __typename: 'TrackRecordNodeList';
@@ -3314,7 +3279,6 @@ export type ApplyMetadataMatchMutation = {
             unreadCount: number;
             downloadCount: number;
             bookmarkCount: number;
-            fillermarkCount: number;
             hasDuplicateChapters: boolean;
             meta: Array<{ __typename: 'MangaMetaType'; mangaId: number; key: string; value: string }>;
             source: {
@@ -3445,49 +3409,6 @@ export type UpdateMangaScanlatorSettingsMutationVariables = Exact<{
 export type UpdateMangaScanlatorSettingsMutation = {
     __typename: 'Mutation';
     updateMangaScanlatorSettings: {
-        __typename: 'UpdateMangaScanlatorSettingsPayload';
-        manga: {
-            __typename: 'MangaType';
-            id: number;
-            unreadCount: number;
-            bookmarkCount: number;
-            firstUnreadChapter: { __typename: 'ChapterType'; id: number } | null;
-            scanlatorSettings: {
-                __typename: 'MangaScanlatorSettingsType';
-                mangaId: number;
-                scanlatorPriority: Array<string>;
-                smartMergeMode: Types.SmartMergeMode;
-                smartMergeEnabled: boolean;
-                scanlatorRangeRules: Array<{
-                    __typename: 'ScanlatorRangeRuleType';
-                    from: number;
-                    to: number;
-                    scanlator: string;
-                }>;
-                blacklistedChapters: Array<{
-                    __typename: 'BlacklistEntryType';
-                    key: string;
-                    chapterIds: Array<number>;
-                    chapterNames: Array<string>;
-                    chapterNumber: number | null;
-                    scanlator: string | null;
-                }>;
-            };
-            chapters: {
-                __typename: 'ChapterNodeList';
-                nodes: Array<{ __typename: 'ChapterType'; id: number; isBlacklisted: boolean; isMergeHidden: boolean }>;
-            };
-        };
-    };
-};
-
-export type CopyFillermarksToBlacklistMutationVariables = Exact<{
-    input: Types.CopyFillermarksToBlacklistInput;
-}>;
-
-export type CopyFillermarksToBlacklistMutation = {
-    __typename: 'Mutation';
-    copyFillermarksToBlacklist: {
         __typename: 'UpdateMangaScanlatorSettingsPayload';
         manga: {
             __typename: 'MangaType';
@@ -5560,7 +5481,6 @@ export type UpdaterMangaFieldsFragment = {
         unreadCount: number;
         downloadCount: number;
         bookmarkCount: number;
-        fillermarkCount: number;
         hasDuplicateChapters: boolean;
         chapters: { __typename: 'ChapterNodeList'; totalCount: number };
         firstUnreadChapter: {
@@ -5622,7 +5542,6 @@ export type UpdaterStatusFieldsFragment = {
             unreadCount: number;
             downloadCount: number;
             bookmarkCount: number;
-            fillermarkCount: number;
             hasDuplicateChapters: boolean;
             chapters: { __typename: 'ChapterNodeList'; totalCount: number };
             firstUnreadChapter: {
@@ -5676,7 +5595,6 @@ export type UpdaterSubscriptionFieldsFragment = {
             unreadCount: number;
             downloadCount: number;
             bookmarkCount: number;
-            fillermarkCount: number;
             hasDuplicateChapters: boolean;
             chapters: { __typename: 'ChapterNodeList'; totalCount: number };
             firstUnreadChapter: {
@@ -5739,7 +5657,6 @@ export type UpdateLibraryMutation = {
                     unreadCount: number;
                     downloadCount: number;
                     bookmarkCount: number;
-                    fillermarkCount: number;
                     hasDuplicateChapters: boolean;
                     chapters: { __typename: 'ChapterNodeList'; totalCount: number };
                     firstUnreadChapter: {
@@ -5812,7 +5729,6 @@ export type GetUpdateStatusQuery = {
                 unreadCount: number;
                 downloadCount: number;
                 bookmarkCount: number;
-                fillermarkCount: number;
                 hasDuplicateChapters: boolean;
                 chapters: { __typename: 'ChapterNodeList'; totalCount: number };
                 firstUnreadChapter: {
@@ -5885,7 +5801,6 @@ export type UpdaterSubscription = {
                 unreadCount: number;
                 downloadCount: number;
                 bookmarkCount: number;
-                fillermarkCount: number;
                 hasDuplicateChapters: boolean;
                 chapters: { __typename: 'ChapterNodeList'; totalCount: number };
                 firstUnreadChapter: {

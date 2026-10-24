@@ -200,7 +200,7 @@ export class Mangas {
         {
             excludedScanlators,
             ...state
-        }: Pick<ChapterConditionInput, 'isRead' | 'isDownloaded' | 'isBookmarked' | 'isFillermarked'> & {
+        }: Pick<ChapterConditionInput, 'isRead' | 'isDownloaded' | 'isBookmarked'> & {
             excludedScanlators?: string[];
         },
     ): Promise<GetMangasChapterIdsWithStateQuery['chapters']['nodes']> {

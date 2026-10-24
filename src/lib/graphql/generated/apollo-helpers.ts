@@ -195,7 +195,6 @@ export type ChapterTypeKeySpecifier = (
     | 'isBlacklisted'
     | 'isBookmarked'
     | 'isDownloaded'
-    | 'isFillermarked'
     | 'isHidden'
     | 'isMergeHidden'
     | 'isRead'
@@ -222,7 +221,6 @@ export type ChapterTypeFieldPolicy = {
     isBlacklisted?: FieldPolicy<any> | FieldReadFunction<any>;
     isBookmarked?: FieldPolicy<any> | FieldReadFunction<any>;
     isDownloaded?: FieldPolicy<any> | FieldReadFunction<any>;
-    isFillermarked?: FieldPolicy<any> | FieldReadFunction<any>;
     isHidden?: FieldPolicy<any> | FieldReadFunction<any>;
     isMergeHidden?: FieldPolicy<any> | FieldReadFunction<any>;
     isRead?: FieldPolicy<any> | FieldReadFunction<any>;
@@ -246,7 +244,6 @@ export type ChapterUserTypeKeySpecifier = (
     | 'isBlacklisted'
     | 'isBookmarked'
     | 'isDownloaded'
-    | 'isFillermarked'
     | 'isMergeHidden'
     | 'isRead'
     | 'lastPageRead'
@@ -259,7 +256,6 @@ export type ChapterUserTypeFieldPolicy = {
     isBlacklisted?: FieldPolicy<any> | FieldReadFunction<any>;
     isBookmarked?: FieldPolicy<any> | FieldReadFunction<any>;
     isDownloaded?: FieldPolicy<any> | FieldReadFunction<any>;
-    isFillermarked?: FieldPolicy<any> | FieldReadFunction<any>;
     isMergeHidden?: FieldPolicy<any> | FieldReadFunction<any>;
     isRead?: FieldPolicy<any> | FieldReadFunction<any>;
     lastPageRead?: FieldPolicy<any> | FieldReadFunction<any>;
@@ -1021,7 +1017,6 @@ export type MangaTypeKeySpecifier = (
     | 'chaptersLastFetchedAt'
     | 'description'
     | 'downloadCount'
-    | 'fillermarkCount'
     | 'firstUnreadChapter'
     | 'genre'
     | 'hasDuplicateChapters'
@@ -1062,7 +1057,6 @@ export type MangaTypeFieldPolicy = {
     chaptersLastFetchedAt?: FieldPolicy<any> | FieldReadFunction<any>;
     description?: FieldPolicy<any> | FieldReadFunction<any>;
     downloadCount?: FieldPolicy<any> | FieldReadFunction<any>;
-    fillermarkCount?: FieldPolicy<any> | FieldReadFunction<any>;
     firstUnreadChapter?: FieldPolicy<any> | FieldReadFunction<any>;
     genre?: FieldPolicy<any> | FieldReadFunction<any>;
     hasDuplicateChapters?: FieldPolicy<any> | FieldReadFunction<any>;
@@ -1099,7 +1093,6 @@ export type MangaUpdateTypeFieldPolicy = {
 export type MangaUserTypeKeySpecifier = (
     | 'bookmarkCount'
     | 'downloadCount'
-    | 'fillermarkCount'
     | 'firstUnreadChapter'
     | 'inLibrary'
     | 'inLibraryAt'
@@ -1112,7 +1105,6 @@ export type MangaUserTypeKeySpecifier = (
 export type MangaUserTypeFieldPolicy = {
     bookmarkCount?: FieldPolicy<any> | FieldReadFunction<any>;
     downloadCount?: FieldPolicy<any> | FieldReadFunction<any>;
-    fillermarkCount?: FieldPolicy<any> | FieldReadFunction<any>;
     firstUnreadChapter?: FieldPolicy<any> | FieldReadFunction<any>;
     inLibrary?: FieldPolicy<any> | FieldReadFunction<any>;
     inLibraryAt?: FieldPolicy<any> | FieldReadFunction<any>;
@@ -1185,7 +1177,6 @@ export type MutationKeySpecifier = (
     | 'clearDatabase'
     | 'clearDownloader'
     | 'connectKoSyncAccount'
-    | 'copyFillermarksToBlacklist'
     | 'createBackup'
     | 'createBackupAsync'
     | 'createCategory'
@@ -1292,7 +1283,6 @@ export type MutationFieldPolicy = {
     clearDatabase?: FieldPolicy<any> | FieldReadFunction<any>;
     clearDownloader?: FieldPolicy<any> | FieldReadFunction<any>;
     connectKoSyncAccount?: FieldPolicy<any> | FieldReadFunction<any>;
-    copyFillermarksToBlacklist?: FieldPolicy<any> | FieldReadFunction<any>;
     createBackup?: FieldPolicy<any> | FieldReadFunction<any>;
     createBackupAsync?: FieldPolicy<any> | FieldReadFunction<any>;
     createCategory?: FieldPolicy<any> | FieldReadFunction<any>;

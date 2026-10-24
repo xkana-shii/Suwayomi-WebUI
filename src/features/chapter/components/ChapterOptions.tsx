@@ -72,11 +72,6 @@ export const ChapterOptions: React.FC<IProps> = ({ open, onClose, options, updat
                                 checked={options.bookmarked}
                                 onChange={(c) => updateOption('bookmarked', c)}
                             />
-                            <ThreeStateCheckboxInput
-                                label={t`Fillermarked`}
-                                checked={options.fillermarked}
-                                onChange={(c) => updateOption('fillermarked', c)}
-                            />
                             {/* fork (Komikku port): bookmark color, blacklist and Smart Scanlator Merge filters */}
                             <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
                                 <CheckboxInput

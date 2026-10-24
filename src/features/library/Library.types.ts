@@ -43,7 +43,6 @@ export interface LibraryOptions {
     // filter options
     hasDownloadedChapters: NullAndUndefined<boolean>;
     hasBookmarkedChapters: NullAndUndefined<boolean>;
-    hasFillermarkedChapters: NullAndUndefined<boolean>;
     hasUnreadChapters: NullAndUndefined<boolean>;
     hasReadChapters: NullAndUndefined<boolean>;
     hasDuplicateChapters: NullAndUndefined<boolean>;

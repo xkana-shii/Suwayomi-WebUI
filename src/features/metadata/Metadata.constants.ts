@@ -91,9 +91,6 @@ export const APP_METADATA: Record<
     deleteChaptersWithBookmark: {
         convert: convertToBoolean,
     },
-    deleteChaptersWithFillermark: {
-        convert: convertToBoolean,
-    },
     downloadAheadLimit: {
         convert: convertToNumber,
         toConstrainedValue: (value: number) => {
@@ -196,9 +193,6 @@ export const APP_METADATA: Record<
         convert: convertToBooleanNullAndUndefined,
     },
     hasBookmarkedChapters: {
-        convert: convertToBooleanNullAndUndefined,
-    },
-    hasFillermarkedChapters: {
         convert: convertToBooleanNullAndUndefined,
     },
     hasUnreadChapters: {
@@ -367,9 +361,6 @@ export const APP_METADATA: Record<
     bookmarked: {
         convert: convertToBooleanNullAndUndefined,
     },
-    fillermarked: {
-        convert: convertToBooleanNullAndUndefined,
-    },
     downloaded: {
         convert: convertToBooleanNullAndUndefined,
     },
@@ -493,7 +484,6 @@ export const GLOBAL_METADATA_KEYS: AppMetadataKeys[] = [
     // filter
     'hasDownloadedChapters',
     'hasBookmarkedChapters',
-    'hasFillermarkedChapters',
     'hasUnreadChapters',
     'hasReadChapters',
     'hasDuplicateChapters',
@@ -562,7 +552,6 @@ export const GLOBAL_METADATA_KEYS: AppMetadataKeys[] = [
     // chapter list options
     'reverse',
     'bookmarked',
-    'fillermarked',
     'downloaded',
     'unread',
     'showChapterNumber',

@@ -115,7 +115,6 @@ export const GET_MANGA_TO_MIGRATE = gql`
                     isRead
                     isDownloaded
                     isBookmarked
-                    isFillermarked
                     meta @include(if: $migrateMetadata) {
                         ...CHAPTER_META_FIELDS
                     }
