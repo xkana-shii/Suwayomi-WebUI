@@ -6,9 +6,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-import { updateMetadataServerSettings,
+import {
+    updateMetadataServerSettings,
     createUpdateMetadataServerSettings,
-    useMetadataServerSettings } from '@/features/settings/services/ServerSettingsMetadata.ts';
+    useMetadataServerSettings,
+} from '@/features/settings/services/ServerSettingsMetadata.ts';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import List from '@mui/material/List';

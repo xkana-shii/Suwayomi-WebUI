@@ -244,6 +244,10 @@ export type CategoryType = {
     updateInterval?: Maybe<Scalars['Int']['output']>;
 };
 
+export type CategoryTypeSubtreeMangaCountArgs = {
+    includeHidden?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 export type CategoryUpdateType = {
     __typename?: 'CategoryUpdateType';
     category: CategoryType;

@@ -6,6 +6,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import IconButton from '@mui/material/IconButton';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
 import EditIcon from '@mui/icons-material/Edit';
@@ -51,6 +53,13 @@ export const CategorySettingsCard = ({
 }) => {
     const { t } = useLingui();
     const smartLabel = getSmartCategoryStatusLabel(category.trackStatus);
+    const isHidden = !!category.hidden;
+
+    // fork (Komikku port): hiding keeps the manga, hierarchy and settings; saved at once
+    const toggleHidden = () =>
+        requestManager
+            .updateCategory(category.id, { hidden: !isHidden })
+            .response.catch((e) => makeToast(t`Failed to save changes`, 'error', getErrorMessage(e)));
 
     const deleteCategory = async () => {
         await Confirmation.show({
@@ -84,12 +93,20 @@ export const CategorySettingsCard = ({
                     ) : (
                         <Box sx={{ width: 34 }} />
                     )}
-                    <Stack sx={{ flexGrow: 1, minWidth: 0 }}>
+                    <Stack sx={{ flexGrow: 1, minWidth: 0, opacity: isHidden ? 0.6 : undefined }}>
                         <Typography variant="h6" component="h2" noWrap>
                             {category.name}
                         </Typography>
-                        {(!!smartLabel || (collapsed && !!childCount)) && (
+                        {(!!smartLabel || isHidden || !!category.updateInterval || (collapsed && !!childCount)) && (
                             <Stack direction="row" sx={{ gap: 0.5, flexWrap: 'wrap' }}>
+                                {isHidden && <Chip size="small" icon={<VisibilityOffIcon />} label={t`Hidden`} />}
+                                {!!category.updateInterval && (
+                                    <Chip
+                                        size="small"
+                                        variant="outlined"
+                                        label={t`Updates every ${category.updateInterval} days`}
+                                    />
+                                )}
                                 {smartLabel && (
                                     <Chip
                                         size="small"
@@ -104,6 +121,20 @@ export const CategorySettingsCard = ({
                         )}
                     </Stack>
                     <Stack sx={{ flexDirection: 'row' }}>
+                        <CustomTooltip title={isHidden ? t`Show in library` : t`Hide from library`}>
+                            <IconButton
+                                component={Box}
+                                onClick={toggleHidden}
+                                aria-label={
+                                    isHidden
+                                        ? t`Show ${category.name} in library`
+                                        : t`Hide ${category.name} from library`
+                                }
+                                aria-pressed={isHidden}
+                            >
+                                {isHidden ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                            </IconButton>
+                        </CustomTooltip>
                         {onAddSubcategory && (
                             <CustomTooltip title={t`Add subcategory`}>
                                 <IconButton component={Box} onClick={onAddSubcategory}>

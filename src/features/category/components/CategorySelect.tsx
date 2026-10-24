@@ -259,7 +259,13 @@ export function CategorySelect(props: CategorySelectProps) {
                             }}
                             label={(() => {
                                 const smartLabel = getSmartCategoryStatusLabel(category.trackStatus);
-                                return smartLabel ? `${category.name} · ${t`Smart`}: ${t(smartLabel)}` : category.name;
+                                return [
+                                    category.name,
+                                    smartLabel ? `${t`Smart`}: ${t(smartLabel)}` : null,
+                                    category.hidden ? t`Hidden` : null,
+                                ]
+                                    .filter(Boolean)
+                                    .join(' · ');
                             })()}
                             key={category.id}
                         />

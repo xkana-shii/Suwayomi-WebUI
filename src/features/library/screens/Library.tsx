@@ -71,7 +71,7 @@ export function Library() {
     const theme = useTheme();
 
     const {
-        settings: { showTabSize },
+        settings: { showTabSize, showHiddenCategories, subcategoryUpdateScope },
     } = useMetadataServerSettings();
 
     const {
@@ -90,6 +90,7 @@ export function Library() {
     const tabsData = categoriesResponse?.categories.nodes.filter(
         (category) =>
             categoryTree.parentOf(category.id) === null &&
+            (showHiddenCategories || !category.hidden) &&
             (category.id !== 0 || (category.id === 0 && category.mangas.totalCount)),
     );
     const tabs = tabsData ?? STABLE_EMPTY_ARRAY;
@@ -109,14 +110,30 @@ export function Library() {
     // a subcategory chip narrows the tab to that subcategory's subtree
     const [subcategoryId, setSubcategoryId] = useState<number | null>(null);
     useEffect(() => setSubcategoryId(null), [activeTab?.id]);
+    // hidden categories (and everything below them) are left out unless shown, as in Komikku
+    const isHiddenInTree = useCallback(
+        (id: number) =>
+            !showHiddenCategories &&
+            [categoryTree.get(id), ...categoryTree.ancestors(id)].some((category) => !!category?.hidden),
+        [categoryTree, showHiddenCategories],
+    );
     const subcategories = useMemo(
-        () => (activeTab ? categoryTree.descendantIds(activeTab.id).map((id) => categoryTree.get(id)!) : []),
-        [categoryTree, activeTab?.id],
+        () =>
+            activeTab
+                ? categoryTree
+                      .descendantIds(activeTab.id)
+                      .filter((id) => !isHiddenInTree(id))
+                      .map((id) => categoryTree.get(id)!)
+                : [],
+        [categoryTree, activeTab?.id, isHiddenInTree],
     );
     const scopeCategoryId = subcategoryId ?? activeTab?.id;
     const scopeSubcategoryIds = useMemo(
-        () => (scopeCategoryId === undefined ? [] : categoryTree.descendantIds(scopeCategoryId)),
-        [categoryTree, scopeCategoryId],
+        () =>
+            scopeCategoryId === undefined
+                ? []
+                : categoryTree.descendantIds(scopeCategoryId).filter((id) => !isHiddenInTree(id)),
+        [categoryTree, scopeCategoryId, isHiddenInTree],
     );
 
     const {
@@ -139,7 +156,7 @@ export function Library() {
     } = useGetVisibleLibraryMangas(categoryMangas, activeTab);
 
     const getTabCount = (tab: (typeof tabs)[number]) => {
-        const total = tab.subtreeMangaCount;
+        const total = showHiddenCategories ? tab.subtreeMangaCount : tab.visibleSubtreeMangaCount;
         if (mangaLoading || tab !== activeTab || subcategoryId !== null || mangas.length === total) {
             return total;
         }
@@ -276,7 +293,12 @@ export function Library() {
                     <AppbarSearch searchHistoryKey="library" suggestions={mangaTitles} />
                     <LibraryToolbarMenu category={activeTab} mangas={mangas} />
                     <SyncButton />
-                    <UpdateChecker categoryId={activeTab?.id} />
+                    {/* fork (Komikku port): refresh the whole tab or only the selected subcategory (with its subtree) */}
+                    <UpdateChecker
+                        categoryId={
+                            subcategoryUpdateScope === 'subcategory' ? (subcategoryId ?? activeTab?.id) : activeTab?.id
+                        }
+                    />
                 </>
             )}
             {!!mangas.length && (

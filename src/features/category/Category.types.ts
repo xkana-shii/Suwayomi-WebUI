@@ -21,4 +21,7 @@ export type CategoryDownloadInclusionInfo = Pick<CategoryType, 'includeInDownloa
 export type CategoryMetadataInfo = CategoryIdInfo & { meta: Pick<CategoryMetaType, 'key' | 'value'>[] };
 
 // fork (Komikku port)
-export type CategoryHierarchyInfo = Pick<CategoryType, 'parentId' | 'trackStatus' | 'order'>;
+export type CategoryHierarchyInfo = Pick<
+    CategoryType,
+    'parentId' | 'trackStatus' | 'order' | 'hidden' | 'updateInterval'
+>;

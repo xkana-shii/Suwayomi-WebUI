@@ -54,6 +54,10 @@ export const CreateOrEditCategoryDialog = ({
     const [dialogDefault, setDialogDefault] = useState(!!category?.default);
     const [parentId, setParentId] = useState<number>(category?.parentId ?? initialParentId ?? TOP_LEVEL);
     const [trackStatus, setTrackStatus] = useState<number>(category?.trackStatus ?? NO_BINDING);
+    const [updateInterval, setUpdateInterval] = useState(category?.updateInterval ? `${category.updateInterval}` : '');
+    const intervalValue = updateInterval === '' ? null : Number(updateInterval);
+    const isInvalidInterval =
+        intervalValue !== null && (!Number.isInteger(intervalValue) || intervalValue < 1 || intervalValue > 365);
 
     const tree = useMemo(() => new CategoryTree(categories), [categories]);
     const parentOptions = useMemo(
@@ -67,7 +71,7 @@ export const CreateOrEditCategoryDialog = ({
     const trimmedName = dialogName?.trim() ?? '';
     const isInvalidName = dialogName !== undefined && !trimmedName.length;
     const isDuplicateName = !!trimmedName && siblingNames.includes(trimmedName.toLowerCase());
-    const canSubmit = dialogName !== undefined && !isInvalidName && !isDuplicateName;
+    const canSubmit = dialogName !== undefined && !isInvalidName && !isDuplicateName && !isInvalidInterval;
 
     const handleDialogSubmit = () => {
         assertIsDefined(dialogName);
@@ -94,6 +98,8 @@ export const CreateOrEditCategoryDialog = ({
                         (newParentId === null ? { moveToTopLevel: true } : { parentId: newParentId })),
                     ...(didBindingChange &&
                         (newTrackStatus === null ? { clearTrackStatus: true } : { trackStatus: newTrackStatus })),
+                    ...((category.updateInterval ?? null) !== intervalValue &&
+                        (intervalValue === null ? { clearUpdateInterval: true } : { updateInterval: intervalValue })),
                 })
                 .response.then(refetchOnBindingChange)
                 .catch((e) => makeToast(t`Failed to save changes`, 'error', getErrorMessage(e)));
@@ -108,7 +114,13 @@ export const CreateOrEditCategoryDialog = ({
                 parentId: newParentId,
                 trackStatus: newTrackStatus,
             })
-            .response.then(refetchOnBindingChange)
+            .response.then(async (response) => {
+                const createdId = response.data?.createCategory?.category.id;
+                if (createdId !== undefined && intervalValue !== null) {
+                    await requestManager.updateCategory(createdId, { updateInterval: intervalValue }).response;
+                }
+                refetchOnBindingChange();
+            })
             .catch((e) => makeToast(t`Could not create category`, 'error', getErrorMessage(e)));
     };
 
@@ -171,6 +183,21 @@ export const CreateOrEditCategoryDialog = ({
                         </MenuItem>
                     ))}
                 </TextField>
+                <TextField
+                    margin="dense"
+                    fullWidth
+                    type="number"
+                    label={t`Automatic update interval (days)`}
+                    value={updateInterval}
+                    onChange={(e) => setUpdateInterval(e.target.value)}
+                    error={isInvalidInterval}
+                    helperText={
+                        isInvalidInterval
+                            ? t`Between 1 and 365 days`
+                            : t`Empty: the parent category's interval, or every automatic update`
+                    }
+                    slotProps={{ htmlInput: { min: 1, max: 365, step: 1 } }}
+                />
                 <FormControlLabel
                     control={<Checkbox checked={dialogDefault} onChange={(e) => setDialogDefault(e.target.checked)} />}
                     label={t`Default category when adding new manga to the library`}

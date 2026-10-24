@@ -111,6 +111,8 @@ export const SERVER_SETTINGS_METADATA_DEFAULT: MetadataServerSettings = {
     updatesBookmarked: undefined,
     updatesBookmarkColorsIncluded: [],
     updatesBookmarkColorsExcluded: [],
+    showHiddenCategories: false,
+    subcategoryUpdateScope: 'whole',
 };
 
 const AUTH_MODES = [AuthMode.None].concat(Object.values(AuthMode).filter((mode) => mode !== AuthMode.None));

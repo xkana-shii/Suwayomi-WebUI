@@ -54,6 +54,10 @@ export type MetadataKomikkuPortSettings = {
     updatesBookmarked: NullAndUndefined<boolean>;
     updatesBookmarkColorsIncluded: number[];
     updatesBookmarkColorsExcluded: number[];
+    /** library tabs and chips include hidden categories */
+    showHiddenCategories: boolean;
+    /** a library refresh covers the whole tab or only the selected subcategory chip */
+    subcategoryUpdateScope: 'whole' | 'subcategory';
 };
 
 export interface ISearchSettings {

@@ -423,6 +423,12 @@ export const APP_METADATA: Record<
     updatesBookmarked: {
         convert: convertToBooleanNullAndUndefined,
     },
+    showHiddenCategories: {
+        convert: convertToBoolean,
+    },
+    subcategoryUpdateScope: {
+        convert: convertToString,
+    },
     updatesBookmarkColorsIncluded: {
         convert: convertToObject<number[]>,
     },
@@ -590,6 +596,8 @@ export const GLOBAL_METADATA_KEYS: AppMetadataKeys[] = [
     'updatesBookmarked',
     'updatesBookmarkColorsIncluded',
     'updatesBookmarkColorsExcluded',
+    'showHiddenCategories',
+    'subcategoryUpdateScope',
 ];
 
 /**

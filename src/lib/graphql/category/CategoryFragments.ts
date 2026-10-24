@@ -45,6 +45,7 @@ export const CATEGORY_LIBRARY_FIELDS = gql`
             totalCount
         }
         subtreeMangaCount
+        visibleSubtreeMangaCount: subtreeMangaCount(includeHidden: false)
     }
 `;
 

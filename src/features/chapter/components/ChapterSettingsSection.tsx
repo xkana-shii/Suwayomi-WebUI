@@ -99,6 +99,36 @@ export const ChapterSettingsSection = () => {
             </ListItem>
             <ListItem>
                 <ListItemText
+                    primary={t`Show hidden categories`}
+                    secondary={t`Hidden categories keep their manga; when shown they appear as library tabs and subcategories again`}
+                />
+                <Switch
+                    edge="end"
+                    checked={settings.showHiddenCategories}
+                    onChange={(e) => setMetadataSetting('showHiddenCategories', e.target.checked)}
+                />
+            </ListItem>
+            <ListItem>
+                <ListItemText
+                    primary={t`Library refresh with subcategories`}
+                    secondary={t`What the library refresh button covers when a subcategory is selected`}
+                />
+                <TextField
+                    select
+                    size="small"
+                    value={settings.subcategoryUpdateScope}
+                    onChange={(e) =>
+                        setMetadataSetting('subcategoryUpdateScope', e.target.value as 'whole' | 'subcategory')
+                    }
+                    sx={{ minWidth: 160 }}
+                    slotProps={{ htmlInput: { 'aria-label': t`Library refresh with subcategories` } }}
+                >
+                    <MenuItem value="whole">{t`Whole category`}</MenuItem>
+                    <MenuItem value="subcategory">{t`Selected subcategory`}</MenuItem>
+                </TextField>
+            </ListItem>
+            <ListItem>
+                <ListItemText
                     primary={t`Remember the last bookmark color`}
                     secondary={t`A click bookmarks with the color last picked from the color menu`}
                 />

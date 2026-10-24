@@ -675,6 +675,10 @@ msgstr "Automatic progress bar vertical position"
 msgid "Automatic update interval"
 msgstr "Automatic update interval"
 
+#: src/features/category/components/CreateOrEditCategoryDialog.tsx
+msgid "Automatic update interval (days)"
+msgstr "Automatic update interval (days)"
+
 #: src/features/settings/components/globalUpdate/GlobalUpdateSettingsInterval.tsx
 msgid "Automatic updates"
 msgstr "Automatic updates"
@@ -767,6 +771,10 @@ msgstr "Before the start date"
 #: src/features/reader/settings/ReaderSettings.constants.tsx
 msgid "Behaviour"
 msgstr "Behaviour"
+
+#: src/features/category/components/CreateOrEditCategoryDialog.tsx
+msgid "Between 1 and 365 days"
+msgstr "Between 1 and 365 days"
 
 #: src/features/settings/Settings.constants.ts
 msgid "Binary"
@@ -1925,6 +1933,10 @@ msgstr "Electron"
 msgid "Electron path"
 msgstr "Electron path"
 
+#: src/features/category/components/CreateOrEditCategoryDialog.tsx
+msgid "Empty: the parent category's interval, or every automatic update"
+msgstr "Empty: the parent category's interval, or every automatic update"
+
 #: src/features/reader/settings/general/components/ReaderSettingBackgroundColor.tsx
 msgid "Enable auto background color in continuous reading mode"
 msgstr "Enable auto background color in continuous reading mode"
@@ -2077,6 +2089,7 @@ msgstr "Failed to reset metadata"
 #: src/features/browse/screens/BrowseSettings.tsx
 #: src/features/browse/sources/components/SourceCard.tsx
 #: src/features/category/components/CategoriesInclusionSetting.tsx
+#: src/features/category/components/CategorySettingsCard.tsx
 #: src/features/category/components/CreateOrEditCategoryDialog.tsx
 #: src/features/chapter/components/buttons/ChapterDownloadButton.tsx
 #: src/features/chapter/components/ChapterList.tsx
@@ -2344,6 +2357,8 @@ msgstr "Headers ({0})"
 msgid "Hiatus"
 msgstr "Hiatus"
 
+#: src/features/category/components/CategorySelect.tsx
+#: src/features/category/components/CategorySettingsCard.tsx
 #: src/features/reader/overlay/progress-bar/settings/components/ReaderSettingProgressBarType.tsx
 msgid "Hidden"
 msgstr "Hidden"
@@ -2352,6 +2367,15 @@ msgstr "Hidden"
 msgid "Hidden by Smart Scanlator Merge"
 msgstr "Hidden by Smart Scanlator Merge"
 
+#: src/features/chapter/components/ChapterSettingsSection.tsx
+msgid "Hidden categories keep their manga; when shown they appear as library tabs and subcategories again"
+msgstr "Hidden categories keep their manga; when shown they appear as library tabs and subcategories again"
+
+#. placeholder {0}: category.name
+#: src/features/category/components/CategorySettingsCard.tsx
+msgid "Hide {0} from library"
+msgstr "Hide {0} from library"
+
 #: src/features/chapter/components/ScanlatorSettingsDialog.tsx
 msgid "Hide blacklisted chapters"
 msgstr "Hide blacklisted chapters"
@@ -2359,6 +2383,10 @@ msgstr "Hide blacklisted chapters"
 #: src/features/browse/screens/BrowseSettings.tsx
 msgid "Hide entries already in library"
 msgstr "Hide entries already in library"
+
+#: src/features/category/components/CategorySettingsCard.tsx
+msgid "Hide from library"
+msgstr "Hide from library"
 
 #: src/features/history/screens/HistorySettings.tsx
 msgid "Hide history"
@@ -2732,6 +2760,10 @@ msgstr "Library entries"
 #: src/features/category/components/CreateOrEditCategoryDialog.tsx
 msgid "Library manga are added and removed automatically by their tracker status. A subcategory only applies to manga in its branch."
 msgstr "Library manga are added and removed automatically by their tracker status. A subcategory only applies to manga in its branch."
+
+#: src/features/chapter/components/ChapterSettingsSection.tsx
+msgid "Library refresh with subcategories"
+msgstr "Library refresh with subcategories"
 
 #: src/features/manga/Manga.constants.ts
 msgid "Licensed"
@@ -3986,6 +4018,10 @@ msgstr "Select pinned sources"
 msgid "Selected"
 msgstr "Selected"
 
+#: src/features/chapter/components/ChapterSettingsSection.tsx
+msgid "Selected subcategory"
+msgstr "Selected subcategory"
+
 #: src/features/reader/filters/settings/components/ReaderSettingSepia.tsx
 msgid "Sepia"
 msgstr "Sepia"
@@ -4068,6 +4104,11 @@ msgstr "Share"
 msgid "Show"
 msgstr "Show"
 
+#. placeholder {0}: category.name
+#: src/features/category/components/CategorySettingsCard.tsx
+msgid "Show {0} in library"
+msgstr "Show {0} in library"
+
 #: src/features/chapter/components/ScanlatorSettingsDialog.tsx
 msgid "Show {scanlator}"
 msgstr "Show {scanlator}"
@@ -4090,9 +4131,17 @@ msgstr "Show continue reading button"
 msgid "Show entry"
 msgstr "Show entry"
 
+#: src/features/chapter/components/ChapterSettingsSection.tsx
+msgid "Show hidden categories"
+msgstr "Show hidden categories"
+
 #: src/features/settings/screens/ServerSettings.tsx
 msgid "Show icon in system tray"
 msgstr "Show icon in system tray"
+
+#: src/features/category/components/CategorySettingsCard.tsx
+msgid "Show in library"
+msgstr "Show in library"
 
 #: src/features/browse/screens/BrowseSettings.tsx
 msgid "Show in sources and extensions lists"
@@ -4878,6 +4927,11 @@ msgstr "Updated version"
 msgid "Updates"
 msgstr "Updates"
 
+#. placeholder {0}: category.updateInterval
+#: src/features/category/components/CategorySettingsCard.tsx
+msgid "Updates every {0} days"
+msgstr "Updates every {0} days"
+
 #: src/features/extension/Extensions.constants.ts
 msgid "Updating"
 msgstr "Updating"
@@ -5014,6 +5068,10 @@ msgstr "WebView"
 msgid "Weekly"
 msgstr "Weekly"
 
+#: src/features/chapter/components/ChapterSettingsSection.tsx
+msgid "What the library refresh button covers when a subcategory is selected"
+msgstr "What the library refresh button covers when a subcategory is selected"
+
 #: src/features/settings/screens/ServerSettings.tsx
 msgid "When enabled, download and streaming links are provided directly in the chapter list. KoSync strategies are applied, but PROMPT conflicts are ignored (treating local progress as priority)"
 msgstr "When enabled, download and streaming links are provided directly in the chapter list. KoSync strategies are applied, but PROMPT conflicts are ignored (treating local progress as priority)"
@@ -5029,6 +5087,10 @@ msgstr "Where to start the WebUI when starting the server"
 #: src/features/reader/settings/general/components/ReaderSettingBackgroundColor.tsx
 msgid "White"
 msgstr "White"
+
+#: src/features/chapter/components/ChapterSettingsSection.tsx
+msgid "Whole category"
+msgstr "Whole category"
 
 #: src/features/settings/Settings.constants.ts
 msgid "With \"Completed\" status"

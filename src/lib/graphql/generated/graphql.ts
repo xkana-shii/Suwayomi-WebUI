@@ -119,6 +119,7 @@ export type CategoryLibraryFieldsFragment = {
     trackStatus: number | null;
     hidden: boolean;
     updateInterval: number | null;
+    visibleSubtreeMangaCount: number;
     meta: Array<{ __typename: 'CategoryMetaType'; categoryId: number; key: string; value: string }>;
     mangas: { __typename: 'MangaNodeList'; totalCount: number };
 };
@@ -338,6 +339,7 @@ export type GetCategoriesLibraryQuery = {
             trackStatus: number | null;
             hidden: boolean;
             updateInterval: number | null;
+            visibleSubtreeMangaCount: number;
             meta: Array<{ __typename: 'CategoryMetaType'; categoryId: number; key: string; value: string }>;
             mangas: { __typename: 'MangaNodeList'; totalCount: number };
         }>;
