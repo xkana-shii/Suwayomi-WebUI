@@ -6,6 +6,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { PreferredTrackerSelect } from '@/features/tracker/components/PreferredTrackerSelect.tsx';
 import { UnifiedTrackerEditor } from '@/features/tracker/components/UnifiedTrackerEditor.tsx';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
@@ -143,7 +144,15 @@ export const TrackManga = ({ manga }: { manga: MangaIdInfo & MangaTitleInfo }) =
                     '.MuiPaper-root .MuiCardContent-root': { paddingBottom: '0' },
                 }}
             >
-                {/* fork (Komikku port): one edit for every tracker of the entry */}
+                {/* fork (Komikku port): per-manga preferred tracker and one edit for every tracker of the entry */}
+                {trackers.some((tracker) => tracker.supportsMangaMetadata) && (
+                    <Box sx={{ px: 2, pt: 2 }}>
+                        <PreferredTrackerSelect
+                            mangaId={manga.id}
+                            trackers={trackers.filter((tracker) => tracker.supportsMangaMetadata)}
+                        />
+                    </Box>
+                )}
                 {!!trackersInUse.length && (
                     <UnifiedTrackerEditor
                         mangaId={manga.id}

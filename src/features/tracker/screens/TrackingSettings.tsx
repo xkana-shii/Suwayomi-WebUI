@@ -6,6 +6,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { updateMetadataServerSettings,
+    createUpdateMetadataServerSettings,
+    useMetadataServerSettings } from '@/features/settings/services/ServerSettingsMetadata.ts';
+import MenuItem from '@mui/material/MenuItem';
+import TextField from '@mui/material/TextField';
 import List from '@mui/material/List';
 import { ListSubheader } from '@/base/components/lists/ListSubheader.tsx';
 import ListItem from '@mui/material/ListItem';
@@ -16,10 +21,6 @@ import { requestManager } from '@/lib/requests/RequestManager.ts';
 import { EmptyViewAbsoluteCentered } from '@/base/components/feedback/EmptyViewAbsoluteCentered.tsx';
 import { LoadingPlaceholder } from '@/base/components/feedback/LoadingPlaceholder.tsx';
 import { SettingsTrackerCard } from '@/features/tracker/components/cards/SettingsTrackerCard.tsx';
-import {
-    createUpdateMetadataServerSettings,
-    useMetadataServerSettings,
-} from '@/features/settings/services/ServerSettingsMetadata.ts';
 import { makeToast } from '@/base/utils/Toast.ts';
 import { defaultPromiseErrorHandler } from '@/lib/DefaultPromiseErrorHandler.ts';
 import { GET_TRACKERS_SETTINGS } from '@/lib/graphql/tracker/TrackerQuery.ts';
@@ -35,7 +36,7 @@ export const TrackingSettings = () => {
     useAppTitle(t`Tracking`);
 
     const {
-        settings: { updateProgressAfterReading, updateProgressManualMarkRead },
+        settings: { updateProgressAfterReading, updateProgressManualMarkRead, preferredMetadataTrackerId },
         loading: areMetadataServerSettingsLoading,
         request: { error: metadataServerSettingsError, refetch: refetchServerMetadataSettings },
     } = useMetadataServerSettings();
@@ -101,6 +102,34 @@ export const TrackingSettings = () => {
                         checked={updateProgressManualMarkRead}
                         onChange={(e) => updateTrackingSettings('updateProgressManualMarkRead', e.target.checked)}
                     />
+                </ListItem>
+                {/* fork (Komikku port): global preferred tracker of the metadata autofill */}
+                <ListItem>
+                    <ListItemText
+                        primary={t`Preferred tracker for metadata`}
+                        secondary={t`Used by "Autofill from tracker" unless a manga has its own preference`}
+                    />
+                    <TextField
+                        select
+                        size="small"
+                        value={preferredMetadataTrackerId}
+                        onChange={(e) =>
+                            updateMetadataServerSettings('preferredMetadataTrackerId', Number(e.target.value)).catch(
+                                (e2) => makeToast(t`Failed to save changes`, 'error', getErrorMessage(e2)),
+                            )
+                        }
+                        sx={{ minWidth: 160 }}
+                        slotProps={{ htmlInput: { 'aria-label': t`Preferred tracker for metadata` } }}
+                    >
+                        <MenuItem value={0}>{t`Ask`}</MenuItem>
+                        {trackers
+                            .filter((tracker) => tracker.supportsMangaMetadata)
+                            .map((tracker) => (
+                                <MenuItem key={tracker.id} value={tracker.id}>
+                                    {tracker.name}
+                                </MenuItem>
+                            ))}
+                    </TextField>
                 </ListItem>
             </List>
             <List

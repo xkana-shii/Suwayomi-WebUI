@@ -287,7 +287,11 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
             <DialogContent>
                 <StackAny sx={{ gap: 2, mt: 1 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-                        <TrackerAutofillButton mangaId={manga.id} onFill={fillFromTracker} />
+                        <TrackerAutofillButton
+                            mangaId={manga.id}
+                            mangaPreferredTrackerId={Number(metaMap['webUI_preferredTrackerId'] ?? 0) || 0}
+                            onFill={fillFromTracker}
+                        />
                     </Box>
                     <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
                         <Box sx={{ position: 'relative', flexShrink: 0, width: 120 }}>

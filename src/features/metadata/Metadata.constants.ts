@@ -453,6 +453,9 @@ export const APP_METADATA: Record<
     preferredMetadataTrackerId: {
         convert: convertToNumber,
     },
+    preferredTrackerId: {
+        convert: convertToNumber,
+    },
     notes: {
         convert: convertToString,
     },

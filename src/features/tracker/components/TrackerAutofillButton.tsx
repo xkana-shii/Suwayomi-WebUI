@@ -39,9 +39,12 @@ const updateSetting = createUpdateMetadataServerSettings<'preferredMetadataTrack
  */
 export const TrackerAutofillButton = ({
     mangaId,
+    mangaPreferredTrackerId = 0,
     onFill,
 }: {
     mangaId: number;
+    /** the manga's own preferred tracker, 0 = follow the global preference */
+    mangaPreferredTrackerId?: number;
     onFill: (metadata: TrackerMangaMetadata, trackerName: string) => void;
 }) => {
     const { t } = useLingui();
@@ -89,7 +92,9 @@ export const TrackerAutofillButton = ({
     };
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-        const preferred = eligibleTrackers.find((tracker) => tracker.id === preferredMetadataTrackerId);
+        // the manga's preference, else the global one; an unavailable preference falls back to asking
+        const preferredId = mangaPreferredTrackerId || preferredMetadataTrackerId;
+        const preferred = eligibleTrackers.find((tracker) => tracker.id === preferredId);
         if (preferred) {
             autofill(preferred);
             return;

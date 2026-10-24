@@ -93,6 +93,8 @@ export type SpecificMangaCardProps = Omit<MangaCardProps, 'manga'> &
 
 export type MangaMetadata = ChapterListOptions & {
     notes: string;
+    /** fork (Komikku port): tracker used for metadata autofill, 0 = follow the global preference */
+    preferredTrackerId: number;
 };
 
 export type MangaMetadataKeys = keyof MangaMetadata;

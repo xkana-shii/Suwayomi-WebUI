@@ -610,6 +610,11 @@ msgstr "Artist"
 msgid "Ascending"
 msgstr "Ascending"
 
+#: src/features/tracker/components/PreferredTrackerSelect.tsx
+#: src/features/tracker/screens/TrackingSettings.tsx
+msgid "Ask"
+msgstr "Ask"
+
 #: src/features/settings/screens/ServerSettings.tsx
 msgid "Authentication"
 msgstr "Authentication"
@@ -2098,6 +2103,7 @@ msgstr "Failed to reset metadata"
 #: src/features/source/services/Sources.ts
 #: src/features/theme/AppThemeContext.tsx
 #: src/features/tracker/components/cards/TrackerActiveCard.tsx
+#: src/features/tracker/components/PreferredTrackerSelect.tsx
 #: src/features/tracker/screens/TrackingSettings.tsx
 #: src/features/updates/components/UpdatesFilterButton.tsx
 msgid "Failed to save changes"
@@ -2223,6 +2229,10 @@ msgstr "FlareSolverr will automatically rotate expired sessions based on the TTL
 #: src/features/settings/screens/WebUISettings.tsx
 msgid "Flavor"
 msgstr "Flavor"
+
+#: src/features/tracker/components/PreferredTrackerSelect.tsx
+msgid "Follow global ({globalName})"
+msgstr "Follow global ({globalName})"
 
 #: src/features/theme/Themes.ts
 msgid "Forest Dew"
@@ -3474,6 +3484,11 @@ msgstr "Prefer a scanlator for a range of chapter numbers. Where rules overlap, 
 #: src/features/tracker/components/TrackerAutofillButton.tsx
 msgid "Preferred"
 msgstr "Preferred"
+
+#: src/features/tracker/components/PreferredTrackerSelect.tsx
+#: src/features/tracker/screens/TrackingSettings.tsx
+msgid "Preferred tracker for metadata"
+msgstr "Preferred tracker for metadata"
 
 #: src/features/reader/settings/behaviour/ReaderBehaviourSettings.tsx
 msgid "Preload images"
@@ -4908,6 +4923,10 @@ msgstr "Use the latest released version."
 #: src/features/settings/Settings.constants.ts
 msgid "Use the version that was delivered with the server release"
 msgstr "Use the version that was delivered with the server release"
+
+#: src/features/tracker/screens/TrackingSettings.tsx
+msgid "Used by \"Autofill from tracker\" unless a manga has its own preference"
+msgstr "Used by \"Autofill from tracker\" unless a manga has its own preference"
 
 #: src/features/chapter/components/ChapterSettingsSection.tsx
 msgid "Used when bookmarking with a click. Hold or right click a bookmark button to pick another color."
