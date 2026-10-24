@@ -220,6 +220,8 @@ import type {
     GetUserSettingsKomikkuPortQueryVariables,
     SetUserSettingsSmartScanlatorMergeMutation,
     SetUserSettingsSmartScanlatorMergeMutationVariables,
+    GetMangaAutofillTrackersQuery,
+    GetMangaAutofillTrackersQueryVariables,
 } from '@/lib/graphql/generated/graphql.ts';
 import type {
     CreateBackupInput,
@@ -358,7 +360,11 @@ import { GET_DOWNLOAD_STATUS } from '@/lib/graphql/download/DownloaderQuery.ts';
 import { defaultPromiseErrorHandler } from '@/lib/DefaultPromiseErrorHandler.ts';
 import type { QueuePriority } from '@/lib/Queue.ts';
 import { SourceAwareQueue } from '@/lib/SourceAwareQueue.ts';
-import { GET_TRACKER_MANGA_METADATA, TRACKER_SEARCH } from '@/lib/graphql/tracker/TrackerQuery.ts';
+import {
+    GET_MANGA_AUTOFILL_TRACKERS,
+    GET_TRACKER_MANGA_METADATA,
+    TRACKER_SEARCH,
+} from '@/lib/graphql/tracker/TrackerQuery.ts';
 import {
     TRACK_BIND_TRACK_RECORD,
     TRACKER_BIND,
@@ -4164,6 +4170,13 @@ export class RequestManager {
         options?: MutationOptions<TrackerUpdateUnifiedMutation, TrackerUpdateUnifiedMutationVariables>,
     ): AbortableApolloMutationResponse<TrackerUpdateUnifiedMutation> {
         return this.doRequest(GQLMethod.MUTATION, TRACKER_UPDATE_UNIFIED, { input }, options);
+    }
+
+    public useGetMangaAutofillTrackers(
+        mangaId: number,
+        options?: QueryHookOptions<GetMangaAutofillTrackersQuery, GetMangaAutofillTrackersQueryVariables>,
+    ): AbortableApolloUseQueryResponse<GetMangaAutofillTrackersQuery, GetMangaAutofillTrackersQueryVariables> {
+        return this.doRequest(GQLMethod.USE_QUERY, GET_MANGA_AUTOFILL_TRACKERS, { mangaId }, options);
     }
 
     public getTrackerMangaMetadata(

@@ -2271,12 +2271,6 @@ export type OsInfo = {
     version: Scalars['String']['output'];
 };
 
-export enum Outcome {
-    Failed = 'FAILED',
-    Skipped = 'SKIPPED',
-    Updated = 'UPDATED',
-}
-
 export type PageInfo = {
     __typename?: 'PageInfo';
     /** When paginating forwards, the cursor to continue. */
@@ -4170,10 +4164,16 @@ export type UnbindTrackPayload = {
     trackRecord?: Maybe<TrackRecordType>;
 };
 
+export enum UnifiedTrackEditOutcome {
+    Failed = 'FAILED',
+    Skipped = 'SKIPPED',
+    Updated = 'UPDATED',
+}
+
 export type UnifiedTrackEditResultType = {
     __typename?: 'UnifiedTrackEditResultType';
     messages: Array<Scalars['String']['output']>;
-    outcome: Outcome;
+    outcome: UnifiedTrackEditOutcome;
     recordId: Scalars['Int']['output'];
     trackerId: Scalars['Int']['output'];
 };

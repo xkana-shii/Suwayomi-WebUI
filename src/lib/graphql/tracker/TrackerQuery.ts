@@ -72,3 +72,27 @@ export const GET_TRACKER_MANGA_METADATA = gql`
         }
     }
 `;
+
+// fork (Komikku port): the trackers a manga can be autofilled from
+export const GET_MANGA_AUTOFILL_TRACKERS = gql`
+    query GET_MANGA_AUTOFILL_TRACKERS($mangaId: Int!) {
+        manga(id: $mangaId) {
+            id
+            trackRecords {
+                nodes {
+                    id
+                    trackerId
+                    title
+                }
+            }
+        }
+        trackers {
+            nodes {
+                id
+                name
+                icon
+                supportsMangaMetadata
+            }
+        }
+    }
+`;

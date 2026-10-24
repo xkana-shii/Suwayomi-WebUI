@@ -6,6 +6,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import type { TrackerMangaMetadata } from '@/features/tracker/components/TrackerAutofillButton.tsx';
+import { TrackerAutofillButton } from '@/features/tracker/components/TrackerAutofillButton.tsx';
 import { useEffect, useMemo, useState } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -246,10 +248,35 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
         }
     };
 
+    // fork (Komikku port): fill the editor from a tracker; existing tags stay first, nothing is saved yet
+    const fillFromTracker = (metadata: TrackerMangaMetadata) => {
+        if (metadata.title) {setTitle(metadata.title);}
+        if (metadata.author) {setAuthor(metadata.author);}
+        if (metadata.artist) {setArtist(metadata.artist);}
+        if (metadata.description) {setDescription(metadata.description);}
+        if (metadata.status) {setStatus(metadata.status);}
+        if (metadata.genre.length) {
+            const seen = new Set<string>();
+            setGenre(
+                [...genre, ...metadata.genre]
+                    .map((tag) => tag.trim())
+                    .filter((tag) => {
+                        const key = tag.toLowerCase();
+                        if (!tag || seen.has(key)) {return false;}
+                        seen.add(key);
+                        return true;
+                    }),
+            );
+        }
+    };
+
     return (
         <>
             <DialogContent>
                 <StackAny sx={{ gap: 2, mt: 1 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                        <TrackerAutofillButton mangaId={manga.id} onFill={fillFromTracker} />
+                    </Box>
                     <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
                         <Box sx={{ position: 'relative', flexShrink: 0, width: 120 }}>
                             <SpinnerImage

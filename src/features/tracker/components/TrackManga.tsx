@@ -6,6 +6,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { UnifiedTrackerEditor } from '@/features/tracker/components/UnifiedTrackerEditor.tsx';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -142,6 +143,13 @@ export const TrackManga = ({ manga }: { manga: MangaIdInfo & MangaTitleInfo }) =
                     '.MuiPaper-root .MuiCardContent-root': { paddingBottom: '0' },
                 }}
             >
+                {/* fork (Komikku port): one edit for every tracker of the entry */}
+                {!!trackersInUse.length && (
+                    <UnifiedTrackerEditor
+                        mangaId={manga.id}
+                        trackerNames={Object.fromEntries(trackers.map((tracker) => [tracker.id, tracker.name]))}
+                    />
+                )}
                 {trackerComponents}
             </OptionalDialogContent>
         );

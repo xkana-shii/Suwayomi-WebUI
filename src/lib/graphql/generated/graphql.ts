@@ -186,6 +186,8 @@ export type UpdateCategoryMutation = {
             includeInUpdate?: Types.IncludeOrExclude;
             includeInDownload?: Types.IncludeOrExclude;
             name?: string;
+            parentId: number | null;
+            trackStatus: number | null;
         };
     } | null;
 };
@@ -209,6 +211,8 @@ export type UpdateCategoriesMutation = {
             includeInUpdate?: Types.IncludeOrExclude;
             includeInDownload?: Types.IncludeOrExclude;
             name?: string;
+            parentId: number | null;
+            trackStatus: number | null;
         }>;
     } | null;
 };
@@ -5375,7 +5379,7 @@ export type TrackerUpdateUnifiedMutation = {
             __typename: 'UnifiedTrackEditResultType';
             recordId: number;
             trackerId: number;
-            outcome: Types.Outcome;
+            outcome: Types.UnifiedTrackEditOutcome;
             messages: Array<string>;
         }>;
         trackRecords: Array<{
@@ -5516,6 +5520,32 @@ export type GetTrackerMangaMetadataQuery = {
         genre: Array<string>;
         status: Types.MangaStatus | null;
         thumbnailUrl: string | null;
+    };
+};
+
+export type GetMangaAutofillTrackersQueryVariables = Exact<{
+    mangaId: number;
+}>;
+
+export type GetMangaAutofillTrackersQuery = {
+    __typename: 'Query';
+    manga: {
+        __typename: 'MangaType';
+        id: number;
+        trackRecords: {
+            __typename: 'TrackRecordNodeList';
+            nodes: Array<{ __typename: 'TrackRecordType'; id: number; trackerId: number; title: string }>;
+        };
+    };
+    trackers: {
+        __typename: 'TrackerNodeList';
+        nodes: Array<{
+            __typename: 'TrackerType';
+            id: number;
+            name: string;
+            icon: string;
+            supportsMangaMetadata: boolean;
+        }>;
     };
 };
 

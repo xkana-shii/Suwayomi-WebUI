@@ -136,6 +136,11 @@ msgstr "{0} / {1}"
 msgid "{0} / {1}{2}"
 msgstr "{0} / {1}{2}"
 
+#. placeholder {0}: tracker.name
+#: src/features/tracker/components/TrackerAutofillButton.tsx
+msgid "{0} has no metadata for this entry"
+msgstr "{0} has no metadata for this entry"
+
 #. placeholder {0}: updateStatus.progress
 #: src/features/app-updates/components/WebUIUpdateChecker.tsx
 msgid "{0}% | Updating…"
@@ -564,6 +569,10 @@ msgstr "Alpha"
 msgid "Also remove from {0}"
 msgstr "Also remove from {0}"
 
+#: src/features/tracker/components/TrackerAutofillButton.tsx
+msgid "Always use this tracker"
+msgstr "Always use this tracker"
+
 #: src/features/category/components/CategorySelect.tsx
 msgid "An entry can not be in the Default category and other categories at the same time"
 msgstr "An entry can not be in the Default category and other categories at the same time"
@@ -581,9 +590,17 @@ msgstr "Appearance"
 msgid "Apply"
 msgstr "Apply"
 
+#: src/features/tracker/components/UnifiedTrackerEditor.tsx
+msgid "Apply one change to every tracker of this entry"
+msgstr "Apply one change to every tracker of this entry"
+
 #: src/features/reader/settings/general/components/ReaderSettingSafeAreaInset.tsx
 msgid "Apply safe area padding"
 msgstr "Apply safe area padding"
+
+#: src/features/tracker/components/UnifiedTrackerEditor.tsx
+msgid "Apply to all trackers"
+msgstr "Apply to all trackers"
 
 #: src/features/manga/components/details/EditMangaMetadataDialog.tsx
 msgid "Applying..."
@@ -656,6 +673,14 @@ msgstr "Auto webtoon mode"
 #: src/features/downloads/screens/DownloadSettings.tsx
 msgid "Auto-download"
 msgstr "Auto-download"
+
+#: src/features/tracker/components/TrackerAutofillButton.tsx
+msgid "Autofill from"
+msgstr "Autofill from"
+
+#: src/features/tracker/components/TrackerAutofillButton.tsx
+msgid "Autofill from tracker"
+msgstr "Autofill from tracker"
 
 #: src/features/backup/screens/Backup.tsx
 msgid "Automated backup"
@@ -753,6 +778,10 @@ msgstr "Badges"
 #: src/features/settings/Settings.constants.ts
 msgid "Basic Authentication"
 msgstr "Basic Authentication"
+
+#: src/features/tracker/components/UnifiedTrackerEditor.tsx
+msgid "Before the start date"
+msgstr "Before the start date"
 
 #: src/features/reader/settings/ReaderSettings.constants.tsx
 msgid "Behaviour"
@@ -1007,6 +1036,7 @@ msgstr "Channel"
 #: src/features/reader/overlay/navigation/desktop/components/ReaderNavBarDesktopChapterNavigation.tsx
 #: src/features/tracker/components/cards/TrackerActiveCard.tsx
 #: src/features/tracker/components/cards/TrackerMangaCard.tsx
+#: src/features/tracker/components/UnifiedTrackerEditor.tsx
 msgid "Chapter"
 msgstr "Chapter"
 
@@ -1340,6 +1370,11 @@ msgstr "Could not load latest track info from tracker"
 #: src/features/manga/screens/Manga.tsx
 msgid "Could not load manga"
 msgstr "Could not load manga"
+
+#. placeholder {0}: tracker.name
+#: src/features/tracker/components/TrackerAutofillButton.tsx
+msgid "Could not load metadata from {0}"
+msgstr "Could not load metadata from {0}"
 
 #: src/features/theme/components/ThemePreview.tsx
 msgid "Could not load theme fonts"
@@ -1874,6 +1909,10 @@ msgstr "Edge"
 msgid "Edit"
 msgstr "Edit"
 
+#: src/features/tracker/components/UnifiedTrackerEditor.tsx
+msgid "Edit all trackers"
+msgstr "Edit all trackers"
+
 #: src/features/category/screens/CategorySettings.tsx
 #: src/features/library/screens/LibrarySettings.tsx
 msgid "Edit categories"
@@ -2034,6 +2073,10 @@ msgstr "Extension installed"
 msgid "Extension stores"
 msgstr "Extension stores"
 
+#: src/features/tracker/components/UnifiedTrackerEditor.tsx
+msgid "Failed"
+msgstr "Failed"
+
 #: src/features/manga/components/details/EditMangaMetadataDialog.tsx
 msgid "Failed to apply metadata"
 msgstr "Failed to apply metadata"
@@ -2111,6 +2154,15 @@ msgstr "Fifth to last read chapter"
 msgid "Filename"
 msgstr "Filename"
 
+#: src/features/tracker/components/TrackerAutofillButton.tsx
+msgid "Fill the fields from a tracker. Hold or right click to choose the tracker."
+msgstr "Fill the fields from a tracker. Hold or right click to choose the tracker."
+
+#. placeholder {0}: tracker.name
+#: src/features/tracker/components/TrackerAutofillButton.tsx
+msgid "Filled from {0}. Review the changes and save."
+msgstr "Filled from {0}. Review the changes and save."
+
 #: src/features/chapter/Chapter.constants.ts
 msgid "Fillermark selected"
 msgstr "Fillermark selected"
@@ -2148,6 +2200,7 @@ msgid "Filter mode"
 msgstr "Filter mode"
 
 #: src/features/tracker/components/cards/TrackerActiveCard.tsx
+#: src/features/tracker/components/UnifiedTrackerEditor.tsx
 msgid "Finish date"
 msgstr "Finish date"
 
@@ -3455,6 +3508,10 @@ msgstr "PostgreSQL"
 msgid "Prefer a scanlator for a range of chapter numbers. Where rules overlap, the newer rule wins."
 msgstr "Prefer a scanlator for a range of chapter numbers. Where rules overlap, the newer rule wins."
 
+#: src/features/tracker/components/TrackerAutofillButton.tsx
+msgid "Preferred"
+msgstr "Preferred"
+
 #: src/features/reader/settings/behaviour/ReaderBehaviourSettings.tsx
 msgid "Preload images"
 msgstr "Preload images"
@@ -3831,6 +3888,10 @@ msgstr "Schema"
 msgid "Score"
 msgstr "Score"
 
+#: src/features/tracker/components/UnifiedTrackerEditor.tsx
+msgid "Score (0-10)"
+msgstr "Score (0-10)"
+
 #: src/features/reader/settings/ReaderSettings.constants.tsx
 msgid "Screen"
 msgstr "Screen"
@@ -4175,6 +4236,10 @@ msgstr "Skip filtered chapters"
 msgid "Skip updating entries"
 msgstr "Skip updating entries"
 
+#: src/features/tracker/components/UnifiedTrackerEditor.tsx
+msgid "Skipped"
+msgstr "Skipped"
+
 #: src/features/reader/settings/behaviour/components/ReaderSettingScrollAmount.tsx
 msgid "Small"
 msgstr "Small"
@@ -4278,6 +4343,7 @@ msgid "Start"
 msgstr "Start"
 
 #: src/features/tracker/components/cards/TrackerActiveCard.tsx
+#: src/features/tracker/components/UnifiedTrackerEditor.tsx
 msgid "Start date"
 msgstr "Start date"
 
@@ -4316,6 +4382,7 @@ msgstr "Static navigation"
 #: src/features/manga/components/details/MangaDetails.tsx
 #: src/features/tracker/components/cards/TrackerActiveCard.tsx
 #: src/features/tracker/components/cards/TrackerMangaCard.tsx
+#: src/features/tracker/components/UnifiedTrackerEditor.tsx
 msgid "Status"
 msgstr "Status"
 
@@ -4631,6 +4698,10 @@ msgstr "Track privately"
 msgid "Track publicly"
 msgstr "Track publicly"
 
+#: src/features/tracker/components/TrackerAutofillButton.tsx
+msgid "Track this entry with MyAnimeList, AniList, MangaUpdates or MangaBaka to autofill its metadata"
+msgstr "Track this entry with MyAnimeList, AniList, MangaUpdates or MangaBaka to autofill its metadata"
+
 #: src/features/library/components/LibraryOptionsPanel.tsx
 msgid "Tracked"
 msgstr "Tracked"
@@ -4717,6 +4788,10 @@ msgstr "Unable to load extension stores"
 #: src/features/migration/screens/MigrationSelectDestinationSources.tsx
 msgid "Unable to load sources"
 msgstr "Unable to load sources"
+
+#: src/features/tracker/components/UnifiedTrackerEditor.tsx
+msgid "Unchanged"
+msgstr "Unchanged"
 
 #: src/features/chapter/components/ScanlatorSettingsDialog.tsx
 msgid "Uncheck a scanlator to hide all its chapters. The order is used by Smart Scanlator Merge."
@@ -4819,6 +4894,10 @@ msgstr "Update progress after reading"
 msgid "Update the details and chapters of a manga in the background when its page is opened. The saved data is shown right away."
 msgstr "Update the details and chapters of a manga in the background when its page is opened. The saved data is shown right away."
 
+#: src/features/tracker/components/UnifiedTrackerEditor.tsx
+msgid "Updated"
+msgstr "Updated"
+
 #: src/features/app-updates/components/ServerUpdateChecker.tsx
 #: src/features/app-updates/components/WebUIUpdateChecker.tsx
 msgid "Updated version"
@@ -4832,6 +4911,10 @@ msgstr "Updates"
 #: src/features/extension/Extensions.constants.ts
 msgid "Updating"
 msgstr "Updating"
+
+#: src/features/tracker/components/UnifiedTrackerEditor.tsx
+msgid "Updating…"
+msgstr "Updating…"
 
 #: src/features/settings/Settings.constants.ts
 msgid "Uploading"
