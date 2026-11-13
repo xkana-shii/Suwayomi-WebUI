@@ -27,6 +27,7 @@ import { AuthManager } from '@/features/authentication/AuthManager.ts';
 import type { RefreshAccessTokenMutation } from '@/lib/graphql/generated/graphql.ts';
 import type { AbortableApolloMutationResponse } from '@/lib/requests/RequestManager.ts';
 import type { ChapterNodeList } from '@/lib/graphql/generated/graphql-base.types.ts';
+import { getUniqueId } from '@/lib/HelperFunctions.ts';
 
 const typePolicies: TypedTypePolicies = {
     MangaType: {
@@ -242,17 +243,25 @@ export class GraphQLClient extends BaseClient<ApolloClient, ApolloClient.Options
     }
 
     private resetWsClient(recreateClient: boolean): void {
-        this.wsClient.dispose();
-        this.wsClient.terminate();
+        const dispose = this.wsClient.dispose();
 
-        if (!recreateClient) {
+        const create = () => {
+            if (!recreateClient) {
+                return;
+            }
+
+            this.createWSClient(false);
+            this.client.setLink(this.createLink());
+
+            this.wsClient.on('opened', () => this.restartAllSubscriptions());
+        };
+
+        if (dispose instanceof Promise) {
+            dispose.then(() => create());
             return;
         }
 
-        this.createWSClient(false);
-        this.client.setLink(this.createLink());
-
-        this.restartAllSubscriptions();
+        create();
     }
 
     private restartAllSubscriptions(): void {
@@ -419,7 +428,9 @@ export class GraphQLClient extends BaseClient<ApolloClient, ApolloClient.Options
         });
 
         let triedForcedReconnection = false;
-        let lastHeartbeat: number = Date.now();
+        let forcedReconnectionTimestamp = 0;
+        let lastHeartbeat = Date.now();
+
         this.wsClient.on('message', async (e) => {
             lastHeartbeat = Date.now();
             triedForcedReconnection = false;
@@ -438,24 +449,33 @@ export class GraphQLClient extends BaseClient<ApolloClient, ApolloClient.Options
             }
         });
 
-        const checkHeartbeatInterval = heartbeatInterval + d(30).seconds.inWholeMilliseconds;
         clearInterval(this.wsClientAliveCheckInterval);
         this.wsClientAliveCheckInterval = setInterval(() => {
-            const isHeartbeatMissing = Date.now() - lastHeartbeat > checkHeartbeatInterval * 1.1;
+            const heartbeatThreshold = heartbeatInterval * 1.5;
+
+            const isHeartbeatMissing = Date.now() - lastHeartbeat > heartbeatThreshold;
             if (!isHeartbeatMissing) {
                 return;
             }
 
             if (!triedForcedReconnection) {
                 triedForcedReconnection = true;
+                forcedReconnectionTimestamp = Date.now();
+
                 this.wsClient.terminate();
 
                 return;
             }
 
+            const hasForcedReconnectionFailed =
+                Date.now() - forcedReconnectionTimestamp > d(15).seconds.inWholeMilliseconds;
+            if (!hasForcedReconnectionFailed) {
+                return;
+            }
+
             clearInterval(this.wsClientAliveCheckInterval);
             this.resetWsClient(true);
-        }, checkHeartbeatInterval);
+        }, d(5).seconds.inWholeMilliseconds);
     }
 
     protected createClient(createWsClientLazily?: boolean) {
@@ -469,8 +489,14 @@ export class GraphQLClient extends BaseClient<ApolloClient, ApolloClient.Options
 
     public override updateConfig() {}
 
-    public registerSubscription(restart: () => void) {
-        this.activeConnectionSubscriptions.set(crypto.randomUUID(), () => restart);
+    public registerSubscription(restart: () => void): () => void {
+        const id = getUniqueId();
+
+        this.activeConnectionSubscriptions.set(id, restart);
+
+        return () => {
+            this.activeConnectionSubscriptions.delete(id);
+        };
     }
 
     public useRestartSubscription(restart: () => void) {

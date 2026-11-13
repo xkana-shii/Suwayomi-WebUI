@@ -6,6 +6,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { Notifications } from '@/base/notification/Notifications.ts';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -33,7 +34,6 @@ import { DebugInformation } from '@/features/settings/components/DebugInformatio
 import Stack from '@mui/material/Stack';
 import { useState } from 'react';
 import { SHUTDOWN_SERVER } from '@/lib/graphql/server/ServerInfoMutation.ts';
-import { makeToast } from '@/base/utils/Toast.ts';
 
 export function About() {
     const { t } = useLingui();
@@ -73,7 +73,7 @@ export function About() {
                 variables: { input: {} },
             });
 
-            makeToast(t`Shutdown command sent. The server should stop shortly.`, 'info');
+            Notifications.info(t`Shutdown command sent. The server should stop shortly.`);
 
             // Close dialog after sending command
             setShutdownDialogOpen(false);
@@ -81,7 +81,7 @@ export function About() {
             // Optionally you could redirect or change UI here, but the server will shut down the connection.
             // e.g. window.location.href = requestManager.getBaseUrl();
         } catch (e) {
-            makeToast(t`Could not send shutdown command`, 'error', getErrorMessage(e));
+            Notifications.error(t`Could not send shutdown command`, getErrorMessage(e));
         } finally {
             setIsShuttingDown(false);
         }

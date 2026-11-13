@@ -9,7 +9,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Added
 
 - (**Library**) Add setting to notify about new chapters of library entries
+- (**Manga**) Show the reading progress of partially read chapters in the chapter list and reading history
 - (**Settings**) Add `databaseSchema`, `hikariMaxPoolSize` settings
+- (**Reader**) Add option to automatically crop blank borders around pages
 
 ### Changed
 
@@ -22,9 +24,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ### Fixed
 
 - (**Source**) Fix potential white screen when opening the language/source filter in the browse source page
+- (**Source**) Fix crash when selecting a saved search with filters that was saved before r3518
 - (**Manga**) Fix incorrect markdown parsing of descriptions (e.g., \~text\~ being shown as ~~text~~)
+- (**Manga**) Fix missing chapter detection across invalid chapter numbers in the chapter list
 - (**Reader**) Fix entering fullscreen when opening the reader from the library continue read button
 - (**Reader**) Fix reader trying to open/opening the previous/next chapter randomly when first opening the reader or changing the page via the progress bar with a continuous vertical reading mode and original image scale type
+- (**PWA**) Fix PWA on iOS 27
+    - Get rid of the status bar background color fade effect
+    - Prevent the top content of dialogs from being hidden by the ios status bar
+- (**Settings/Tracker**) Fix oauth login while using a subpath
 
 ## [20260929.01] (r3518) - 2026-09-29
 

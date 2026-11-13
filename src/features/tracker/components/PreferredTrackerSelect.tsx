@@ -6,6 +6,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { Notifications } from '@/base/notification/Notifications.ts';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import { useLingui } from '@lingui/react/macro';
@@ -14,7 +15,6 @@ import { GET_MANGA_META } from '@/lib/graphql/manga/MangaQuery.ts';
 import type { GetMangaMetaQuery, GetMangaMetaQueryVariables } from '@/lib/graphql/generated/graphql.ts';
 import { updateMangaMetadata, useGetMangaMetadata } from '@/features/manga/services/MangaMetadata.ts';
 import { useMetadataServerSettings } from '@/features/settings/services/ServerSettingsMetadata.ts';
-import { makeToast } from '@/base/utils/Toast.ts';
 import { getErrorMessage } from '@/lib/HelperFunctions.ts';
 import { STABLE_EMPTY_ARRAY } from '@/base/Base.constants.ts';
 
@@ -52,7 +52,7 @@ export const PreferredTrackerSelect = ({
             disabled={!data}
             onChange={(e) =>
                 updateMangaMetadata(manga, 'preferredTrackerId', Number(e.target.value)).catch((error) =>
-                    makeToast(t`Failed to save changes`, 'error', getErrorMessage(error)),
+                    Notifications.error(t`Failed to save changes`, getErrorMessage(error)),
                 )
             }
         >

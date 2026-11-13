@@ -6,6 +6,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { Notifications } from '@/base/notification/Notifications.ts';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -16,7 +17,6 @@ import Stack from '@mui/material/Stack';
 import { useLingui } from '@lingui/react/macro';
 import { ListSubheader } from '@/base/components/lists/ListSubheader.tsx';
 import { requestManager } from '@/lib/requests/RequestManager.ts';
-import { makeToast } from '@/base/utils/Toast.ts';
 import { getErrorMessage } from '@/lib/HelperFunctions.ts';
 import {
     createUpdateMetadataServerSettings,
@@ -34,7 +34,7 @@ export const ChapterSettingsSection = () => {
     const smartScanlatorMerge = !!userSettings.data?.userSettings.smartScanlatorMerge;
 
     const setMetadataSetting = createUpdateMetadataServerSettings<keyof MetadataKomikkuPortSettings>((e) =>
-        makeToast(t`Failed to save changes`, 'error', getErrorMessage(e)),
+        Notifications.error(t`Failed to save changes`, getErrorMessage(e)),
     );
 
     return (
@@ -58,7 +58,7 @@ export const ChapterSettingsSection = () => {
                         requestManager
                             .setSmartScanlatorMerge(e.target.checked)
                             .response.catch((error) =>
-                                makeToast(t`Failed to save changes`, 'error', getErrorMessage(error)),
+                                Notifications.error(t`Failed to save changes`, getErrorMessage(error)),
                             )
                     }
                 />

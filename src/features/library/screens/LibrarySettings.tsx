@@ -28,11 +28,6 @@ import { ListSubheader } from '@/base/components/lists/ListSubheader.tsx';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { plural, t as translate } from '@lingui/core/macro';
 import { GlobalUpdateSettings } from '@/features/settings/components/globalUpdate/GlobalUpdateSettings.tsx';
-import { makeToast } from '@/base/utils/Toast.ts';
-import {
-    createUpdateMetadataServerSettings,
-    useMetadataServerSettings,
-} from '@/features/settings/services/ServerSettingsMetadata.ts';
 import { requestManager } from '@/lib/requests/RequestManager.ts';
 import { Mangas } from '@/features/manga/services/Mangas.ts';
 import { EmptyView } from '@/base/components/feedback/EmptyView.tsx';
@@ -59,8 +54,13 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import BrokenImageIcon from '@mui/icons-material/BrokenImage';
 import { GET_SOURCES_WITH_COUNTS } from '@/lib/graphql/source/SourceQuery.ts';
 import { CLEAR_DATABASE } from '@/lib/graphql/server/ServerInfoMutation.ts';
-import { Notifications } from '@/features/notifications/services/Notifications.ts';
-import { LibraryUpdateNotifier } from '@/features/notifications/services/LibraryUpdateNotifier.ts';
+import { DeviceNotifications } from '@/lib/DeviceNotifications.ts';
+import { LibraryUpdateNotifier } from '@/features/updates/LibraryUpdateNotifier.ts';
+import {
+    createUpdateMetadataServerSettings,
+    useMetadataServerSettings,
+} from '@/features/settings/services/ServerSettingsMetadata.ts';
+import { Notifications } from '@/base/notification/Notifications.ts';
 
 /**
  * Build the extension-style icon path used by the browse screen.
@@ -112,9 +112,9 @@ const removeNonLibraryMangasFromCategories = async (): Promise<void> => {
                 clearCategories: true,
             }).response;
         }
-        makeToast(translate`Removed non library manga from categories`, 'success');
+        Notifications.success(translate`Removed non library manga from categories`);
     } catch (e) {
-        makeToast(translate`Could not remove non library manga from categories`, 'error', getErrorMessage(e));
+        Notifications.error(translate`Could not remove non library manga from categories`, getErrorMessage(e));
     }
 };
 
@@ -125,14 +125,14 @@ const setNotifyNewChapters = async (enable: boolean) => {
     }
 
     // without the permission, updates still get shown while Suwayomi is in use
-    await Notifications.requestPermission();
+    await DeviceNotifications.requestPermission();
     await LibraryUpdateNotifier.enable();
 };
 
 export function LibrarySettings() {
     const { t } = useLingui();
 
-    const [notificationPermission, setNotificationPermission] = useState(Notifications.getPermission());
+    const [notificationPermission, setNotificationPermission] = useState(DeviceNotifications.getPermission());
 
     useAppTitle(t`Library`);
 
@@ -149,7 +149,7 @@ export function LibrarySettings() {
 
     // stable helper
     const setSettingValue = createUpdateMetadataServerSettings<keyof MetadataLibrarySettings>((e) =>
-        makeToast(t`Could not save the default search settings to the server`, 'error', getErrorMessage(e)),
+        Notifications.error(t`Could not save the default search settings to the server`, getErrorMessage(e)),
     );
 
     // All component-level hooks must be declared before early returns:
@@ -249,7 +249,7 @@ export function LibrarySettings() {
 
             setSources(filtered);
         } catch (e) {
-            makeToast(t`Could not fetch sources`, 'error', getErrorMessage(e));
+            Notifications.error(t`Could not fetch sources`, getErrorMessage(e));
         }
     };
 
@@ -316,7 +316,7 @@ export function LibrarySettings() {
         const selectedIds = sources.filter((s) => s.selected).map((s) => String(s.id));
 
         if (!selectedIds.length) {
-            makeToast(t`No sources selected`, 'error');
+            Notifications.error(t`No sources selected`);
             setConfirmOpen(false);
             return;
         }
@@ -327,7 +327,7 @@ export function LibrarySettings() {
                 variables: { input: { keepReadManga, sourceIds: selectedIds } },
             });
 
-            makeToast(t`Database cleared`, 'success');
+            Notifications.success(t`Database cleared`);
 
             setSources((old) => old.map((s) => ({ ...s, selected: false })));
             setConfirmOpen(false);
@@ -343,10 +343,10 @@ export function LibrarySettings() {
                     .refetchQueries({ include: 'active' })
                     .catch(defaultPromiseErrorHandler('LibrarySettings::refetchQueriesAfterClear'));
             } catch (e) {
-                makeToast(t`Could not refresh source list after clearing`, 'warning');
+                Notifications.warn(t`Could not refresh source list after clearing`);
             }
         } catch (e) {
-            makeToast(t`Could not clear database`, 'error', getErrorMessage(e));
+            Notifications.error(t`Could not clear database`, getErrorMessage(e));
         } finally {
             setIsClearing(false);
         }
@@ -441,8 +441,8 @@ export function LibrarySettings() {
                                         <Link
                                             component="button"
                                             onClick={() =>
-                                                Notifications.requestPermission().then(() =>
-                                                    setNotificationPermission(Notifications.getPermission()),
+                                                DeviceNotifications.requestPermission().then(() =>
+                                                    setNotificationPermission(DeviceNotifications.getPermission()),
                                                 )
                                             }
                                         >
@@ -460,9 +460,9 @@ export function LibrarySettings() {
                         checked={settings.notifyNewChapters}
                         onChange={(e) =>
                             setNotifyNewChapters(e.target.checked)
-                                .then(() => setNotificationPermission(Notifications.getPermission()))
+                                .then(() => setNotificationPermission(DeviceNotifications.getPermission()))
                                 .catch((saveError) =>
-                                    makeToast(t`Failed to save changes`, 'error', getErrorMessage(saveError)),
+                                    Notifications.error(t`Failed to save changes`, getErrorMessage(saveError)),
                                 )
                         }
                     />

@@ -6,6 +6,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { Notifications } from '@/base/notification/Notifications.ts';
 import { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
 import Popover from '@mui/material/Popover';
@@ -18,7 +19,6 @@ import {
     createUpdateMetadataServerSettings,
     useMetadataServerSettings,
 } from '@/features/settings/services/ServerSettingsMetadata.ts';
-import { makeToast } from '@/base/utils/Toast.ts';
 import { getErrorMessage } from '@/lib/HelperFunctions.ts';
 import type { ChapterFilterInput } from '@/lib/graphql/generated/graphql-base.types.ts';
 import type { MetadataKomikkuPortSettings } from '@/features/settings/Settings.types.ts';
@@ -54,7 +54,7 @@ export const UpdatesFilterButton = () => {
         settings: { updatesBookmarked, updatesBookmarkColorsIncluded, updatesBookmarkColorsExcluded },
     } = useMetadataServerSettings();
     const updateSetting = createUpdateMetadataServerSettings<keyof MetadataKomikkuPortSettings>((e) =>
-        makeToast(t`Failed to save changes`, 'error', getErrorMessage(e)),
+        Notifications.error(t`Failed to save changes`, getErrorMessage(e)),
     );
 
     return (

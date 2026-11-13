@@ -27,7 +27,7 @@ import { requestManager } from '@/lib/requests/RequestManager.ts';
 import { ListCardContent } from '@/base/components/lists/cards/ListCardContent.tsx';
 import type { CategoryHierarchyInfo, CategoryIdInfo, CategoryNameInfo } from '@/features/category/Category.types.ts';
 import { Confirmation } from '@/base/AppAwaitableComponent.ts';
-import { makeToast } from '@/base/utils/Toast.ts';
+import { Notifications } from '@/base/notification/Notifications.ts';
 import { getErrorMessage } from '@/lib/HelperFunctions.ts';
 import { getSmartCategoryStatusLabel } from '@/features/category/CategoryTree.ts';
 
@@ -59,7 +59,7 @@ export const CategorySettingsCard = ({
     const toggleHidden = () =>
         requestManager
             .updateCategory(category.id, { hidden: !isHidden })
-            .response.catch((e) => makeToast(t`Failed to save changes`, 'error', getErrorMessage(e)));
+            .response.catch((e) => Notifications.error(t`Failed to save changes`, getErrorMessage(e)));
 
     const deleteCategory = async () => {
         await Confirmation.show({
@@ -72,7 +72,7 @@ export const CategorySettingsCard = ({
         try {
             await requestManager.deleteCategory(category.id).response;
         } catch (e) {
-            makeToast(t`Could not delete category`, 'error', getErrorMessage(e));
+            Notifications.error(t`Could not delete category`, getErrorMessage(e));
         }
     };
 

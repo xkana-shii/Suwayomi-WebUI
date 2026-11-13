@@ -162,11 +162,11 @@ msgstr "{childCount} subcategories"
 msgid "{colorCount} colors"
 msgstr "{colorCount} colors"
 
-#: src/features/notifications/services/LibraryUpdateNotifier.ts
+#: src/features/updates/LibraryUpdateNotifier.ts
 msgid "{count, plural, one {# new chapter} other {# new chapters}}"
 msgstr "{count, plural, one {# new chapter} other {# new chapters}}"
 
-#: src/features/notifications/services/LibraryUpdateNotifier.ts
+#: src/features/updates/LibraryUpdateNotifier.ts
 msgid "{count, plural, one {#+ new chapter} other {#+ new chapters}}"
 msgstr "{count, plural, one {#+ new chapter} other {#+ new chapters}}"
 
@@ -352,7 +352,7 @@ msgstr "{currentAutoUpdateIntervalHours}h"
 msgid "{currentDownloadAheadLimit, plural, one {# Chapter} other {# Chapters}}"
 msgstr "{currentDownloadAheadLimit, plural, one {# Chapter} other {# Chapters}}"
 
-#: src/features/notifications/services/LibraryUpdateNotifier.ts
+#: src/features/updates/LibraryUpdateNotifier.ts
 msgid "{entryCount, plural, one {in # entry} other {in # entries}}"
 msgstr "{entryCount, plural, one {in # entry} other {in # entries}}"
 
@@ -764,6 +764,10 @@ msgstr "Badges"
 msgid "Basic Authentication"
 msgstr "Basic Authentication"
 
+#: src/base/notification/BasicAuthDeprecationReminder.ts
+msgid "Basic Authentication deprecation"
+msgstr "Basic Authentication deprecation"
+
 #: src/features/tracker/components/UnifiedTrackerEditor.tsx
 msgid "Before the start date"
 msgstr "Before the start date"
@@ -990,6 +994,10 @@ msgstr "Category selection dialog"
 msgid "CBZ MIME-Type"
 msgstr "CBZ MIME-Type"
 
+#: src/base/notification/BasicAuthDeprecationReminder.ts
+msgid "Change"
+msgstr "Change"
+
 #: src/features/manga/Manga.constants.ts
 msgid "Change categories"
 msgstr "Change categories"
@@ -1080,6 +1088,10 @@ msgstr "Check tracker bindings"
 #: src/features/chapter/bookmark/BookmarkColorFilterDialog.tsx
 msgid "Checked colors are included, crossed colors are excluded."
 msgstr "Checked colors are included, crossed colors are excluded."
+
+#: src/base/AppInitializer.ts
+msgid "Checking for authentication…"
+msgstr "Checking for authentication…"
 
 #: src/features/app-updates/components/VersionInfo.tsx
 msgid "Checking for update"
@@ -1523,6 +1535,10 @@ msgstr "Creating theme…"
 #: src/features/theme/Themes.ts
 msgid "Crimson"
 msgstr "Crimson"
+
+#: src/features/reader/settings/layout/ReaderLayoutSettings.tsx
+msgid "Crop borders"
+msgstr "Crop borders"
 
 #: src/features/migration/components/MigrationDestinationSourceList.tsx
 msgid "Current source"
@@ -2794,6 +2810,14 @@ msgstr "Links"
 msgid "List"
 msgstr "List"
 
+#: src/base/AppInitializer.ts
+msgid "Loading client settings…"
+msgstr "Loading client settings…"
+
+#: src/base/AppInitializer.ts
+msgid "Loading server settings…"
+msgstr "Loading server settings…"
+
 #: src/features/theme/components/ThemePreview.tsx
 msgid "Loading theme fonts…"
 msgstr "Loading theme fonts…"
@@ -3457,6 +3481,15 @@ msgstr "Page"
 #: src/features/reader/settings/layout/components/ReaderSettingPageGap.tsx
 msgid "Page gap"
 msgstr "Page gap"
+
+#: src/features/chapter/services/Chapters.ts
+msgid "Page: {page}"
+msgstr "Page: {page}"
+
+#. placeholder {0}: chapter.pageCount
+#: src/features/chapter/services/Chapters.ts
+msgid "Page: {page}/{0}"
+msgstr "Page: {page}/{0}"
 
 #: src/features/browse/screens/BrowseSettings.tsx
 msgid "Parallel source requests"
@@ -4525,6 +4558,10 @@ msgstr "Target mode"
 msgid "That haven't been started"
 msgstr "That haven't been started"
 
+#: src/base/notification/BasicAuthDeprecationReminder.ts
+msgid "The \"Basic Authentication\" mode is deprecated and will be removed in the future. Switch to another authentication mode"
+msgstr "The \"Basic Authentication\" mode is deprecated and will be removed in the future. Switch to another authentication mode"
+
 #: src/features/settings/screens/ServerSettings.tsx
 msgid "The address of the FlareSolverr server"
 msgstr "The address of the FlareSolverr server"
@@ -4642,6 +4679,10 @@ msgstr "This icon will be shown on the system that is running the server"
 #: src/features/app-updates/components/VersionInfo.tsx
 msgid "This is the latest version"
 msgstr "This is the latest version"
+
+#: src/features/settings/Settings.constants.ts
+msgid "This mode is deprecated and will be removed in the future"
+msgstr "This mode is deprecated and will be removed in the future"
 
 #: src/features/source/browse/components/SourceOptions.tsx
 msgid "This will delete the saved search \"{savedSearch}\""
@@ -4763,6 +4804,14 @@ msgstr "Type"
 msgid "UI Login"
 msgstr "UI Login"
 
+#: src/base/AppInitializer.ts
+msgid "Unable to determine authentication"
+msgstr "Unable to determine authentication"
+
+#: src/base/AppInitializer.ts
+msgid "Unable to load client settings"
+msgstr "Unable to load client settings"
+
 #: src/features/backup/screens/Backup.tsx
 #: src/features/browse/extensions/Extensions.tsx
 #: src/features/browse/screens/BrowseSettings.tsx
@@ -4803,6 +4852,10 @@ msgstr "Unable to load data"
 #: src/features/extension/store/screens/ExtensionStores.tsx
 msgid "Unable to load extension stores"
 msgstr "Unable to load extension stores"
+
+#: src/base/AppInitializer.ts
+msgid "Unable to load server settings"
+msgstr "Unable to load server settings"
 
 #: src/features/migration/screens/MigrationSelectDestinationSources.tsx
 msgid "Unable to load sources"

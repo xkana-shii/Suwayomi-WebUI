@@ -6,6 +6,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { Notifications } from '@/base/notification/Notifications.ts';
 import type { TrackerMangaMetadata } from '@/features/tracker/components/TrackerAutofillButton.tsx';
 import { TrackerAutofillButton } from '@/features/tracker/components/TrackerAutofillButton.tsx';
 import { useEffect, useMemo, useState } from 'react';
@@ -38,7 +39,6 @@ import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useLingui } from '@lingui/react/macro';
 import { requestManager } from '@/lib/requests/RequestManager.ts';
 import { MangaStatus } from '@/lib/graphql/generated/graphql-base.types.ts';
-import { makeToast } from '@/base/utils/Toast.ts';
 import { getErrorMessage } from '@/lib/HelperFunctions.ts';
 import { Mangas } from '@/features/manga/services/Mangas.ts';
 import { SpinnerImage } from '@/base/components/SpinnerImage.tsx';
@@ -226,10 +226,10 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
                 await requestManager.uploadMangaCover(manga.id, coverFile).response;
             }
 
-            makeToast(t`Metadata updated successfully`, 'success');
+            Notifications.success(t`Metadata updated successfully`);
             onClose();
         } catch (e) {
-            makeToast(t`Failed to update metadata`, 'error', getErrorMessage(e));
+            Notifications.error(t`Failed to update metadata`, getErrorMessage(e));
         } finally {
             setIsSaving(false);
         }
@@ -239,10 +239,10 @@ const EditTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => void
         setIsResetting(true);
         try {
             await requestManager.resetMangaMetadataToSource(manga.id, resetCover).response;
-            makeToast(t`Metadata reset to source`, 'success');
+            Notifications.success(t`Metadata reset to source`);
             onClose();
         } catch (e) {
-            makeToast(t`Failed to reset metadata`, 'error', getErrorMessage(e));
+            Notifications.error(t`Failed to reset metadata`, getErrorMessage(e));
         } finally {
             setIsResetting(false);
         }
@@ -594,7 +594,7 @@ const MatchTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => voi
             const response = await requestManager.searchMetadataProvider(providerToUse, query).response;
             setResults(response.data?.searchMetadataProvider?.results ?? []);
         } catch (e) {
-            makeToast(t`Search failed`, 'error', getErrorMessage(e));
+            Notifications.error(t`Search failed`, getErrorMessage(e));
         } finally {
             setIsSearching(false);
         }
@@ -617,10 +617,10 @@ const MatchTab = ({ manga, onClose }: { manga: EditableManga; onClose: () => voi
         setIsApplying(true);
         try {
             await requestManager.applyMetadataMatch(manga.id, provider, selectedId, includeCover).response;
-            makeToast(t`Metadata applied successfully`, 'success');
+            Notifications.success(t`Metadata applied successfully`);
             onClose();
         } catch (e) {
-            makeToast(t`Failed to apply metadata`, 'error', getErrorMessage(e));
+            Notifications.error(t`Failed to apply metadata`, getErrorMessage(e));
         } finally {
             setIsApplying(false);
         }

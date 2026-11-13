@@ -16,7 +16,6 @@ import { StringParam, useQueryParam } from 'use-query-params';
 import { useLingui } from '@lingui/react/macro';
 import { PasswordTextField } from '@/base/components/inputs/PasswordTextField.tsx';
 import { requestManager } from '@/lib/requests/RequestManager.ts';
-import { makeToast } from '@/base/utils/Toast.ts';
 import { getErrorMessage } from '@/lib/HelperFunctions.ts';
 import { AuthManager } from '@/features/authentication/AuthManager.ts';
 import { AppRoutes } from '@/base/AppRoute.constants.ts';
@@ -24,6 +23,7 @@ import { useNavBarContext } from '@/features/navigation-bar/NavbarContext.tsx';
 import { SearchParam } from '@/base/Base.types.ts';
 import { SplashScreen } from '@/features/authentication/components/SplashScreen.tsx';
 import { ServerAddressSetting } from '@/features/settings/components/ServerAddressSetting.tsx';
+import { Notifications } from '@/base/notification/Notifications.ts';
 
 export const LoginPage = ({ redirect = true }: { redirect?: boolean }) => {
     const theme = useTheme();
@@ -50,7 +50,7 @@ export const LoginPage = ({ redirect = true }: { redirect?: boolean }) => {
                 }
             }
         } catch (e) {
-            makeToast(t`Could not log in to Suwayomi`, 'error', getErrorMessage(e));
+            Notifications.error(t`Could not log in to Suwayomi`, getErrorMessage(e));
         }
     };
 
@@ -78,12 +78,12 @@ export const LoginPage = ({ redirect = true }: { redirect?: boolean }) => {
                         sx: {
                             position: 'unset',
                             minWidth: 'auto',
-                            minHeight: '50vh',
+                            minHeight: '50dvh',
                             flexBasis: '60%',
                             p: 4,
                             [theme.breakpoints.up('lg')]: {
-                                minHeight: '0vh',
-                                height: '100vh',
+                                minHeight: '0dvh',
+                                height: '100dvh',
                             },
                         },
                     },
@@ -97,14 +97,14 @@ export const LoginPage = ({ redirect = true }: { redirect?: boolean }) => {
             <Stack
                 sx={{
                     position: 'relative',
-                    minHeight: '50vh',
+                    minHeight: '50dvh',
                     flexBasis: '40%',
                     p: 4,
                     justifyContent: 'center',
                     alignItems: 'center',
                     [theme.breakpoints.up('lg')]: {
-                        minHeight: '0vh',
-                        height: '100vh',
+                        minHeight: '0dvh',
+                        height: '100dvh',
                     },
                 }}
             >

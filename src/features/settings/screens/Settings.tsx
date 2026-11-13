@@ -32,7 +32,7 @@ import { AppRoutes } from '@/base/AppRoute.constants.ts';
 import { useAppTitle } from '@/features/navigation-bar/hooks/useAppTitle.ts';
 import { useNavBarContext } from '@/features/navigation-bar/NavbarContext.tsx';
 import { MediaQuery } from '@/base/utils/MediaQuery.tsx';
-import { OffsetComponent, useOffsetComponent } from '@/base/OffsetComponent.tsx';
+import { OffsetComponent, useOffsetComponent } from '@/base/components/OffsetComponent.tsx';
 
 const SETTING_MENU_ITEMS = [
     { to: AppRoutes.settings.children.appearance.path, icon: <PaletteIcon />, label: msg`Appearance` },
@@ -105,7 +105,7 @@ export function Settings() {
             <OffsetComponent
                 sx={{
                     minWidth: isDesktopWidth ? 250 : undefined,
-                    height: `calc(100vh - ${topOffset + bottomBarHeight}px)`,
+                    height: `calc(100dvh - ${topOffset + bottomBarHeight}px)`,
                     flexShrink: 0,
                     overflowY: 'auto',
                     borderRight: 1,

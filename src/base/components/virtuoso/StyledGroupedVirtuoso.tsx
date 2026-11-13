@@ -11,7 +11,7 @@ import type { ComponentProps } from 'react';
 import { useMemo } from 'react';
 import { useNavBarContext } from '@/features/navigation-bar/NavbarContext.tsx';
 import { GroupedVirtuosoPersisted } from '@/lib/virtuoso/Component/GroupedVirtuosoPersisted.tsx';
-import { OffsetComponent } from '@/base/OffsetComponent.tsx';
+import { OffsetComponent } from '@/base/components/OffsetComponent.tsx';
 
 const StickyVirtuosoHeaderWithOffset =
     () =>
@@ -40,7 +40,7 @@ export const StyledGroupedVirtuoso = <ItemData = any, Context = any>({
             }}
             style={{
                 ...style,
-                height: `calc(100vh - ${heightToSubtract}px - ${appBarHeight}px - ${bottomBarHeight}px - ${!bottomBarHeight ? 'env(safe-area-inset-bottom)' : '0px'})`,
+                height: `calc(100dvh - ${heightToSubtract}px - ${appBarHeight}px - ${bottomBarHeight}px - ${!bottomBarHeight ? 'env(safe-area-inset-bottom)' : '0px'})`,
             }}
         />
     );

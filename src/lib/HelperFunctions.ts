@@ -8,7 +8,7 @@
 
 import { CombinedGraphQLErrors } from '@apollo/client';
 import type { ReactNode } from 'react';
-import { makeToast } from '@/base/utils/Toast.ts';
+import { Notifications } from '@/base/notification/Notifications.ts';
 import { t } from '@lingui/core/macro';
 
 export const jsonSaveParse = <T = any>(...args: Parameters<typeof JSON.parse>): T | null => {
@@ -101,9 +101,9 @@ export const maybeExecuteWithDelay = (
 export const copyToClipboard = async (text: string) => {
     try {
         await navigator.clipboard.writeText(text);
-        makeToast(t`Copied to clipboard`, 'info');
+        Notifications.info(t`Copied to clipboard`);
     } catch (e) {
-        makeToast(t`Could not copy to clipboard`, 'error', getErrorMessage(e));
+        Notifications.error(t`Could not copy to clipboard`, getErrorMessage(e));
     }
 };
 
@@ -130,4 +130,14 @@ export const getRenderedText = (el: HTMLElement, cssText: string) => {
     clone.remove();
 
     return text;
+};
+
+const sessionId = Math.random().toString(36).slice(2, 10);
+let counter = 0;
+export const getUniqueId = (): string => {
+    if (typeof crypto.randomUUID === 'function') {
+        return crypto.randomUUID().toString();
+    }
+
+    return [Date.now().toString(36), sessionId, (counter++).toString(36)].join('-');
 };

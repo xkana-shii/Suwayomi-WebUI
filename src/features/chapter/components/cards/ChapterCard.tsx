@@ -37,6 +37,7 @@ import type {
     ChapterNameInfo,
     ChapterNumberInfo,
     ChapterReadInfo,
+    ChapterReadProgressInfo,
     ChapterScanlatorInfo,
     ChapterSourceOrderInfo,
     ChapterBookmarkColorInfo,
@@ -55,6 +56,7 @@ type TChapter = ChapterIdInfo &
     ChapterMangaInfo &
     ChapterDownloadInfo &
     ChapterReadInfo &
+    ChapterReadProgressInfo &
     ChapterBookmarkInfo &
     ChapterNumberInfo &
     ChapterScanlatorInfo &
@@ -157,8 +159,10 @@ export const ChapterCard = memo((props: IProps) => {
                                     title={showChapterNumber ? `${t`Chapter`} ${chapter.chapterNumber}` : chapter.name}
                                     secondaryText={chapter.scanlator}
                                     ternaryText={`${getDateString(Number(chapter.uploadDate ?? 0), true)}${
-                                        isDownloaded ? ` — ${t`Downloaded`}` : ''
-                                    }`}
+                                        Chapters.isPartiallyRead(chapter)
+                                            ? ` — ${Chapters.getProgressString(chapter)}`
+                                            : ''
+                                    }${isDownloaded ? ` — ${t`Downloaded`}` : ''}`}
                                     infoIcons={
                                         <>
                                             {!chapter.isRead ? (

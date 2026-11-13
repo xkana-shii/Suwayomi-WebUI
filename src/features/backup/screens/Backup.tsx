@@ -18,7 +18,6 @@ import { AwaitableComponent } from 'awaitable-component';
 import { useLingui } from '@lingui/react/macro';
 import { plural } from '@lingui/core/macro';
 import { requestManager } from '@/lib/requests/RequestManager.ts';
-import { makeToast } from '@/base/utils/Toast.ts';
 import { BackupRestoreState } from '@/lib/graphql/generated/graphql-base.types.ts';
 import { CircularProgressWithText } from '@/base/components/feedback/CircularProgressWithText.tsx';
 import { TextSetting } from '@/base/components/settings/text/TextSetting.tsx';
@@ -41,6 +40,7 @@ import {
     getBackupCleanupDisplayValue,
 } from '@/features/backup/Backup.utils.ts';
 import type { BackupSettingsType } from '@/features/backup/Backup.types.ts';
+import { Notifications } from '@/base/notification/Notifications.ts';
 
 let backupRestoreId: string | undefined;
 
@@ -82,7 +82,7 @@ export function Backup() {
         value: BackupSettingsType[Setting],
     ) => {
         mutateSettings({ variables: { input: { settings: { [setting]: value } } } }).catch((e) =>
-            makeToast(t`Failed to save changes`, 'error', getErrorMessage(e)),
+            Notifications.error(t`Failed to save changes`, getErrorMessage(e)),
         );
     };
 
@@ -90,7 +90,7 @@ export function Backup() {
         settings: Record<Setting, BackupSettingsType[Setting]>,
     ) => {
         mutateSettings({ variables: { input: { settings } } }).catch((e) =>
-            makeToast(t`Failed to save changes`, 'error', getErrorMessage(e)),
+            Notifications.error(t`Failed to save changes`, getErrorMessage(e)),
         );
     };
 
@@ -105,11 +105,11 @@ export function Backup() {
         const isRestoreFinished = isSuccess || isFailure;
         if (isRestoreFinished) {
             if (isSuccess) {
-                makeToast(t`Backup restored.`, 'success');
+                Notifications.success(t`Backup restored.`);
             }
 
             if (isFailure) {
-                makeToast(t`Could not restore backup`, 'error');
+                Notifications.error(t`Could not restore backup`);
             }
 
             requestManager.reset();
@@ -123,14 +123,14 @@ export function Backup() {
             title: t`Create backup`,
         });
 
-        makeToast(t`Creating backup…`, 'info');
+        Notifications.info(t`Creating backup…`);
 
         try {
             const backupFileResponse = await requestManager.createBackupFile({ flags }).response;
 
             const backupFileUrl = backupFileResponse.data?.createBackup.url;
             if (!backupFileUrl) {
-                makeToast(t`Could not create backup`, 'error', getErrorMessage(backupFileResponse.error));
+                Notifications.error(t`Could not create backup`, getErrorMessage(backupFileResponse.error));
                 return;
             }
 
@@ -141,12 +141,12 @@ export function Backup() {
             link.click();
             document.body.removeChild(link);
         } catch (e) {
-            makeToast(t`Could not create backup`, 'error', getErrorMessage(e));
+            Notifications.error(t`Could not create backup`, getErrorMessage(e));
         }
     };
 
     const installMissingExtensionsFromBackup = async (file: File) => {
-        makeToast(t`Installing missing extensions…`, 'info');
+        Notifications.info(t`Installing missing extensions…`);
 
         const response = await requestManager.installMissingExtensionsFromBackup(file).response;
         const payload = response.data?.installMissingExtensionsFromBackup;
@@ -158,11 +158,11 @@ export function Backup() {
         requestManager.clearExtensionCache();
 
         if (payload.installedExtensions.length) {
-            makeToast(t`Missing extensions installed.`, 'success');
+            Notifications.success(t`Missing extensions installed.`);
         } else if (payload.unmatchedSources.length) {
-            makeToast(t`Some missing extensions could not be installed.`, 'warning');
+            Notifications.warn(t`Some missing extensions could not be installed.`);
         } else {
-            makeToast(t`No missing extensions needed installation.`, 'info');
+            Notifications.info(t`No missing extensions needed installation.`);
         }
 
         return payload;
@@ -228,7 +228,7 @@ export function Backup() {
 
             return true;
         } catch (e) {
-            makeToast(t`Could not validate backup`, 'error', getErrorMessage(e));
+            Notifications.error(t`Could not validate backup`, getErrorMessage(e));
         } finally {
             resetBackupState();
         }
@@ -242,13 +242,13 @@ export function Backup() {
         });
 
         try {
-            makeToast(t`Restoring backup…`, 'info');
+            Notifications.info(t`Restoring backup…`);
 
             const response = await requestManager.restoreBackupFile({ backup, flags }).response;
             backupRestoreId = response.data?.restoreBackup.id;
             setTriggerReRender(Date.now());
         } catch (e) {
-            makeToast(t`Could not restore backup`, 'error', getErrorMessage(e));
+            Notifications.error(t`Could not restore backup`, getErrorMessage(e));
         } finally {
             resetBackupState();
         }
@@ -256,13 +256,13 @@ export function Backup() {
 
     const submitBackup = async (file: File) => {
         if (file.name.toLowerCase().endsWith('json')) {
-            makeToast(t`legacy backups are not supported!`, 'error');
+            Notifications.error(t`legacy backups are not supported!`);
             return;
         }
 
         const isValidFilename = file.name.toLowerCase().match(/proto\.gz$|tachibk$/g);
         if (!isValidFilename) {
-            makeToast(t`Invalid filetype`, 'error');
+            Notifications.error(t`Invalid filetype`);
             return;
         }
 

@@ -68,6 +68,8 @@ export const CHAPTER_LIST_FIELDS = gql`
         fetchedAt
         uploadDate
         lastReadAt
+        lastPageRead
+        pageCount
     }
 `;
 

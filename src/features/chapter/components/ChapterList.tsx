@@ -42,12 +42,12 @@ import { useNavBarContext } from '@/features/navigation-bar/NavbarContext.tsx';
 import { MediaQuery } from '@/base/utils/MediaQuery.tsx';
 import { shouldForwardProp } from '@/base/utils/ShouldForwardProp.ts';
 import { getErrorMessage } from '@/lib/HelperFunctions.ts';
-import { makeToast } from '@/base/utils/Toast.ts';
 import { ChapterListCard } from '@/features/chapter/components/cards/ChapterListCard.tsx';
 import { VirtuosoPersisted } from '@/lib/virtuoso/Component/VirtuosoPersisted.tsx';
 import { STABLE_EMPTY_ARRAY } from '@/base/Base.constants.ts';
 import { useElementSize } from '@mantine/hooks';
 import { VirtuosoUtil } from '@/lib/virtuoso/Virtuoso.util.tsx';
+import { Notifications } from '@/base/notification/Notifications.ts';
 
 type ChapterListHeaderProps = {
     scrollbarWidth: number;
@@ -70,7 +70,7 @@ const StyledVirtuoso = styled(VirtuosoPersisted, {
     listStyle: 'none',
     padding: 0,
     [theme.breakpoints.up('md')]: {
-        height: `calc(100vh - ${topOffset}px)`,
+        height: `calc(100dvh - ${topOffset}px)`,
         margin: 0,
     },
 }));
@@ -126,7 +126,7 @@ export const ChapterList = ({
 
     const options = useChapterListOptions(manga);
     const updateOption = updateChapterListOptions(manga, (e) =>
-        makeToast(t`Failed to save changes`, 'error', getErrorMessage(e)),
+        Notifications.error(t`Failed to save changes`, getErrorMessage(e)),
     );
     const {
         data: chaptersData,

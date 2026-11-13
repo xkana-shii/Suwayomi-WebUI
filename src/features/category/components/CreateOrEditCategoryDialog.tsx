@@ -25,9 +25,9 @@ import type {
     CategoryNameInfo,
 } from '@/features/category/Category.types.ts';
 import { getErrorMessage } from '@/lib/HelperFunctions.ts';
-import { makeToast } from '@/base/utils/Toast.ts';
 import { assertIsDefined } from '@/base/Asserts.ts';
 import { CategoryTree, SMART_CATEGORY_STATUSES } from '@/features/category/CategoryTree.ts';
+import { Notifications } from '@/base/notification/Notifications.ts';
 
 type DialogCategory = CategoryIdInfo & CategoryNameInfo & CategoryDefaultInfo & CategoryHierarchyInfo;
 
@@ -102,7 +102,7 @@ export const CreateOrEditCategoryDialog = ({
                         (intervalValue === null ? { clearUpdateInterval: true } : { updateInterval: intervalValue })),
                 })
                 .response.then(refetchOnBindingChange)
-                .catch((e) => makeToast(t`Failed to save changes`, 'error', getErrorMessage(e)));
+                .catch((e) => Notifications.error(t`Failed to save changes`, getErrorMessage(e)));
 
             return;
         }
@@ -121,7 +121,7 @@ export const CreateOrEditCategoryDialog = ({
                 }
                 refetchOnBindingChange();
             })
-            .catch((e) => makeToast(t`Could not create category`, 'error', getErrorMessage(e)));
+            .catch((e) => Notifications.error(t`Could not create category`, getErrorMessage(e)));
     };
 
     return (

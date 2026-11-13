@@ -23,7 +23,6 @@ import { requestManager } from '@/lib/requests/RequestManager.ts';
 import { EmptyViewAbsoluteCentered } from '@/base/components/feedback/EmptyViewAbsoluteCentered.tsx';
 import { LoadingPlaceholder } from '@/base/components/feedback/LoadingPlaceholder.tsx';
 import { SettingsTrackerCard } from '@/features/tracker/components/cards/SettingsTrackerCard.tsx';
-import { makeToast } from '@/base/utils/Toast.ts';
 import { defaultPromiseErrorHandler } from '@/lib/DefaultPromiseErrorHandler.ts';
 import { GET_TRACKERS_SETTINGS } from '@/lib/graphql/tracker/TrackerQuery.ts';
 import type { GetTrackersSettingsQuery } from '@/lib/graphql/generated/graphql.ts';
@@ -31,6 +30,7 @@ import type { MetadataTrackingSettings } from '@/features/tracker/Tracker.types.
 import { getErrorMessage } from '@/lib/HelperFunctions.ts';
 import { useAppTitle } from '@/features/navigation-bar/hooks/useAppTitle.ts';
 import { STABLE_EMPTY_ARRAY } from '@/base/Base.constants.ts';
+import { Notifications } from '@/base/notification/Notifications.ts';
 
 export const TrackingSettings = () => {
     const { t } = useLingui();
@@ -43,7 +43,7 @@ export const TrackingSettings = () => {
         request: { error: metadataServerSettingsError, refetch: refetchServerMetadataSettings },
     } = useMetadataServerSettings();
     const updateTrackingSettings = createUpdateMetadataServerSettings<keyof MetadataTrackingSettings>((e) =>
-        makeToast(t`Failed to save changes`, 'error', getErrorMessage(e)),
+        Notifications.error(t`Failed to save changes`, getErrorMessage(e)),
     );
 
     const {
@@ -117,7 +117,7 @@ export const TrackingSettings = () => {
                         value={preferredMetadataTrackerId}
                         onChange={(e) =>
                             updateMetadataServerSettings('preferredMetadataTrackerId', Number(e.target.value)).catch(
-                                (e2) => makeToast(t`Failed to save changes`, 'error', getErrorMessage(e2)),
+                                (e2) => Notifications.error(t`Failed to save changes`, getErrorMessage(e2)),
                             )
                         }
                         sx={{ minWidth: 160 }}

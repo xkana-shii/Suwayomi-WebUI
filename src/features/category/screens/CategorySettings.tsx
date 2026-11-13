@@ -6,8 +6,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { Notifications } from '@/base/notification/Notifications.ts';
 import { CategoryTree } from '@/features/category/CategoryTree.ts';
-import { makeToast } from '@/base/utils/Toast.ts';
 import type { ComponentProps } from 'react';
 import { useMemo, useState } from 'react';
 import Fab from '@mui/material/Fab';
@@ -117,9 +117,8 @@ export function CategorySettings() {
 
         // categories are reordered among their siblings; moving to another parent is done in the edit dialog
         if (tree.parentOf(Number(active.id)) !== tree.parentOf(Number(over.id))) {
-            makeToast(
+            Notifications.info(
                 t`Categories can only be reordered among their siblings. Use "Edit" to change the parent.`,
-                'info',
             );
             return;
         }

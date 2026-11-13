@@ -6,6 +6,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { Notifications } from '@/base/notification/Notifications.ts';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -36,7 +37,6 @@ import SettingsBackupRestoreIcon from '@mui/icons-material/SettingsBackupRestore
 import { useLingui } from '@lingui/react/macro';
 import { plural } from '@lingui/core/macro';
 import { requestManager } from '@/lib/requests/RequestManager.ts';
-import { makeToast } from '@/base/utils/Toast.ts';
 import { getErrorMessage } from '@/lib/HelperFunctions.ts';
 import { MediaQuery } from '@/base/utils/MediaQuery.tsx';
 import { CustomTooltip } from '@/base/components/CustomTooltip.tsx';
@@ -168,7 +168,7 @@ export const ScanlatorSettingsDialog = ({
             .enqueue(() => requestManager.updateMangaScanlatorSettings({ ...change, mangaId }).response)
             .catch((e) => {
                 failedRef.current = true;
-                makeToast(t`Scanlator settings were not saved`, 'error', getErrorMessage(e));
+                Notifications.error(t`Scanlator settings were not saved`, getErrorMessage(e));
                 refetch().catch(() => {});
             });
     };
@@ -178,7 +178,7 @@ export const ScanlatorSettingsDialog = ({
             .enqueue(
                 () => requestManager.updateMangaScanlatorSettings({ mangaId, removeBlacklistEntries: keys }).response,
             )
-            .catch((e) => makeToast(t`Scanlator settings were not saved`, 'error', getErrorMessage(e)));
+            .catch((e) => Notifications.error(t`Scanlator settings were not saved`, getErrorMessage(e)));
     };
 
     const blacklist = settings?.blacklistedChapters ?? [];

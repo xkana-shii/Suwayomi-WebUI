@@ -68,6 +68,8 @@ export type ChapterVisibilityInfo = Pick<ChapterType, 'isBlacklisted' | 'isMerge
 
 export type ChapterReadInfo = Pick<ChapterType, 'isRead'>;
 
+export type ChapterReadProgressInfo = ChapterReadInfo & Pick<ChapterType, 'lastPageRead' | 'pageCount'>;
+
 export type ChapterNumberInfo = Pick<ChapterType, 'chapterNumber'>;
 
 export type ChapterSourceOrderInfo = Pick<ChapterType, 'sourceOrder'>;

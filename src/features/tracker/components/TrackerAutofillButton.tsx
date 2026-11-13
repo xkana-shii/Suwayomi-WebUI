@@ -6,6 +6,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+import { Notifications } from '@/base/notification/Notifications.ts';
 import { useMemo, useState } from 'react';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu';
@@ -20,7 +21,6 @@ import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import { useLingui } from '@lingui/react/macro';
 import { requestManager } from '@/lib/requests/RequestManager.ts';
 import { CustomTooltip } from '@/base/components/CustomTooltip.tsx';
-import { makeToast } from '@/base/utils/Toast.ts';
 import { getErrorMessage } from '@/lib/HelperFunctions.ts';
 import {
     createUpdateMetadataServerSettings,
@@ -79,13 +79,13 @@ export const TrackerAutofillButton = ({
                 ) ||
                     !!metadata.genre.length);
             if (!metadata || !hasData) {
-                makeToast(t`${tracker.name} has no metadata for this entry`, 'warning');
+                Notifications.warn(t`${tracker.name} has no metadata for this entry`);
                 return;
             }
             onFill(metadata, tracker.name);
-            makeToast(t`Filled from ${tracker.name}. Review the changes and save.`, 'info');
+            Notifications.info(t`Filled from ${tracker.name}. Review the changes and save.`);
         } catch (e) {
-            makeToast(t`Could not load metadata from ${tracker.name}`, 'error', getErrorMessage(e));
+            Notifications.error(t`Could not load metadata from ${tracker.name}`, getErrorMessage(e));
         } finally {
             setIsFetching(false);
         }
